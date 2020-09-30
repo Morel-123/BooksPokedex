@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Platform, Image, Text, View, Button } from "react-native";
 import { firebase } from "../firebase/Config";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../actions/auth";
 
 function Main(props) {
   const [currentUser, setCurrentUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch();
+
+  const uid = useSelector((state) => state.auth.userID);
 
   useEffect(() => {
     setCurrentUser(firebase.auth().currentUser);
@@ -18,7 +20,7 @@ function Main(props) {
       .auth()
       .signOut()
       .then(() => {
-        dispatch({ type: authActions.LOGOUT});
+        dispatch(authActions.logout());
         props.navigation.navigate("Loading");
       })
       .catch((error) => setErrorMessage(error.message));
@@ -26,7 +28,9 @@ function Main(props) {
 
   return (
     <View style={styles.container}>
-      <Text>Hi {currentUser && currentUser.email}!</Text>
+      <Text>
+        Hi {currentUser && currentUser.email}! {uid}
+      </Text>
       <Button title="Log Out" onPress={handleLogout} />
     </View>
   );

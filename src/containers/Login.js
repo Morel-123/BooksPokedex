@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View, Button } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { firebase } from "../firebase/Config";
 import { useDispatch } from "react-redux";
 import * as authActions from "../actions/auth";
+import { Card, ListItem, Button, Icon } from 'react-native-elements'
 
 function Login(props) {
   const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ function Login(props) {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        dispatch({ type: authActions.SIGNUP, userID: email });
+        dispatch(authActions.login(firebase.auth().currentUser.uid));
         props.navigation.navigate("Main");
       })
       .catch((error) => setErrorMessage(error.message));

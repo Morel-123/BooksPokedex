@@ -15,7 +15,7 @@ function Signup(props) {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
-          dispatch({ type: authActions.SIGNUP, userID: email });
+          dispatch({ type: authActions.SIGNUP, userID: firebase.auth().currentUser.uid });
           props.navigation.navigate("Main");
       })
       .catch((error) => setErrorMessage(error.message));

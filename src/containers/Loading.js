@@ -1,21 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { firebase } from "../firebase/Config";
-export default class Loading extends React.Component {
-  componentDidMount() {
+import { useDispatch, useSelector } from "react-redux";
+import * as authActions from "../actions/auth";
+
+function Loading(props) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
-      this.props.navigation.navigate(user ? "Main" : "SignUp");
+      if(user) {
+        dispatch(authActions.login(user.uid))
+      }
+      props.navigation.navigate(user ? "Main" : "SignUp");
     });
-  }
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Loading</Text>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Text>Loading</Text>
+      <ActivityIndicator size="large" />
+    </View>
+  );
 }
+
+export default Loading;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
