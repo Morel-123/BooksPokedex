@@ -1,29 +1,24 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import Input from "./Input";
 
 export default class Registration extends React.Component {
   render() {
     return (
       <View style={styles.regform}>
         <Text style={styles.header}>הרשמה</Text>
-        <TextInput
+        <Input
+          id="standard-basic"
+          label="Standard"
           style={styles.textinput}
           placeholder="שם מלא"
-          underlineColorAndroid={"transparent"}
-        ></TextInput>
-
-        <TextInput
+        ></Input>
+        <Input
+          id="standard-basic"
+          label="Standard"
           style={styles.textinput}
           placeholder="אימייל"
-          underlineColorAndroid={"transparent"}
-        ></TextInput>
-
+        ></Input>
       </View>
     );
   }
@@ -41,14 +36,5 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     borderBottomColor: "#199187",
     borderBottomWidth: 1,
-  },
-  textinput: {
-    alignSelf: "stretch",
-    height: 40,
-    marginBottom: 30,
-    color: "#fff",
-    borderBottomColor: "#f8f8f8",
-    borderBottomWidth: 1,
-    textAlign: 'right',
   },
 });
