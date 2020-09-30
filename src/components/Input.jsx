@@ -1,20 +1,21 @@
 import React, { Component } from "react";
 import { StyleSheet, View, TextInput } from "react-native";
 
-export default class Input extends Component {
-  render() {
-    return (
-      <View>
-        <TextInput
-          id="standard-basic"
-          label="Standard"
-          style={styles.textinput}
-          placeholder="אימייל"
-        ></TextInput>
-      </View>
-    );
-  }
+function Input(props) {
+  return (
+    <View>
+      <TextInput
+        id="standard-basic"
+        label="Standard"
+        style={styles.textinput}
+        placeholder={props.placeholder}
+        placeholderTextColor={props.placeholderTextColor}
+      ></TextInput>
+    </View>
+  );
 }
+
+export default Input;
 
 const styles = StyleSheet.create({
   textinput: {
