@@ -2,12 +2,14 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import RegistrationForm from "./src/components/RegistrationForm";
+import { AuthContextProvider } from "./src/contexts/AuthContext";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <RegistrationForm />
-      <StatusBar style="auto" />
+      <AuthContextProvider>
+        <RegistrationForm />
+      </AuthContextProvider>
     </View>
   );
 }

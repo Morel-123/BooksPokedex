@@ -8,9 +8,11 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.1.0",
     "@material-ui/core": "^4.11.0",
     "@react-native-firebase/app": "^8.4.3",
     "expo": "~39.0.2",
+    "expo-font": "~8.3.0",
     "expo-splash-screen": "~0.6.0",
     "expo-status-bar": "~1.0.2",
     "expo-updates": "~0.3.2",
@@ -33,6 +35,11 @@
     "babel-jest": "~25.2.6",
     "jest": "~25.2.6",
     "react-test-renderer": "~16.13.1"
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/"
+    ]
   },
   "jest": {
     "preset": "react-native"

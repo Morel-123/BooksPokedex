@@ -3,7 +3,7 @@ import { StyleSheet, View, TextInput } from "react-native";
 
 function Input(props) {
   return (
-    <View>
+    <View style={props.styleInput}>
       <TextInput
         id="standard-basic"
         label="Standard"
@@ -15,16 +15,20 @@ function Input(props) {
   );
 }
 
+/*
+    marginLeft: 40,
+    marginRight: 40,
+    marginBottom: 30,
+*/
+
 export default Input;
 
 const styles = StyleSheet.create({
   textinput: {
     alignSelf: "stretch",
     height: 40,
-    marginBottom: 30,
     color: "#fff",
     borderBottomColor: "#f8f8f8",
     borderBottomWidth: 1,
-    textAlign: "right",
   },
 });

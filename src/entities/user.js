@@ -1,19 +1,24 @@
-class User{
-    constructor(userID, userName, userPassword, userPhoneNumber, userEmail, isActive){
-        this.userID = userID;
-        this.userPassword = userPassword;
-        this.userName = userName;
-        this.userPhoneNumber = userPhoneNumber;
-        this.userEmail = userEmail;
-        this.isActive = isActive;
-    }
+class User {
+  constructor(uid, firstName, lastName, userPhoneNumber, userEmail) {
+    this.uid = uid;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.userEmail = userEmail;
+    this.userPhoneNumber = userPhoneNumber;
+  }
 }
 
 export default User;
 
-let currentUser = new User(3, "no123456", "12345678", "0543333333", "mftcarpool@gmail.com", true)
+let currentUser = new User(
+  "3",
+  "orel",
+  "zilberman",
+  "0543333333",
+  "orelsmail@gmail.com"
+);
 
-const setCurrentUser = (user) => {
-    currentUser = user;
-}
-export { currentUser, setCurrentUser }
+// const setCurrentUser = (user) => {
+//   currentUser = user;
+// };
+// export { currentUser, setCurrentUser };
