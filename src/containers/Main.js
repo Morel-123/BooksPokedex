@@ -10,6 +10,7 @@ function Main(props) {
   const dispatch = useDispatch();
 
   const uid = useSelector((state) => state.auth.userID);
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     setCurrentUser(firebase.auth().currentUser);
@@ -30,6 +31,9 @@ function Main(props) {
     <View style={styles.container}>
       <Text>
         Hi {currentUser && currentUser.email}! {uid}
+      </Text>
+      <Text>
+        Hi {user && user.firstName} {user && user.lastName}
       </Text>
       <Button title="Log Out" onPress={handleLogout} />
     </View>

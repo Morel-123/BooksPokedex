@@ -6,13 +6,24 @@ import * as authActions from "../actions/auth";
 
 function Loading(props) {
   const dispatch = useDispatch();
+  const database = firebase.firestore();
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
-      if(user) {
-        dispatch(authActions.login(user.uid))
+      if (user) {
+        database
+          .collection("users")
+          .doc(user.uid)
+          .get()
+          .then(function (response) {
+            dispatch(authActions.login(user.uid, response.data()));
+            props.navigation.navigate("Main");
+          })
+          .catch(function (error) {});
       }
-      props.navigation.navigate(user ? "Main" : "SignUp");
+      else {
+        props.navigation.navigate("SignUp");
+      }
     });
   }, []);
 
