@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Platform, Image, Text, View, Button } from "react-native";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
-import * as authActions from "../actions/auth";
+import * as authActions from "../actions/Auth";
 
 function Main(props) {
   const [currentUser, setCurrentUser] = useState(null);
