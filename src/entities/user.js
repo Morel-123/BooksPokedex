@@ -1,10 +1,11 @@
 class User {
-  constructor(uid, firstName, lastName, userPhoneNumber, userEmail) {
+  constructor(uid, firstName, lastName, userPhoneNumber, userEmail, gender) {
     this.uid = uid;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.userEmail = userEmail;
-    this.userPhoneNumber = userPhoneNumber;
+    this.email = userEmail;
+    this.phoneNumber = userPhoneNumber;
+    this.gender = gender;
   }
 }
 

@@ -1,15 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet, Text, View, Button, TouchableOpacity } from "react-native";
+import { firebase } from "../firebase/Config";
 import Input from "./Input";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import User from "../entities/User";
-import { AuthContext } from "../contexts/AuthContext";
 
-function Registration() {
-  const { user, completeRegistration, cancelRegistration } = useContext(
-    AuthContext
-  );
-
+function Registration(props) {
   return (
     <View>
       <FontAwesome name="arrow-left" style={styles.backButton} size={24} />
@@ -31,14 +27,16 @@ function Registration() {
           style={styles.registerButton}
           opacity={1}
           onPress={() =>
-            completeRegistration(
+            props.handleSignUp(
               new User(
                 "3",
                 "orel",
                 "zilberman",
                 "0543333333",
-                "orelsmail@gmail.com"
-              )
+                "orels123mail@gmail.com",
+                "Male"
+              ),
+              "MorTheGarbach"
             )
           }
         >
@@ -47,6 +45,10 @@ function Registration() {
       </View>
     </View>
   );
+}
+
+function completeRegistration(user) {
+  console.log(user);
 }
 
 export default Registration;
@@ -62,8 +64,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     marginBottom: 40,
     alignSelf: "center",
-    // borderBottomColor: "#19918740",
-    // borderBottomWidth: 1,
   },
   input: {
     marginLeft: 40,

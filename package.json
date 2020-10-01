@@ -11,6 +11,7 @@
     "@expo-google-fonts/inter": "^0.1.0",
     "@material-ui/core": "^4.11.0",
     "@react-native-firebase/app": "^8.4.3",
+    "destiny": "^0.7.1",
     "expo": "~39.0.2",
     "expo-font": "~8.3.0",
     "expo-splash-screen": "~0.6.0",
@@ -28,7 +29,10 @@
     "react-native-reanimated": "~1.13.0",
     "react-native-screens": "~2.10.1",
     "react-native-unimodules": "~0.11.0",
-    "react-native-web": "~0.13.12"
+    "react-native-web": "~0.13.12",
+    "react-navigation": "^4.4.1",
+    "react-redux": "^7.2.1",
+    "redux": "^4.0.5"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
