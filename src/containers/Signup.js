@@ -26,13 +26,12 @@ function Signup(props) {
             firstName: "firstName",
             lastName: "lastName",
             gender: "gender",
-            userEmail: email,
+            email: email,
           })
           .then(function () {
             console.log("Document successfully written!");
             dispatch({
               type: authActions.SIGNUP,
-              userID: firebase.auth().currentUser.uid,
               user: new User(uid, "firstName", "lastName", "gender", email)
             });
             props.navigation.navigate("Main");

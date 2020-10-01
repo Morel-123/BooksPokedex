@@ -9,7 +9,6 @@ function Main(props) {
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch();
 
-  const uid = useSelector((state) => state.auth.userID);
   const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
@@ -30,10 +29,10 @@ function Main(props) {
   return (
     <View style={styles.container}>
       <Text>
-        Hi {currentUser && currentUser.email}! {uid}
+        Hi {currentUser && currentUser.email}!
       </Text>
       <Text>
-        Hi {user && user.firstName} {user && user.lastName}
+        Hi {user && user.firstName} {user && user.lastName} {user && user.gender}
       </Text>
       <Button title="Log Out" onPress={handleLogout} />
     </View>

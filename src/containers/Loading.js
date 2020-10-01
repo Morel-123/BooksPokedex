@@ -16,13 +16,13 @@ function Loading(props) {
           .doc(user.uid)
           .get()
           .then(function (response) {
-            dispatch(authActions.login(user.uid, response.data()));
+            dispatch(authActions.login(response.data()));
             props.navigation.navigate("Main");
           })
-          .catch(function (error) {});
+          .catch(function (error) {console.error(error)});
       }
       else {
-        props.navigation.navigate("SignUp");
+        props.navigation.navigate("Login");
       }
     });
   }, []);

@@ -7,6 +7,8 @@ import {
   ImageBackground,
   TouchableOpacity,
   Image,
+  Dimensions,
+  KeyboardAvoidingView,
 } from "react-native";
 import { firebase } from "../firebase/Config";
 import { useDispatch } from "react-redux";
@@ -32,7 +34,7 @@ function Login(props) {
           .doc(uid)
           .get()
           .then(function (response) {
-            dispatch(authActions.login(uid, response.data()));
+            dispatch(authActions.login(response.data()));
             props.navigation.navigate("Main");
           })
           .catch(function (error) {});
@@ -59,69 +61,44 @@ function Login(props) {
         <Image style={styles.logo} source={require("../../assets/logo.png")} />
         <Text style={styles.logoText}>Log In To BookDex</Text>
       </View>
+
       <View style={styles.loginInnerContainer}>
         <Card>
-          {/* <Card.Title>Login</Card.Title> */}
-          {/* <Card.Divider /> */}
-          <View style={styles.container}>
-            <Input
-              placeholder="Email"
-              onChangeText={(email) => setEmail(email)}
-              containerStyle={{ marginBottom: 20 }}
-            />
-            <Input
-              placeholder="Password"
-              secureTextEntry={!showPassword}
-              onChangeText={(password) => setPassword(password)}
-              containerStyle={{ marginBottom: 20 }}
-              rightIcon={
-                showPassword ? (
-                  <Icon
-                    name="eye"
-                    type="font-awesome"
-                    onPress={() => setShowPassword(false)}
-                  />
-                ) : (
-                  <Icon
-                    name="eye-slash"
-                    type="font-awesome"
-                    onPress={() => setShowPassword(true)}
-                  />
-                )
-              }
-            />
-            <Button
-              title="Login"
-              buttonStyle={{ width: "75vw", borderRadius: "25px" }}
-            />
-          </View>
+          <Input
+            placeholder="Email"
+            onChangeText={(email) => setEmail(email)}
+          />
+          <Input
+            placeholder="Password"
+            secureTextEntry={!showPassword}
+            onChangeText={(password) => setPassword(password)}
+            rightIcon={
+              showPassword ? (
+                <Icon
+                  name="eye"
+                  type="font-awesome"
+                  onPress={() => setShowPassword(false)}
+                />
+              ) : (
+                <Icon
+                  name="eye-slash"
+                  type="font-awesome"
+                  onPress={() => setShowPassword(true)}
+                />
+              )
+            }
+          />
+          <Button
+            title="Login"
+            buttonStyle={{
+              width: Dimensions.get("window").width * 0.75,
+              borderRadius: 25,
+              alignSelf: "center",
+            }}
+          />
         </Card>
       </View>
     </View>
-    // <View style={styles.container}>
-    //   <Text>Login</Text>
-    //   {errorMessage && <Text style={{ color: "red" }}>{errorMessage}</Text>}
-    //   <TextInput
-    //     style={styles.textInput}
-    //     autoCapitalize="none"
-    //     placeholder="Email"
-    //     onChangeText={(email) => setEmail(email)}
-    //     value={email}
-    //   />
-    //   <TextInput
-    //     secureTextEntry
-    //     style={styles.textInput}
-    //     autoCapitalize="none"
-    //     placeholder="Password"
-    //     onChangeText={(password) => setPassword(password)}
-    //     value={password}
-    //   />
-    //   <Button title="Login" onPress={handleLogin} />
-    //   <Button
-    //     title="Don't have an account? Sign Up"
-    //     onPress={() => props.navigation.navigate("SignUp")}
-    //   />
-    // </View>
   );
 }
 
@@ -141,7 +118,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   loginButton: {
-    borderRadius: "25px",
+    borderRadius: 25,
     width: "75vw",
   },
   loginContainer: {
@@ -164,13 +141,13 @@ const styles = StyleSheet.create({
   signUpButton: {
     borderBottomColor: "#0000007a",
     borderBottomWidth: 1,
-    fontSize: "18px",
+    fontSize: 18,
   },
   signUpButtonWrapper: {
     alignSelf: "flex-start",
     position: "absolute",
-    top: "5px",
-    right: "5px",
+    top: "3%",
+    right: "3%",
     zIndex: 1,
   },
   logo: {
@@ -185,7 +162,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     position: "absolute",
     zIndex: 1,
-    left: "calc(50% - 75px)",
-    top: 60,
+    left: Dimensions.get("window").width / 2 - 75,
+    top: 100,
   },
 });
