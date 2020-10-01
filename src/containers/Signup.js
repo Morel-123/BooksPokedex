@@ -25,14 +25,15 @@ function Signup(props) {
             uid: uid,
             firstName: "firstName",
             lastName: "lastName",
-            gender: "gender",
             email: email,
+            phoneNumber: "phoneNumber",
+            gender: "gender",
           })
           .then(function () {
             console.log("Document successfully written!");
             dispatch({
               type: authActions.SIGNUP,
-              user: new User(uid, "firstName", "lastName", "gender", email)
+              user: new User(uid, "firstName", "lastName", email, "phoneNumber", "gender")
             });
             props.navigation.navigate("Main");
           })

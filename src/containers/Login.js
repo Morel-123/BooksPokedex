@@ -37,7 +37,7 @@ function Login(props) {
             dispatch(authActions.login(response.data()));
             props.navigation.navigate("Main");
           })
-          .catch(function (error) {});
+          .catch((error) => setErrorMessage(error.message));
       })
       .catch((error) => setErrorMessage(error.message));
   };
@@ -95,7 +95,9 @@ function Login(props) {
               borderRadius: 25,
               alignSelf: "center",
             }}
+            onPress={handleLogin}
           />
+          <Text>{errorMessage}</Text>
         </Card>
       </View>
     </View>
