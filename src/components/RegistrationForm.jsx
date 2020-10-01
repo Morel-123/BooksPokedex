@@ -5,40 +5,56 @@ import Input from "./Input";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import User from "../entities/User";
 
-function Registration(props) {
+function Registration({ handleSignUp }) {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+
   return (
-    <View>
+    <View style={styles.container}>
       <FontAwesome name="arrow-left" style={styles.backButton} size={24} />
       <View style={styles.regform}>
         <Text style={styles.header}>Registration</Text>
         <Input
-          placeholder="Full Name"
+          placeholder="First Name"
           placeholderTextColor="#b2b2b2"
           style={styles.input}
           styleInput={styles.inputMargin}
+          onChange={setFirstName}
+        ></Input>
+        <Input
+          placeholder="Last Name"
+          placeholderTextColor="#b2b2b2"
+          style={styles.input}
+          styleInput={styles.inputMargin}
+          onChange={setLastName}
         ></Input>
         <Input
           placeholder="Email"
           placeholderTextColor="#b2b2b2"
+          style={styles.input}
           styleInput={styles.inputMargin}
+          onChange={setEmail}
+        ></Input>
+        <Input
+          placeholder="Phone Number"
+          placeholderTextColor="#b2b2b2"
+          style={styles.input}
+          styleInput={styles.inputMargin}
+          onChange={setPhoneNumber}
         ></Input>
         <TouchableOpacity
           title="Register"
           style={styles.registerButton}
           opacity={1}
-          onPress={() =>
-            props.handleSignUp(
-              new User(
-                "3",
-                "orel",
-                "zilberman",
-                "0543333333",
-                "orels123mail@gmail.com",
-                "Male"
-              ),
-              "MorTheGarbach"
-            )
-          }
+          onPress={() => {
+            handleSignUp(
+              new User(null, firstName, lastName, phoneNumber, email, "Female"),
+              "Password"
+            );
+          }}
         >
           <Text style={styles.registerButtonText}>Register</Text>
         </TouchableOpacity>
@@ -54,6 +70,12 @@ function completeRegistration(user) {
 export default Registration;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#36485f",
+    paddingLeft: 60,
+    paddingRight: 60,
+  },
   regform: {
     alignSelf: "stretch",
     marginTop: 40,

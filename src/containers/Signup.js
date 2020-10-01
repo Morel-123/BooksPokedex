@@ -7,13 +7,11 @@ import User from "../entities/User";
 import RegistrationForm from "../components/RegistrationForm";
 
 function Signup(props) {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch();
   const database = firebase.firestore();
 
-  const handleSignUp = async (user, inputPassword) => {
+  const handleSignUp = (user, inputPassword) => {
     firebase
       .auth()
       .createUserWithEmailAndPassword(user.email, inputPassword)
@@ -31,7 +29,6 @@ function Signup(props) {
             gender: user.gender,
           })
           .then(function () {
-            console.log("Document successfully written!");
             dispatch({
               type: authActions.SIGNUP,
               user: new User(
@@ -44,19 +41,17 @@ function Signup(props) {
               ),
             });
             // props.navigation.navigate("Main");
-            console.log("navigated to main");
           })
           .catch(function (error) {
-            console.error("Error writing document: ", error);
+            setErrorMessage(error.message);
           });
       })
       .catch((error) => {
         setErrorMessage(error.message);
-        console.log(error.message);
       });
   };
 
-  return <RegistrationForm handleSignUp={handleSignUp.bind(this)} />;
+  return <RegistrationForm handleSignUp={handleSignUp} />;
 }
 
 export default Signup;

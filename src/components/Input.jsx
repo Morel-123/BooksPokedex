@@ -1,25 +1,21 @@
 import React, { Component } from "react";
 import { StyleSheet, View, TextInput } from "react-native";
 
-function Input(props) {
+
+function Input({ styleInput, placeholder, placeholderTextColor, onChange }) {
   return (
-    <View style={props.styleInput}>
+    <View style={styleInput}>
       <TextInput
         id="standard-basic"
         label="Standard"
         style={styles.textinput}
-        placeholder={props.placeholder}
-        placeholderTextColor={props.placeholderTextColor}
+        placeholder={placeholder}
+        placeholderTextColor={placeholderTextColor}
+        onChange={(e) => onChange(e.target.value)}
       ></TextInput>
     </View>
   );
 }
-
-/*
-    marginLeft: 40,
-    marginRight: 40,
-    marginBottom: 30,
-*/
 
 export default Input;
 
