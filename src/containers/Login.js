@@ -14,6 +14,7 @@ import { firebase } from "../firebase/Config";
 import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
 import { Card, ListItem, Button, Input, Icon } from "react-native-elements";
+import { useForm, Controller } from "react-hook-form";
 
 function Login(props) {
   const [email, setEmail] = useState("");
@@ -22,8 +23,21 @@ function Login(props) {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const database = firebase.firestore();
+  const { control, handleSubmit, errors, register } = useForm({
+    mode: "onTouched",
+  });
+  const onSubmit = (data) => {
+    console.log(data);
+    console.log(isEmailAddressValid(email));
+  };
 
-  const handleLogin = () => {
+  const isEmailAddressValid = (input) => {
+    return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+      input
+    );
+  };
+
+  const handleLogin = (data) => {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
@@ -64,29 +78,101 @@ function Login(props) {
 
       <View style={styles.loginInnerContainer}>
         <Card>
-          <Input
-            placeholder="Email"
-            onChangeText={(email) => setEmail(email)}
+          <Controller
+            control={control}
+            render={({ onChange, onBlur, value }) => (
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={{
+                    height: 40,
+                    fontSize: 18,
+                    borderBottom: "1px solid #86939e",
+                  }}
+                  placeholder="Email"
+                  onChangeText={(email) => {
+                    onChange(email);
+                    setEmail(email);
+                  }}
+                  onBlur={onBlur}
+                  value={value}
+                />
+                {errors.email && errors.email.type === "required" && (
+                  <Text style={styles.errorMessage}>Email is required.</Text>
+                )}
+                {errors.email && errors.email.type === "validate" && (
+                  <Text style={styles.errorMessage}>
+                    Please provide a valid email.
+                  </Text>
+                )}
+              </View>
+            )}
+            name="email"
+            rules={{
+              required: true,
+              validate: (value) => isEmailAddressValid(value),
+            }}
+            defaultValue=""
           />
-          <Input
-            placeholder="Password"
-            secureTextEntry={!showPassword}
-            onChangeText={(password) => setPassword(password)}
-            rightIcon={
-              showPassword ? (
-                <Icon
-                  name="eye"
-                  type="font-awesome"
-                  onPress={() => setShowPassword(false)}
+          <Controller
+            control={control}
+            render={({ onChange, onBlur, value }) => (
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={{
+                    height: 40,
+                    fontSize: 18,
+                    borderBottom: "1px solid #86939e",
+                  }}
+                  placeholder="Password"
+                  onChangeText={(password) => {
+                    onChange(password);
+                    setPassword(password);
+                  }}
+                  onBlur={onBlur}
+                  value={value}
+                  secureTextEntry={!showPassword}
                 />
-              ) : (
-                <Icon
-                  name="eye-slash"
-                  type="font-awesome"
-                  onPress={() => setShowPassword(true)}
-                />
-              )
-            }
+                {errors.password && errors.password.type === "required" && (
+                  <Text style={styles.errorMessage}>Password is required.</Text>
+                )}
+                {errors.password && errors.password.type === "minLength" && (
+                  <Text style={styles.errorMessage}>
+                    Password must be at least 6 characters long.
+                  </Text>
+                )}
+                {showPassword ? (
+                  <Icon
+                    name="eye"
+                    type="font-awesome"
+                    containerStyle={{
+                      height: 24,
+                      position: "absolute",
+                      top: 8,
+                      right: 0,
+                    }}
+                    onPress={() => setShowPassword(false)}
+                  />
+                ) : (
+                  <Icon
+                    name="eye-slash"
+                    type="font-awesome"
+                    containerStyle={{
+                      height: 24,
+                      position: "absolute",
+                      top: 8,
+                      right: 0,
+                    }}
+                    onPress={() => setShowPassword(true)}
+                  />
+                )}
+              </View>
+            )}
+            name="password"
+            rules={{
+              required: true,
+              minLength: 6,
+            }}
+            defaultValue=""
           />
           <Button
             title="Login"
@@ -95,9 +181,8 @@ function Login(props) {
               borderRadius: 25,
               alignSelf: "center",
             }}
-            onPress={handleLogin}
+            onPress={handleSubmit(handleLogin)}
           />
-          <Text>{errorMessage}</Text>
         </Card>
       </View>
     </View>
@@ -165,6 +250,20 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 1,
     left: Dimensions.get("window").width / 2 - 75,
-    top: 100,
+    top: 80,
+  },
+  errorMessage: {
+    color: "red",
+  },
+  inputContainer: {
+    marginBottom: 20,
+    height: 60,
+    position: "relative",
+  },
+  passwordIcon: {
+    height: 24,
+    position: "absolute",
+    top: 8,
+    right: 0,
   },
 });
