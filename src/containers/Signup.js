@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View, Button } from "react-native";
-import { firebase } from "../firebase/Config";
+import { firebase, firebaseAuth } from "../firebase/Config";
 import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
 import User from "../entities/User";
@@ -51,7 +51,28 @@ function Signup(props) {
       });
   };
 
-  return <RegistrationForm handleSignUp={handleSignUp} />;
+  const handleGoogleAuthentication = () => {
+    console.log("Continue with Google");
+    console.log(firebaseAuth);
+    firebase.auth().signInWithPopup(firebaseAuth).then(function(result) {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      var token = result.credential.accessToken;
+      // The signed-in user info.
+      var user = result.user;
+      // ...
+    }).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // The email of the user's account used.
+      var email = error.email;
+      // The firebase.auth.AuthCredential type that was used.
+      var credential = error.credential;
+      // ...
+    });
+  }
+
+  return <RegistrationForm handleSignUp={handleSignUp} handleGoogleAuthentication={handleGoogleAuthentication} />;
 }
 
 export default Signup;

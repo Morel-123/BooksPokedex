@@ -1,15 +1,17 @@
 import React, { useContext, useState } from "react";
-import { StyleSheet, Text, View, Button, TouchableOpacity } from "react-native";
-import { firebase } from "../firebase/Config";
+import { StyleSheet, Text, View, Button, TouchableOpacity, ImageBackground } from "react-native";
+// import actorIcon from "../../assets/fonts/actor.png"
 import Input from "./Input";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import User from "../entities/User";
 
-function Registration({ handleSignUp }) {
+function Registration({ handleSignUp, handleGoogleAuthentication }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [gender, setGender] = useState("Female");
+
   const [password, setPassword] = useState("");
 
   return (
@@ -17,6 +19,29 @@ function Registration({ handleSignUp }) {
       <FontAwesome name="arrow-left" style={styles.backButton} size={24} />
       <View style={styles.regform}>
         <Text style={styles.header}>Registration</Text>
+        <Text style={styles.genderTitle}>Who are you?</Text>
+        <View style={styles.genderIconsContainer}>
+          <TouchableOpacity style={(gender == "Male") ? styles.noGrayScale : styles.grayScale}
+            onPress={() => {
+              setGender("Male");
+            }}>
+            <ImageBackground
+              style={styles.maleIcon}
+              resizeMode={"cover"}
+              source={require("../../assets/icons/actor.png")}>
+            </ImageBackground>
+          </TouchableOpacity>
+          <TouchableOpacity style={(gender == "Female") ? styles.noGrayScale : styles.grayScale}
+            onPress={() => {
+              setGender("Female")
+            }}>
+            <ImageBackground
+              style={styles.femaleIcon}
+              resizeMode={"cover"}
+              source={require("../../assets/icons/actress.png")}>
+            </ImageBackground>
+          </TouchableOpacity>
+        </View>
         <Input
           placeholder="First Name"
           placeholderTextColor="#b2b2b2"
@@ -51,12 +76,22 @@ function Registration({ handleSignUp }) {
           opacity={1}
           onPress={() => {
             handleSignUp(
-              new User(null, firstName, lastName, phoneNumber, email, "Female"),
+              new User(null, firstName, lastName, phoneNumber, email, gender),
               "Password"
             );
           }}
         >
           <Text style={styles.registerButtonText}>Register</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          title="Register"
+          style={styles.registerButton}
+          opacity={1}
+          onPress={() => {
+            handleGoogleAuthentication();
+          }}
+        >
+          <Text style={styles.registerButtonText}>Continue with google</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -78,7 +113,7 @@ const styles = StyleSheet.create({
   },
   regform: {
     alignSelf: "stretch",
-    marginTop: 40,
+    marginTop: 10,
   },
   header: {
     fontSize: 24,
@@ -86,6 +121,38 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     marginBottom: 40,
     alignSelf: "center",
+  },
+  grayScale: {
+    filter: "grayscale(100%)"
+  },
+  noGrayScale: {
+    filter: "grayscale(0)"
+  },
+  genderTitle: {
+    color: "#fdfdfd30",
+    width: "100%",
+    textAlign: "center",
+  },
+  genderIconsContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  maleIcon: {
+    height: 50,
+    width: 50,
+    marginRight: 20,
+    backgroundColor: "#0e94a0",
+    borderRadius: 10,
+  },
+  femaleIcon: {
+    height: 50,
+    width: 50,
+    marginLeft: 20,
+    backgroundColor: "#eb7735",
+    borderRadius: 10,
   },
   input: {
     marginLeft: 40,
