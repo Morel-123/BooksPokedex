@@ -5,8 +5,16 @@
     "name": "booksPokedex",
     "slug": "booksPokedex",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "bundleIdentifier": "com.bookspokedex",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.bookspokedex",
+      "googleServicesFile": "./app/google-services.json",
+      "versionCode": 1
+    }
   }
 }
