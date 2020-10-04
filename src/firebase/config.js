@@ -14,9 +14,7 @@ const firebaseConfig = {
 };
 
 if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
 }
 
-var firebaseAuth = new firebase.auth.GoogleAuthProvider();
-
-export { firebase, firebaseAuth };
+export { firebase };
