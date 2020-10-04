@@ -44,31 +44,68 @@ function Login(props) {
     mode: "onTouched",
   });
 
-    useEffect(() => {
+  useEffect(() => {
     if (response?.type === "success") {
       const { access_token } = response.params;
 
-      const credential = firebase.auth.GoogleAuthProvider.credential(null, access_token);
-      firebase.auth().signInWithCredential(credential)
-      .then(function (result) {
-        console.log(result);
-        console.log(firebase.auth().currentUser.uid);
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        var token = result.credential.accessToken;
-        // The signed-in user info.
-        var user = result.user;
-        // ...
-      })
-      .catch(function (error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // The email of the user's account used.
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
-        // ...
-      });
+      const credential = firebase.auth.GoogleAuthProvider.credential(
+        null,
+        access_token
+      );
+      firebase
+        .auth()
+        .signInWithCredential(credential)
+        .then(function (result) {
+          let uid = result.user.uid;
+          if (result.additionalUserInfo.isNewUser) {
+            //need to add it to firebase
+            database
+              .collection("users")
+              .doc(uid)
+              .set({
+                uid: uid,
+                firstName: result.additionalUserInfo.profile.given_name,
+                lastName: result.additionalUserInfo.profile.family_name,
+                userPhoneNumber: result.user.phoneNumber,
+                userEmail: result.additionalUserInfo.profile.email,
+                gender: "male",
+              })
+              .then(function () {
+                dispatch({
+                  type: authActions.SIGNUP,
+                  user: new User(
+                    uid,
+                    result.additionalUserInfo.profile.given_name,
+                    result.additionalUserInfo.profile.family_name,
+                    result.user.phoneNumber,
+                    result.additionalUserInfo.profile.email,
+                    "male"
+                  ),
+                });
+                props.navigation.navigate("Main");
+              })
+              .catch(function (error) {
+                console.log(error.message);
+              });
+          } else {
+            getUserFromDBAndNavigate(uid);
+          }
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = result.credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          // ...
+        })
+        .catch(function (error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // The email of the user's account used.
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
+          // ...
+        });
     }
   }, [response]);
 
@@ -78,21 +115,25 @@ function Login(props) {
     );
   };
 
+  const getUserFromDBAndNavigate = (uid) => {
+    database
+      .collection("users")
+      .doc(uid)
+      .get()
+      .then(function (response) {
+        dispatch(authActions.login(response.data()));
+        props.navigation.navigate("Main");
+      })
+      .catch((error) => setErrorMessage(error.message));
+  };
+
   const handleLogin = (data) => {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
         let uid = firebase.auth().currentUser.uid;
-        database
-          .collection("users")
-          .doc(uid)
-          .get()
-          .then(function (response) {
-            dispatch(authActions.login(response.data()));
-            props.navigation.navigate("Main");
-          })
-          .catch((error) => setErrorMessage(error.message));
+        getUserFromDBAndNavigate(uid);
       })
       .catch((error) => setErrorMessage(error.message));
   };
