@@ -54,13 +54,13 @@ function Signup(props) {
   const handleGoogleAuthentication = () => {
     console.log("Continue with Google");
     console.log(firebaseAuth);
-    firebase.auth().signInWithPopup(firebaseAuth).then(function(result) {
+    firebase.auth().signInWithPopup(firebaseAuth).then(function (result) {
       // This gives you a Google Access Token. You can use it to access the Google API.
       var token = result.credential.accessToken;
       // The signed-in user info.
       var user = result.user;
       // ...
-    }).catch(function(error) {
+    }).catch(function (error) {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
@@ -72,7 +72,11 @@ function Signup(props) {
     });
   }
 
-  return <RegistrationForm handleSignUp={handleSignUp} handleGoogleAuthentication={handleGoogleAuthentication} />;
+  return <RegistrationForm
+    isPasswordSignup={true}
+    handleSignUp={handleSignUp}
+    handleGoogleAuthentication={handleGoogleAuthentication}
+  />;
 }
 
 export default Signup;

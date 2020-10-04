@@ -5,14 +5,13 @@ import Input from "./Input";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import User from "../entities/User";
 
-function Registration({ handleSignUp, handleGoogleAuthentication }) {
+function Registration({ isPasswordSignup, handleSignUp, handleGoogleAuthentication }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [gender, setGender] = useState("Female");
-
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(null);
 
   return (
     <View style={styles.container}>
@@ -70,6 +69,13 @@ function Registration({ handleSignUp, handleGoogleAuthentication }) {
           styleInput={styles.inputMargin}
           onChange={setPhoneNumber}
         ></Input>
+        {isPasswordSignup ? <Input
+          placeholder="Password"
+          placeholderTextColor="#b2b2b2"
+          style={styles.input}
+          styleInput={styles.inputPasswordMargin}
+          onChange={setPassword}
+        ></Input> : null}
         <TouchableOpacity
           title="Register"
           style={styles.registerButton}
@@ -77,21 +83,11 @@ function Registration({ handleSignUp, handleGoogleAuthentication }) {
           onPress={() => {
             handleSignUp(
               new User(null, firstName, lastName, phoneNumber, email, gender),
-              "Password"
+              password
             );
           }}
         >
           <Text style={styles.registerButtonText}>Register</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          title="Register"
-          style={styles.registerButton}
-          opacity={1}
-          onPress={() => {
-            handleGoogleAuthentication();
-          }}
-        >
-          <Text style={styles.registerButtonText}>Continue with google</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -110,6 +106,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#36485f",
     paddingLeft: 60,
     paddingRight: 60,
+    height: "100%",
+    width: "100%",
   },
   regform: {
     alignSelf: "stretch",
@@ -118,8 +116,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     color: "#fff",
-    paddingBottom: 10,
-    marginBottom: 40,
+    marginBottom: 10,
     alignSelf: "center",
   },
   grayScale: {
@@ -139,6 +136,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,
+    marginBottom: 20,
   },
   maleIcon: {
     height: 50,
@@ -161,6 +159,9 @@ const styles = StyleSheet.create({
   backButton: {
     marginTop: 20,
     color: "#fff",
+    position: "absolute",
+    left: 20,
+    top: 0,
   },
   registerButton: {
     width: "auto",
@@ -169,6 +170,7 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     marginRight: 40,
     marginTop: 30,
+    marginBottom: 20,
     paddingTop: 5,
     paddingBottom: 5,
     borderRadius: 25,
@@ -178,7 +180,6 @@ const styles = StyleSheet.create({
     boxShadow: "#2f2f2f 0px 0px 11px 0px",
   },
   registerButtonText: {
-    // color: "#124671",
     color: "#d4f4f3",
     alignSelf: "center",
     fontWeight: "bold",
@@ -187,5 +188,10 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     marginRight: 40,
     marginBottom: 30,
+  },
+  inputPasswordMargin: {
+    marginLeft: 40,
+    marginRight: 40,
+    marginBottom: 10,
   },
 });

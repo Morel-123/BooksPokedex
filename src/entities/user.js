@@ -10,16 +10,3 @@ class User {
 }
 
 export default User;
-
-let currentUser = new User(
-  "3",
-  "orel",
-  "zilberman",
-  "0543333333",
-  "orelsmail@gmail.com"
-);
-
-// const setCurrentUser = (user) => {
-//   currentUser = user;
-// };
-// export { currentUser, setCurrentUser };
