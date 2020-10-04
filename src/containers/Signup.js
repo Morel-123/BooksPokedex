@@ -1,69 +1,82 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View, Button } from "react-native";
-import { firebase } from "../firebase/Config";
+import { firebase, firebaseAuth } from "../firebase/config";
 import { useDispatch } from "react-redux";
-import * as authActions from "../actions/auth";
+import * as authActions from "../actions/Auth";
+import User from "../entities/User";
+import RegistrationForm from "../components/RegistrationForm";
 
 function Signup(props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch();
+  const database = firebase.firestore();
 
-  const handleSignUp = async () => {
+  const handleSignUp = (user, inputPassword) => {
     firebase
       .auth()
-      .createUserWithEmailAndPassword(email, password)
+      .createUserWithEmailAndPassword(user.email, inputPassword)
       .then(() => {
-          dispatch({ type: authActions.SIGNUP, userID: email });
-          props.navigation.navigate("Main");
+        let uid = firebase.auth().currentUser.uid;
+        database
+          .collection("users")
+          .doc(uid)
+          .set({
+            uid: uid,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            userPhoneNumber: user.phoneNumber,
+            userEmail: user.email,
+            gender: user.gender,
+          })
+          .then(function () {
+            dispatch({
+              type: authActions.SIGNUP,
+              user: new User(
+                uid,
+                user.firstName,
+                user.lastName,
+                user.phoneNumber,
+                user.email,
+                user.gender
+              ),
+            });
+            // props.navigation.navigate("Main");
+          })
+          .catch(function (error) {
+            setErrorMessage(error.message);
+          });
       })
-      .catch((error) => setErrorMessage(error.message));
+      .catch((error) => {
+        setErrorMessage(error.message);
+      });
   };
 
-  return (
-    <View style={styles.container}>
-        <Text>Sign Up</Text>
-        {errorMessage && (
-          <Text style={{ color: "red" }}>{errorMessage}</Text>
-        )}
-        <TextInput
-          placeholder="Email"
-          autoCapitalize="none"
-          style={styles.textInput}
-          onChangeText={(email) => setEmail(email)}
-          value={email}
-        />
-        <TextInput
-          secureTextEntry
-          placeholder="Password"
-          autoCapitalize="none"
-          style={styles.textInput}
-          onChangeText={(password) => setPassword(password)}
-          value={password}
-        />
-        <Button title="Sign Up" onPress={handleSignUp} />
-        <Button
-          title="Already have an account? Login"
-          onPress={() => props.navigation.navigate("Login")}
-        />
-      </View>
-  );
+  const handleGoogleAuthentication = () => {
+    console.log("Continue with Google");
+    console.log(firebaseAuth);
+    firebase.auth().signInWithPopup(firebaseAuth).then(function (result) {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      var token = result.credential.accessToken;
+      // The signed-in user info.
+      var user = result.user;
+      // ...
+    }).catch(function (error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // The email of the user's account used.
+      var email = error.email;
+      // The firebase.auth.AuthCredential type that was used.
+      var credential = error.credential;
+      // ...
+    });
+  }
+
+  return <RegistrationForm
+    isPasswordSignup={true}
+    handleSignUp={handleSignUp}
+    handleGoogleAuthentication={handleGoogleAuthentication}
+  />;
 }
 
 export default Signup;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  textInput: {
-    height: 40,
-    width: "90%",
-    borderColor: "gray",
-    borderWidth: 1,
-    marginTop: 8,
-  },
-});
