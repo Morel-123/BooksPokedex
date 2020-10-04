@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,6 +15,10 @@ import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
 import { Card, ListItem, Button, Input, Icon } from "react-native-elements";
 import { useForm, Controller } from "react-hook-form";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+
+WebBrowser.maybeCompleteAuthSession();
 
 function Login(props) {
   const [email, setEmail] = useState("");
@@ -23,13 +27,50 @@ function Login(props) {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const database = firebase.firestore();
+  var provider = new firebase.auth.GoogleAuthProvider();
+  const [user, setUser] = useState(null);
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    expoClientId:
+      "786999117943-diu3s943muh0hrfsmu413i2co9f58tup.apps.googleusercontent.com",
+    iosClientId:
+      "786999117943-diu3s943muh0hrfsmu413i2co9f58tup.apps.googleusercontent.com",
+    androidClientId:
+      "786999117943-nv1n1ekb6hio89bs9imagid0np54bsvb.apps.googleusercontent.com",
+    webClientId:
+      "786999117943-diu3s943muh0hrfsmu413i2co9f58tup.apps.googleusercontent.com",
+  });
+
   const { control, handleSubmit, errors, register } = useForm({
     mode: "onTouched",
   });
-  const onSubmit = (data) => {
-    console.log(data);
-    console.log(isEmailAddressValid(email));
-  };
+
+    useEffect(() => {
+    if (response?.type === "success") {
+      const { access_token } = response.params;
+
+      const credential = firebase.auth.GoogleAuthProvider.credential(null, access_token);
+      firebase.auth().signInWithCredential(credential)
+      .then(function (result) {
+        console.log(result);
+        console.log(firebase.auth().currentUser.uid);
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        var token = result.credential.accessToken;
+        // The signed-in user info.
+        var user = result.user;
+        // ...
+      })
+      .catch(function (error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        // ...
+      });
+    }
+  }, [response]);
 
   const isEmailAddressValid = (input) => {
     return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
@@ -86,7 +127,8 @@ function Login(props) {
                   style={{
                     height: 40,
                     fontSize: 18,
-                    borderBottom: "1px solid #86939e",
+                    borderBottomColor: "#86939e",
+                    borderBottomWidth: 1,
                   }}
                   placeholder="Email"
                   onChangeText={(email) => {
@@ -121,7 +163,8 @@ function Login(props) {
                   style={{
                     height: 40,
                     fontSize: 18,
-                    borderBottom: "1px solid #86939e",
+                    borderBottomColor: "#86939e",
+                    borderBottomWidth: 1,
                   }}
                   placeholder="Password"
                   onChangeText={(password) => {
@@ -184,6 +227,15 @@ function Login(props) {
             onPress={handleSubmit(handleLogin)}
           />
         </Card>
+      </View>
+      <View style={{ position: "absolute", bottom: 25, alignSelf: "center" }}>
+        <Button
+          title="Login With Google"
+          buttonStyle={{
+            borderRadius: 25,
+          }}
+          onPress={promptAsync}
+        />
       </View>
     </View>
   );
