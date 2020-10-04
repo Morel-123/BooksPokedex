@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View, Button } from "react-native";
-import { firebase, firebaseAuth } from "../firebase/config";
+import { firebase } from "../firebase/Config";
 import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
 import User from "../entities/User";
@@ -52,6 +52,7 @@ function Signup(props) {
   };
 
   const handleGoogleAuthentication = () => {
+    const firebaseAuth = new firebase.auth.GoogleAuthProvider();
     console.log("Continue with Google");
     console.log(firebaseAuth);
     firebase
