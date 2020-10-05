@@ -1,7 +1,8 @@
-import { SET_CURRENT_BOOK } from "../actions/Books";
+import { SET_CURRENT_BOOK, SET_HISTORY_BOOKS } from "../actions/Books";
 
 const initialState = {
-  book: null,
+  selectedBook: null,
+  historyBooks: null,
 };
 
 export default (state = initialState, action) => {
@@ -10,7 +11,12 @@ export default (state = initialState, action) => {
     case SET_CURRENT_BOOK:
       return {
         ...state,
-        book: action.book,
+        selectedBook: action.book,
+      };
+    case SET_HISTORY_BOOKS:
+      return {
+        ...state,
+        historyBooks: action.books,
       };
     default:
       return state;

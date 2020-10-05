@@ -9,6 +9,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,10 +21,12 @@ function Main(props) {
   const [currentUser, setCurrentUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [books, setBooks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const database = firebase.firestore();
 
   const user = useSelector((state) => state.auth.user);
+  const historyBooks = useSelector((state) => state.books.historyBooks);
 
   useEffect(() => {
     setCurrentUser(firebase.auth().currentUser);
@@ -37,23 +40,40 @@ function Main(props) {
         response.forEach(function (doc) {
           // doc.data() is never undefined for query doc snapshots
           booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
-          booksFromDB.push(doc.data());
         });
         console.log(booksFromDB);
-        setBooks(booksFromDB);
+        // setBooks(booksFromDB);
+        // setIsLoading(false);
       })
       .catch((error) => console.log(error.message));
+    if (historyBooks) {
+      console.log(historyBooks);
+      setBooks(historyBooks);
+      setIsLoading(false);
+    } else {
+      console.log("else");
+      fetch(
+        "https://www.googleapis.com/books/v1/volumes?q=subject:history&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc",
+        {
+          method: "GET",
+        }
+      )
+        .then((response) => response.json())
+        .then((responseJson) => {
+          let googleBooks = [];
+          console.log(responseJson);
+          responseJson.items.forEach((book) => {
+            console.log(book);
+            googleBooks.push(book.volumeInfo);
+          });
+          setBooks(googleBooks);
+          dispatch(booksActions.setHistoryBooks(googleBooks));
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   }, []);
 
   const handleLogout = () => {
@@ -92,28 +112,35 @@ function Main(props) {
       {/* {user && user.gender} */}
       {/* </Text> */}
 
-      <ScrollView style={styles.booksScrollView}>
-        <View style={styles.booksContainer}>
-          {books.map((book) => (
-            <TouchableOpacity
-              key={book.bookName}
-              style={{ width: "33%", marginLeft: 5, marginBottom: 5 }}
-              onPress={() => onBookPress(book)}
-            >
-              {/* <Text>{book.bookName}</Text> */}
-              <View style={{ width: "100%" }}>
-                <Image
-                  style={{ height: 200 }}
-                  source={{
-                    uri: book.imageUrl,
-                  }}
-                  resizeMode="contain"
-                />
-              </View>
-            </TouchableOpacity>
-          ))}
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <Text>Loading</Text>
+          <ActivityIndicator size="large" />
         </View>
-      </ScrollView>
+      ) : (
+        <ScrollView style={styles.booksScrollView}>
+          <View style={styles.booksContainer}>
+            {books.map((book) => (
+              <TouchableOpacity
+                key={book.title}
+                style={{ width: "33%", marginLeft: 5, marginBottom: 5 }}
+                onPress={() => onBookPress(book)}
+              >
+                {/* <Text>{book.bookName}</Text> */}
+                <View style={{ width: "100%" }}>
+                  <Image
+                    style={{ height: 200 }}
+                    source={{
+                      uri: book.imageLinks.thumbnail,
+                    }}
+                    resizeMode="contain"
+                  />
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      )}
 
       <Button title="Log Out" onPress={handleLogout} />
     </View>
@@ -160,5 +187,15 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     color: "white",
     // alignSelf: "flex-start",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    height: Dimensions.get("window").height * 0.8,
+    backgroundColor: "pink",
+    width: "100%",
+    // marginTop: 20,
+    marginBottom: 5,
   },
 });

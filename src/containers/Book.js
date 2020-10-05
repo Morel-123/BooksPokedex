@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 function Book(props) {
   const dispatch = useDispatch();
   const database = firebase.firestore();
-  const book = useSelector((state) => state.books.book);
+  const book = useSelector((state) => state.books.selectedBook);
 
   useEffect(() => {}, []);
 
@@ -24,12 +24,13 @@ function Book(props) {
   return (
     <View style={styles.container}>
       <Text>Book Info</Text>
-      <Text>{book.author}</Text>
+      <Text>{book.authors[0]}</Text>
+      {/* {book.authors.map(author => <Text>{author}</Text>)} */}
       {/* <View style={{ width: 200 }}> */}
         <Image
           style={{ height: 200, width: 200 }}
           source={{
-            uri: book.imageUrl,
+            uri: book.imageLinks.thumbnail,
           }}
           resizeMode="contain"
         />
