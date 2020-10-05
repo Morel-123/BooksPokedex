@@ -8,11 +8,14 @@ import Loading from "./src/containers/Loading";
 import SignUp from "./src/containers/Signup";
 import Login from "./src/containers/Login";
 import Main from "./src/containers/Main";
+import Book from "./src/containers/Book";
 
 import authReducer from "./src/reducers/Auth";
+import booksReducer from "./src/reducers/Books";
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  books: booksReducer,
 });
 let store = createStore(rootReducer);
 
@@ -23,6 +26,7 @@ const AppContainer = createAppContainer(
       SignUp,
       Login,
       Main,
+      Book,
     },
     {
       initialRouteName: "Loading",
