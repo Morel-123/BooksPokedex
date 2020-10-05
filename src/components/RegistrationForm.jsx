@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
-import { StyleSheet, Text, View, Button, TouchableOpacity, ImageBackground } from "react-native";
-import Input from "./Input";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import User from "../entities/User";
 
@@ -11,6 +10,21 @@ function Registration({ isPasswordSignup, handleSignUp, handleGoogleAuthenticati
   const [phoneNumber, setPhoneNumber] = useState("");
   const [gender, setGender] = useState("Female");
   const [password, setPassword] = useState(null);
+  const [reEnterPassword, setReEnterPassword] = useState(null);
+  const [formFilled, setFormFilled] = useState(false);
+
+  const isFormFilled = () => {
+    let bool = true;
+    if (firstName == "") bool = false;
+    if (lastName == "") bool = false;
+    if (email == "") bool = false;
+    if (phoneNumber == "") bool = false;
+    if (password == "") bool = false;
+    if (reEnterPassword == "") bool = false;
+    if(password != reEnterPassword) bool = false;
+    console.log("bool");
+    return bool;
+  }
 
   return (
     <View style={styles.container}>
@@ -47,49 +61,55 @@ function Registration({ isPasswordSignup, handleSignUp, handleGoogleAuthenticati
             </ImageBackground>
           </TouchableOpacity>
         </View>
-        <Input
-          placeholder="First Name"
-          placeholderTextColor="#b2b2b2"
-          style={styles.input}
-          styleInput={styles.inputMargin}
-          onChange={setFirstName}
-        ></Input>
-        <Input
-          placeholder="Last Name"
-          placeholderTextColor="#b2b2b2"
-          style={styles.input}
-          styleInput={styles.inputMargin}
-          onChange={setLastName}
-        ></Input>
-        <Input
-          placeholder="Email"
-          placeholderTextColor="#b2b2b2"
-          style={styles.input}
-          styleInput={styles.inputMargin}
-          onChange={setEmail}
-        ></Input>
-        <Input
-          placeholder="Phone Number"
-          placeholderTextColor="#b2b2b2"
-          style={styles.input}
-          styleInput={styles.inputMargin}
-          onChange={setPhoneNumber}
-        ></Input>
-        {isPasswordSignup ? <Input
-          placeholder="Password"
-          placeholderTextColor="#b2b2b2"
-          style={styles.input}
-          styleInput={styles.inputMargin}
-          onChange={setPassword}
-        ></Input> : null}
-        {isPasswordSignup ? <Input
-          placeholder="Re-enter password"
-          placeholderTextColor="#b2b2b2"
-          style={styles.input}
-          styleInput={styles.inputMargin}
-          onChange={setPassword}
-        ></Input> : null}
+        <View style={styles.inputMargin}>
+          <TextInput
+            placeholder="First Name"
+            placeholderTextColor="#b2b2b2"
+            style={styles.textInput}
+
+            onChange={setFirstName}
+          ></TextInput>
+        </View>
+        <View style={styles.inputMargin}>
+          <TextInput
+            placeholder="Last Name"
+            placeholderTextColor="#b2b2b2"
+            style={styles.inputMargin, styles.textInput}
+            onChange={setLastName}
+          ></TextInput>
+        </View>
+        <View style={styles.inputMargin}>
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor="#b2b2b2"
+            style={styles.inputMargin, styles.textInput}
+            onChange={setEmail}
+          ></TextInput>
+        </View>
+        <View style={styles.inputMargin}>
+          <TextInput
+            placeholder="Phone Number"
+            placeholderTextColor="#b2b2b2"
+            style={styles.inputMargin, styles.textInput}
+            onChange={setPhoneNumber}
+          ></TextInput>
+        </View>
+        {isPasswordSignup ? <View style={styles.inputMargin}>
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor="#b2b2b2"
+            style={styles.inputMargin, styles.textInput}
+            onChange={setPassword}
+          ></TextInput> </View> : null}
+        {isPasswordSignup ? <View style={styles.inputMargin}>
+          <TextInput
+            placeholder="Re-enter password"
+            placeholderTextColor="#b2b2b2"
+            style={styles.inputMargin, styles.textInput}
+            onChange={setReEnterPassword}
+          ></TextInput></View> : null}
         <TouchableOpacity
+          // disabled={() => isFormFilled()}
           title="Register"
           style={styles.registerButton}
           opacity={1}
@@ -103,7 +123,7 @@ function Registration({ isPasswordSignup, handleSignUp, handleGoogleAuthenticati
           <Text style={styles.registerButtonText}>Register</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </View >
   );
 }
 
@@ -130,7 +150,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: "#fff",
     marginBottom: 10,
-    marginTop: 50,
+    marginTop: 25,
     alignSelf: "center",
   },
   opacity: {
@@ -166,9 +186,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#eb7735",
     borderRadius: 10,
   },
-  input: {
-    marginLeft: 40,
-    marginRight: 40,
+  textInput: {
+    alignSelf: "stretch",
+    height: 40,
+    width: "100%",
+    color: "#fff",
+    borderBottomColor: "#f8f8f8",
+    borderBottomWidth: 1,
+  },
+  inputMargin: {
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 10,
   },
   backButtonIcon: {
     color:"#fff"
@@ -179,10 +208,15 @@ const styles = StyleSheet.create({
     left: 20,
     top: 20,
   },
+  buttonDisabled: {
+    backgroundColor: "#4d4d4d"
+  },
+  buttonEnabled: {
+    backgroundColor: "#2288dc"
+  },
   registerButton: {
     width: "auto",
     height: "auto",
-    backgroundColor: "#2288dc",
     marginLeft: 10,
     marginRight: 10,
     marginTop: 30,
@@ -190,6 +224,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     borderRadius: 25,
+    backgroundColor: "#2288dc",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -199,10 +234,5 @@ const styles = StyleSheet.create({
     color: "#d4f4f3",
     alignSelf: "center",
     fontWeight: "bold",
-  },
-  inputMargin: {
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 30,
   },
 });
