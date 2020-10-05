@@ -11,6 +11,10 @@ function Signup(props) {
   const dispatch = useDispatch();
   const database = firebase.firestore();
 
+  const handleOnBackPress = () => {
+    props.navigation.navigate("Login");
+  }
+
   const handleSignUp = (user, inputPassword) => {
     firebase
       .auth()
@@ -82,6 +86,7 @@ function Signup(props) {
       isPasswordSignup={true}
       handleSignUp={handleSignUp}
       handleGoogleAuthentication={handleGoogleAuthentication}
+      handleOnBackPress={handleOnBackPress}
     />
   );
 }

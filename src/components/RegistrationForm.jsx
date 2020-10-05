@@ -5,7 +5,7 @@ import Input from "./Input";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import User from "../entities/User";
 
-function Registration({ isPasswordSignup, handleSignUp, handleGoogleAuthentication }) {
+function Registration({ isPasswordSignup, handleSignUp, handleGoogleAuthentication, handleOnBackPress }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -15,7 +15,14 @@ function Registration({ isPasswordSignup, handleSignUp, handleGoogleAuthenticati
 
   return (
     <View style={styles.container}>
-      <FontAwesome name="arrow-left" style={styles.backButton} size={24} />
+      <TouchableOpacity
+      style={styles.backButton}
+        onPress={() => {
+          console.log("backPress");
+          handleOnBackPress();
+        }}>
+        <FontAwesome name="arrow-left" color="#fff" size={24} />
+      </TouchableOpacity>
       <View style={styles.regform}>
         <Text style={styles.header}>Registration</Text>
         <Text style={styles.genderTitle}>Who are you?</Text>
@@ -156,9 +163,11 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     marginRight: 40,
   },
+  backButtonIcon: {
+    color:"#fff"
+  },
   backButton: {
     marginTop: 20,
-    color: "#fff",
     position: "absolute",
     left: 20,
     top: 0,

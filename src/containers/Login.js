@@ -149,7 +149,7 @@ function Login(props) {
         title="Sign Up"
         style={styles.signUpButtonWrapper}
         opacity={1}
-        onPress={() => props.navigation.navigate("SignUp")}
+        onPress={() => props.navigation.navigate("Signup")}
       >
         <Text style={styles.signUpButton}>Sign Up</Text>
       </TouchableOpacity>
