@@ -300,6 +300,7 @@ const styles = StyleSheet.create({
   loginButton: {
     borderRadius: 25,
     width: "75vw",
+    elevation: 1,
   },
   loginContainer: {
     height: "100%",

@@ -127,10 +127,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   grayScale: {
-    filter: "grayscale(100%)"
+    // filter: "grayscale(100%)"
   },
   noGrayScale: {
-    filter: "grayscale(0)"
+    // filter: "grayscale(0)"
   },
   genderTitle: {
     color: "#fdfdfd30",
@@ -186,7 +186,8 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    boxShadow: "#2f2f2f 0px 0px 11px 0px",
+    // boxShadow: "#2f2f2f 0px 0px 11px 0px",
+    elevation: 1,
   },
   registerButtonText: {
     color: "#d4f4f3",
