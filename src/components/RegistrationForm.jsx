@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import { StyleSheet, Text, View, Button, TouchableOpacity, ImageBackground } from "react-native";
-// import actorIcon from "../../assets/fonts/actor.png"
 import Input from "./Input";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import User from "../entities/User";
@@ -20,7 +19,7 @@ function Registration({ isPasswordSignup, handleSignUp, handleGoogleAuthenticati
         <Text style={styles.header}>Registration</Text>
         <Text style={styles.genderTitle}>Who are you?</Text>
         <View style={styles.genderIconsContainer}>
-          <TouchableOpacity style={(gender == "Male") ? styles.noGrayScale : styles.grayScale}
+          <TouchableOpacity style={(gender == "Male") ? styles.noOpacity : styles.opacity}
             onPress={() => {
               setGender("Male");
             }}>
@@ -30,7 +29,7 @@ function Registration({ isPasswordSignup, handleSignUp, handleGoogleAuthenticati
               source={require("../../assets/icons/actor.png")}>
             </ImageBackground>
           </TouchableOpacity>
-          <TouchableOpacity style={(gender == "Female") ? styles.noGrayScale : styles.grayScale}
+          <TouchableOpacity style={(gender == "Female") ? styles.noOpacity : styles.opacity}
             onPress={() => {
               setGender("Female")
             }}>
@@ -73,7 +72,14 @@ function Registration({ isPasswordSignup, handleSignUp, handleGoogleAuthenticati
           placeholder="Password"
           placeholderTextColor="#b2b2b2"
           style={styles.input}
-          styleInput={styles.inputPasswordMargin}
+          styleInput={styles.inputMargin}
+          onChange={setPassword}
+        ></Input> : null}
+        {isPasswordSignup ? <Input
+          placeholder="Re-enter password"
+          placeholderTextColor="#b2b2b2"
+          style={styles.input}
+          styleInput={styles.inputMargin}
           onChange={setPassword}
         ></Input> : null}
         <TouchableOpacity
@@ -114,16 +120,17 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   header: {
-    fontSize: 24,
+    fontSize: 28,
     color: "#fff",
     marginBottom: 10,
+    marginTop: 50,
     alignSelf: "center",
   },
-  grayScale: {
-    filter: "grayscale(100%)"
+  opacity: {
+    opacity: 0.3
   },
-  noGrayScale: {
-    filter: "grayscale(0)"
+  noOpacity: {
+    opacity: 1
   },
   genderTitle: {
     color: "#fdfdfd30",
@@ -135,19 +142,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: 40,
+    marginBottom: 40,
   },
   maleIcon: {
-    height: 50,
-    width: 50,
+    height: 75,
+    width: 75,
     marginRight: 20,
     backgroundColor: "#0e94a0",
     borderRadius: 10,
   },
   femaleIcon: {
-    height: 50,
-    width: 50,
+    height: 75,
+    width: 75,
     marginLeft: 20,
     backgroundColor: "#eb7735",
     borderRadius: 10,
@@ -161,23 +168,23 @@ const styles = StyleSheet.create({
     color: "#fff",
     position: "absolute",
     left: 20,
-    top: 0,
+    top: 20,
   },
   registerButton: {
     width: "auto",
     height: "auto",
     backgroundColor: "#2288dc",
-    marginLeft: 40,
-    marginRight: 40,
+    marginLeft: 10,
+    marginRight: 10,
     marginTop: 30,
     marginBottom: 20,
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingTop: 10,
+    paddingBottom: 10,
     borderRadius: 25,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    boxShadow: "#2f2f2f 0px 0px 11px 0px",
+    elevation: 1
   },
   registerButtonText: {
     color: "#d4f4f3",
@@ -185,13 +192,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   inputMargin: {
-    marginLeft: 40,
-    marginRight: 40,
+    marginLeft: 10,
+    marginRight: 10,
     marginBottom: 30,
-  },
-  inputPasswordMargin: {
-    marginLeft: 40,
-    marginRight: 40,
-    marginBottom: 10,
   },
 });
