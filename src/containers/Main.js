@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   Dimensions,
   ActivityIndicator,
+  SafeAreaView,
+  FlatList,
 } from "react-native";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,14 +22,13 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 function Main(props) {
   const [currentUser, setCurrentUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const database = firebase.firestore();
 
   const user = useSelector((state) => state.auth.user);
   const historyBooks = useSelector((state) => state.books.historyBooks);
-
   useEffect(() => {
     setCurrentUser(firebase.auth().currentUser);
     database
@@ -53,7 +54,7 @@ function Main(props) {
     } else {
       console.log("else");
       fetch(
-        "https://www.googleapis.com/books/v1/volumes?q=subject:history&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc",
+        "https://www.googleapis.com/books/v1/volumes?q=subject:history&maxResults=20&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc",
         {
           method: "GET",
         }
@@ -63,11 +64,10 @@ function Main(props) {
           let googleBooks = [];
           console.log(responseJson);
           responseJson.items.forEach((book) => {
-            console.log(book);
             googleBooks.push(book.volumeInfo);
           });
-          setBooks(googleBooks);
           dispatch(booksActions.setHistoryBooks(googleBooks));
+          setBooks(googleBooks);
           setIsLoading(false);
         })
         .catch((error) => {
@@ -118,28 +118,41 @@ function Main(props) {
           <ActivityIndicator size="large" />
         </View>
       ) : (
-        <ScrollView style={styles.booksScrollView}>
-          <View style={styles.booksContainer}>
-            {books.map((book) => (
+        <SafeAreaView style={styles.booksScrollView}>
+          <FlatList
+            data={books}
+            renderItem={({ item }) => (
               <TouchableOpacity
-                key={book.title}
-                style={{ width: "33%", marginLeft: 5, marginBottom: 5 }}
-                onPress={() => onBookPress(book)}
+                key={item.title}
+                style={{ marginLeft: 5, marginBottom: 5 }}
+                onPress={() => onBookPress(item)}
               >
-                {/* <Text>{book.bookName}</Text> */}
-                <View style={{ width: "100%" }}>
+                <View>
                   <Image
-                    style={{ height: 200 }}
+                    style={{ height: 200, width: 150 }}
                     source={{
-                      uri: book.imageLinks.thumbnail,
+                      uri: item.imageLinks.thumbnail,
                     }}
                     resizeMode="contain"
                   />
                 </View>
               </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
+            )}
+            numColumns={2}
+            columnWrapperStyle={{display: "flex", justifyContent: "space-evenly", marginBottom: 10}}
+            keyExtractor={(item) => item.title}
+            onEndReached={(dis) => {
+              console.log(dis)
+              if (dis.distanceFromEnd < 0) {
+                return;
+              }
+              setBooks((data) => {
+                return [...data, ...data];
+              });
+            }}
+            onEndReachedThreshold={0.1}
+          />
+        </SafeAreaView>
       )}
 
       <Button title="Log Out" onPress={handleLogout} />
@@ -158,17 +171,13 @@ const styles = StyleSheet.create({
   booksContainer: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-evenly",
     width: "100%",
     height: "100%",
-    flexWrap: "wrap",
   },
   booksScrollView: {
-    // height: "80%",
-    height: Dimensions.get("window").height * 0.8,
-    backgroundColor: "pink",
+    height: Dimensions.get("window").height * 0.84,
     width: "100%",
-    // marginTop: 20,
+    marginTop: 10,
     marginBottom: 5,
   },
   plusButton: {
@@ -177,7 +186,6 @@ const styles = StyleSheet.create({
     right: 10,
   },
   title: {
-    // marginTop: 10,
     paddingTop: 10,
     fontSize: 24,
     fontWeight: "bold",
@@ -186,7 +194,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingBottom: 10,
     color: "white",
-    // alignSelf: "flex-start",
+    height: Dimensions.get("window").height * 0.08,
   },
   loadingContainer: {
     flex: 1,
@@ -195,7 +203,7 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height * 0.8,
     backgroundColor: "pink",
     width: "100%",
-    // marginTop: 20,
+    marginTop: 10,
     marginBottom: 5,
   },
 });
