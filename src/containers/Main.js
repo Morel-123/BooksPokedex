@@ -13,13 +13,19 @@ import {
   SafeAreaView,
   FlatList,
 } from "react-native";
+import { Icon } from "react-native-elements";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../actions/Auth";
 import * as booksActions from "../actions/Books";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { createStackNavigator } from "@react-navigation/stack";
+import Book from "./Book";
+import { TouchableRipple } from "react-native-paper";
 
-function Main(props) {
+const Stack = createStackNavigator();
+
+function MyBooks(props) {
   const [currentUser, setCurrentUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [books, setBooks] = useState(null);
@@ -31,22 +37,6 @@ function Main(props) {
   const historyBooks = useSelector((state) => state.books.historyBooks);
   useEffect(() => {
     setCurrentUser(firebase.auth().currentUser);
-    database
-      .collection("books")
-      // .doc(firebase.auth().currentUser.uid)
-      .get()
-      .then(function (response) {
-        console.log(response);
-        let booksFromDB = [];
-        response.forEach(function (doc) {
-          // doc.data() is never undefined for query doc snapshots
-          booksFromDB.push(doc.data());
-        });
-        console.log(booksFromDB);
-        // setBooks(booksFromDB);
-        // setIsLoading(false);
-      })
-      .catch((error) => console.log(error.message));
     if (historyBooks) {
       console.log(historyBooks);
       setBooks(historyBooks);
@@ -89,28 +79,20 @@ function Main(props) {
 
   const onBookPress = (book) => {
     dispatch(booksActions.setCurrentBook(book));
-    props.navigation.navigate("Book");
+    props.navigation.navigate("Book Info");
   };
 
   return (
     <View style={styles.container}>
-      {/* <Text style={{ position: "fixed", top: 0, zIndex: 1 }}>
-        Hi {currentUser && currentUser.email}!
-      </Text> */}
       <Text style={styles.title}>My Books</Text>
       <TouchableOpacity
         style={styles.plusButton}
         onPress={() => {
           console.log("plusPress");
-          // handleOnBackPress();
         }}
       >
         <FontAwesome name="plus" color="#ffffff" size={24} />
       </TouchableOpacity>
-      {/* <Text style={{position: "fixed"}}> */}
-      {/* Hi {user && user.firstName} {user && user.lastName}{" "} */}
-      {/* {user && user.gender} */}
-      {/* </Text> */}
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
@@ -139,10 +121,14 @@ function Main(props) {
               </TouchableOpacity>
             )}
             numColumns={2}
-            columnWrapperStyle={{display: "flex", justifyContent: "space-evenly", marginBottom: 10}}
+            columnWrapperStyle={{
+              display: "flex",
+              justifyContent: "space-evenly",
+              marginBottom: 10,
+            }}
             keyExtractor={(item) => item.title}
             onEndReached={(dis) => {
-              console.log(dis)
+              console.log(dis);
               if (dis.distanceFromEnd < 0) {
                 return;
               }
@@ -175,7 +161,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   booksScrollView: {
-    height: Dimensions.get("window").height * 0.84,
+    height: Dimensions.get("window").height * 0.75,
     width: "100%",
     marginTop: 10,
     marginBottom: 5,
@@ -206,4 +192,67 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5,
   },
+  rightIconsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    width: 120,
+  },
+  roundIcon: {
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
+
+function Main(props) {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="My Books" component={MyBooks} />
+      <Stack.Screen
+        name="Book Info"
+        component={Book}
+        options={{
+          headerRight: (props) => (
+            <View style={styles.rightIconsContainer}>
+              <TouchableRipple
+                onPress={() => console.log("search")}
+                rippleColor="rgba(0, 0, 0, .32)"
+                style={styles.roundIcon}
+                borderless={true}
+                centered={true}
+              >
+                <View style={styles.iconContainer}>
+                  <Icon
+                    type="ionicon"
+                    name={Platform.OS === "ios" ? "ios-search" : "md-search"}
+                  />
+                </View>
+              </TouchableRipple>
+              <TouchableRipple
+                onPress={() => console.log("like")}
+                rippleColor="rgba(0, 0, 0, .32)"
+                style={styles.roundIcon}
+                borderless={true}
+                centered={true}
+              >
+                <View style={styles.iconContainer}>
+                  <Icon
+                    type="ionicon"
+                    name={Platform.OS === "ios" ? "ios-heart" : "md-heart"}
+                  />
+                </View>
+              </TouchableRipple>
+            </View>
+          ),
+        }}
+      />
+    </Stack.Navigator>
+  );
+}

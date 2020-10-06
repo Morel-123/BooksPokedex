@@ -7,8 +7,7 @@ import { createStore, combineReducers } from "redux";
 import Loading from "./src/containers/Loading";
 import SignUp from "./src/containers/Signup";
 import Login from "./src/containers/Login";
-import Main from "./src/containers/Main";
-import Book from "./src/containers/Book";
+import BottomNavigator from "./src/containers/BottomNavigator";
 
 import authReducer from "./src/reducers/Auth";
 import booksReducer from "./src/reducers/Books";
@@ -17,7 +16,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   books: booksReducer,
 });
-let store = createStore(rootReducer);
+export const store = createStore(rootReducer);
 
 const AppContainer = createAppContainer(
   createSwitchNavigator(
@@ -25,8 +24,7 @@ const AppContainer = createAppContainer(
       Loading,
       SignUp,
       Login,
-      Main,
-      Book,
+      BottomNavigator,
     },
     {
       initialRouteName: "Loading",
