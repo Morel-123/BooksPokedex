@@ -78,22 +78,13 @@ function MyBooks(props) {
   };
 
   const onBookPress = (book) => {
+    console.log(book)
     dispatch(booksActions.setCurrentBook(book));
     props.navigation.navigate("Book Info");
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>My Books</Text>
-      <TouchableOpacity
-        style={styles.plusButton}
-        onPress={() => {
-          console.log("plusPress");
-        }}
-      >
-        <FontAwesome name="plus" color="#ffffff" size={24} />
-      </TouchableOpacity>
-
       {isLoading ? (
         <View style={styles.loadingContainer}>
           <Text>Loading</Text>
@@ -133,7 +124,7 @@ function MyBooks(props) {
                 return;
               }
               setBooks((data) => {
-                return [...data, ...data];
+                return [...data, ...data.slice(0, 10)];
               });
             }}
             onEndReachedThreshold={0.1}
@@ -163,7 +154,7 @@ const styles = StyleSheet.create({
   booksScrollView: {
     height: Dimensions.get("window").height * 0.75,
     width: "100%",
-    marginTop: 10,
+    marginTop: 5,
     marginBottom: 5,
   },
   plusButton: {
@@ -186,10 +177,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    height: Dimensions.get("window").height * 0.8,
-    backgroundColor: "pink",
+    height: Dimensions.get("window").height * 0.75,
     width: "100%",
-    marginTop: 10,
     marginBottom: 5,
   },
   rightIconsContainer: {
@@ -212,8 +201,17 @@ const styles = StyleSheet.create({
 });
 
 function Main(props) {
+  const [liked, setLiked] = useState(false);
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      initialRouteName="My Books"
+      headerMode="screen"
+      screenOptions={{
+        headerStyle: { backgroundColor: "#ff4336" },
+        headerTitleStyle: { color: "white" },
+        headerTintColor: "white",
+      }}
+    >
       <Stack.Screen name="My Books" component={MyBooks} />
       <Stack.Screen
         name="Book Info"
@@ -230,23 +228,33 @@ function Main(props) {
               >
                 <View style={styles.iconContainer}>
                   <Icon
+                    color="white"
                     type="ionicon"
                     name={Platform.OS === "ios" ? "ios-search" : "md-search"}
                   />
                 </View>
               </TouchableRipple>
               <TouchableRipple
-                onPress={() => console.log("like")}
+                onPress={() => setLiked((value) => !value)}
                 rippleColor="rgba(0, 0, 0, .32)"
                 style={styles.roundIcon}
                 borderless={true}
                 centered={true}
               >
                 <View style={styles.iconContainer}>
+                  {liked ?
                   <Icon
+                    color="white"
                     type="ionicon"
                     name={Platform.OS === "ios" ? "ios-heart" : "md-heart"}
                   />
+                  :
+                  <Icon
+                    color="white"
+                    type="ionicon"
+                    name={Platform.OS === "ios" ? "ios-heart-empty" : "md-heart-empty"}
+                  />
+                  }
                 </View>
               </TouchableRipple>
             </View>
