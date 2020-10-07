@@ -106,7 +106,7 @@ function MyBooks(props) {
                     source={{
                       uri: item.imageLinks.thumbnail,
                     }}
-                    resizeMode="contain"
+                    resizeMode="stretch"
                   />
                 </View>
               </TouchableOpacity>
