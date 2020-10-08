@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Main from "./Main";
+import UserCollectionNavigator from "./UserCollectionNavigator";
 import Profile from "./Profile";
 import { BottomNavigation } from "react-native-paper";
 
@@ -16,7 +17,7 @@ function MyTabs() {
       activeColor="white"
       inactiveColor="#bdbdbd"
       labelStyle={{ fontSize: 12 }}
-      barStyle={{ backgroundColor: '#448aff' }}
+      barStyle={{ backgroundColor: "#448aff" }}
     >
       <Tab.Screen
         name="Main"
@@ -25,6 +26,16 @@ function MyTabs() {
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Collection"
+        component={UserCollectionNavigator}
+        options={{
+          tabBarLabel: "Collection",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="book" color={color} size={26} />
           ),
         }}
       />

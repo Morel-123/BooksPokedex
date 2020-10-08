@@ -23,7 +23,8 @@ function Book(props) {
   useEffect(() => {}, []);
 
   const handleBack = () => {
-    props.navigation.navigate("My Books");
+    // props.navigation.navigate("My Books");
+    props.navigation.pop();
   };
 
   const renderTruncatedFooter = (handlePress) => {
@@ -84,7 +85,7 @@ function Book(props) {
                 marginTop: 5,
               }}
             >
-              {book.authors[0]}
+              {book.authors ? book.authors[0] : "Not Specified"}
             </Text>
           </View>
         </View>

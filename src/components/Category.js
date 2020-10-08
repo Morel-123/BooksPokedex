@@ -20,7 +20,7 @@ function Category(props) {
     >
       <>
         <Image source={props.iconImage} style={{ width: 40, height: 40 }} />
-        <Text style={{ color: "white", fontSize: 16, marginTop: 5 }}>
+        <Text style={styles(props).categoryName}>
           {props.name}
         </Text>
       </>
@@ -43,6 +43,11 @@ const styles = (props) =>
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
+    },
+    categoryName: {
+      color: props.selected(props.id) ? "white" : "#bdbdbd",
+      fontSize: 16,
+      marginTop: 5,
     },
   });
 

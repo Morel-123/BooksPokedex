@@ -67,7 +67,7 @@ function MyBooks(props) {
             console.log(responseJson);
             if (responseJson) {
               responseJson.items.forEach((book) => {
-                googleBooks.push(book.volumeInfo);
+                googleBooks.push({ ...book.volumeInfo, id: book.id });
               });
               dispatch(booksActions.setHistoryBooks(googleBooks));
               setBooks(googleBooks);
@@ -129,7 +129,9 @@ function MyBooks(props) {
       <SearchBar
         platform="android"
         containerStyle={{
-          height: "15%",
+          height: 60,
+          // height: "12%",
+          // height: Dimensions.get("window").height * 0.1,
           width: "85%",
           // position: "absolute",
           backgroundColor: "#cbcbcb",
@@ -148,7 +150,7 @@ function MyBooks(props) {
           setInputChanged(true);
           setSearchText(search);
         }}
-        onClear={()=> setIsLoading(true)}
+        onClear={() => setIsLoading(true)}
         value={searchText}
       />
       <View
@@ -203,7 +205,7 @@ function MyBooks(props) {
             data={books}
             renderItem={({ item }) => (
               <TouchableOpacity
-                key={item.title}
+                key={item.id}
                 style={{ marginLeft: 5, marginBottom: 5 }}
                 onPress={() => onBookPress(item)}
               >
@@ -228,7 +230,7 @@ function MyBooks(props) {
               justifyContent: "space-evenly",
               marginBottom: 10,
             }}
-            keyExtractor={(item) => item.title}
+            keyExtractor={(item) => item.id}
             onEndReached={(dis) => {
               console.log(dis);
               if (dis.distanceFromEnd < 0) {
@@ -260,9 +262,11 @@ export default Main;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
+    // flex: 1,
+    display: "flex",
+    justifyContent: "space-evenly",
     alignItems: "center",
+    height: Dimensions.get("window").height - 64 - 54,
   },
   booksContainer: {
     display: "flex",
@@ -272,7 +276,8 @@ const styles = StyleSheet.create({
   },
   booksScrollView: {
     // height: Dimensions.get("window").height * 0.75,
-    height: Dimensions.get("window").height * 0.5,
+    // height: Dimensions.get("window").height * 0.5,
+    height: "60%",
     width: "100%",
     marginTop: 5,
     marginBottom: 5,
@@ -301,7 +306,8 @@ const styles = StyleSheet.create({
     // backgroundColor: "pink",
     // width: "100%",
     // marginBottom: 5,
-    height: Dimensions.get("window").height * 0.5,
+    // height: Dimensions.get("window").height * 0.5,
+    height: "60%",
     width: "100%",
     marginTop: 5,
     marginBottom: 5,
@@ -312,8 +318,10 @@ const styles = StyleSheet.create({
   },
   rightIconsContainer: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    // justifyContent: "space-evenly",
+    justifyContent: "flex-end",
     width: 120,
+    marginRight: 5,
   },
   roundIcon: {
     borderTopLeftRadius: 50,
@@ -330,7 +338,33 @@ const styles = StyleSheet.create({
 });
 
 function Main(props) {
-  const [liked, setLiked] = useState(false);
+  let selectedBook = useSelector((state) => state.books.selectedBook);
+  let favoriteBooks = useSelector((state) => state.books.favoriteBooks);
+  console.log(selectedBook);
+  console.log(favoriteBooks);
+  const [liked, setLiked] = useState(
+    selectedBook ? (favoriteBooks[selectedBook.id] ? true : false) : false
+  );
+  const dispatch = useDispatch();
+  // const [liked, setLiked] = useState(false);
+
+  useEffect(() => {
+    if (selectedBook && favoriteBooks[selectedBook.id]) {
+      setLiked(true);
+    } else {
+      setLiked(false);
+    }
+  }, [selectedBook, favoriteBooks]);
+
+  const onBookLikePress = () => {
+    if (liked) {
+      dispatch(booksActions.removeFavoriteBook(selectedBook));
+    } else {
+      dispatch(booksActions.addFavoriteBook(selectedBook));
+    }
+    setLiked((value) => !value);
+  };
+
   return (
     <Stack.Navigator
       initialRouteName="My Books"
@@ -348,7 +382,7 @@ function Main(props) {
         options={{
           headerRight: (props) => (
             <View style={styles.rightIconsContainer}>
-              <TouchableRipple
+              {/* <TouchableRipple
                 onPress={() => console.log("search")}
                 rippleColor="rgba(0, 0, 0, .32)"
                 style={styles.roundIcon}
@@ -362,9 +396,9 @@ function Main(props) {
                     name={Platform.OS === "ios" ? "ios-search" : "md-search"}
                   />
                 </View>
-              </TouchableRipple>
+              </TouchableRipple> */}
               <TouchableRipple
-                onPress={() => setLiked((value) => !value)}
+                onPress={onBookLikePress}
                 rippleColor="rgba(0, 0, 0, .32)"
                 style={styles.roundIcon}
                 borderless={true}
