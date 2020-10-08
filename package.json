@@ -19,6 +19,7 @@
     "expo": "~39.0.2",
     "expo-application": "^2.3.0",
     "expo-auth-session": "~2.0.0",
+    "expo-cli": "^3.27.14",
     "expo-font": "~8.3.0",
     "expo-google-sign-in": "~8.3.0",
     "expo-splash-screen": "~0.6.1",
@@ -43,7 +44,8 @@
     "react-native-web": "~0.13.12",
     "react-navigation": "^4.4.1",
     "react-redux": "^7.2.1",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "use-debounce": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
