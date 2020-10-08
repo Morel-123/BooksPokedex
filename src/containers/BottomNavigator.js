@@ -4,7 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Main from "./Main";
-import UserCollectionNavigator from "./UserCollectionNavigator";
+import UserCollection from "./UserCollection";
 import Profile from "./Profile";
 import { BottomNavigation } from "react-native-paper";
 
@@ -13,14 +13,14 @@ const Tab = createMaterialBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="Main"
+      initialRouteName="Home"
       activeColor="white"
       inactiveColor="#bdbdbd"
       labelStyle={{ fontSize: 12 }}
       barStyle={{ backgroundColor: "#448aff" }}
     >
       <Tab.Screen
-        name="Main"
+        name="Home"
         component={Main}
         options={{
           tabBarLabel: "Home",
@@ -31,7 +31,7 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Collection"
-        component={UserCollectionNavigator}
+        component={UserCollection}
         options={{
           tabBarLabel: "Collection",
           tabBarIcon: ({ color }) => (
@@ -52,11 +52,4 @@ function MyTabs() {
     </Tab.Navigator>
   );
 }
-
-export default function BottomNavigator() {
-  return (
-    <NavigationContainer>
-      <MyTabs />
-    </NavigationContainer>
-  );
-}
+export default MyTabs;

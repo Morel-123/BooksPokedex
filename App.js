@@ -7,7 +7,7 @@ import { createStore, combineReducers } from "redux";
 import Loading from "./src/containers/Loading";
 import SignUp from "./src/containers/Signup";
 import Login from "./src/containers/Login";
-import BottomNavigator from "./src/containers/BottomNavigator";
+import MainNavigator from "./src/containers/MainNavigator";
 
 import authReducer from "./src/reducers/Auth";
 import booksReducer from "./src/reducers/Books";
@@ -24,7 +24,7 @@ const AppContainer = createAppContainer(
       Loading,
       SignUp,
       Login,
-      BottomNavigator,
+      MainNavigator,
     },
     {
       initialRouteName: "Loading",

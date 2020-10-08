@@ -28,7 +28,7 @@ import Category from "../components/Category";
 
 const Stack = createStackNavigator();
 
-function MyBooks(props) {
+function Main(props) {
   const [currentUser, setCurrentUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [books, setBooks] = useState(null);
@@ -336,98 +336,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-function Main(props) {
-  let selectedBook = useSelector((state) => state.books.selectedBook);
-  let favoriteBooks = useSelector((state) => state.books.favoriteBooks);
-  console.log(selectedBook);
-  console.log(favoriteBooks);
-  const [liked, setLiked] = useState(
-    selectedBook ? (favoriteBooks[selectedBook.id] ? true : false) : false
-  );
-  const dispatch = useDispatch();
-  // const [liked, setLiked] = useState(false);
-
-  useEffect(() => {
-    if (selectedBook && favoriteBooks[selectedBook.id]) {
-      setLiked(true);
-    } else {
-      setLiked(false);
-    }
-  }, [selectedBook, favoriteBooks]);
-
-  const onBookLikePress = () => {
-    if (liked) {
-      dispatch(booksActions.removeFavoriteBook(selectedBook));
-    } else {
-      dispatch(booksActions.addFavoriteBook(selectedBook));
-    }
-    setLiked((value) => !value);
-  };
-
-  return (
-    <Stack.Navigator
-      initialRouteName="My Books"
-      headerMode="screen"
-      screenOptions={{
-        headerStyle: { backgroundColor: "#ff4336" },
-        headerTitleStyle: { color: "white" },
-        headerTintColor: "white",
-      }}
-    >
-      <Stack.Screen name="My Books" component={MyBooks} />
-      <Stack.Screen
-        name="Book Info"
-        component={Book}
-        options={{
-          headerRight: (props) => (
-            <View style={styles.rightIconsContainer}>
-              {/* <TouchableRipple
-                onPress={() => console.log("search")}
-                rippleColor="rgba(0, 0, 0, .32)"
-                style={styles.roundIcon}
-                borderless={true}
-                centered={true}
-              >
-                <View style={styles.iconContainer}>
-                  <Icon
-                    color="white"
-                    type="ionicon"
-                    name={Platform.OS === "ios" ? "ios-search" : "md-search"}
-                  />
-                </View>
-              </TouchableRipple> */}
-              <TouchableRipple
-                onPress={onBookLikePress}
-                rippleColor="rgba(0, 0, 0, .32)"
-                style={styles.roundIcon}
-                borderless={true}
-                centered={true}
-              >
-                <View style={styles.iconContainer}>
-                  {liked ? (
-                    <Icon
-                      color="white"
-                      type="ionicon"
-                      name={Platform.OS === "ios" ? "ios-heart" : "md-heart"}
-                    />
-                  ) : (
-                    <Icon
-                      color="white"
-                      type="ionicon"
-                      name={
-                        Platform.OS === "ios"
-                          ? "ios-heart-empty"
-                          : "md-heart-empty"
-                      }
-                    />
-                  )}
-                </View>
-              </TouchableRipple>
-            </View>
-          ),
-        }}
-      />
-    </Stack.Navigator>
-  );
-}

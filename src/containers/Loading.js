@@ -17,7 +17,7 @@ function Loading(props) {
           .get()
           .then(function (response) {
             dispatch(authActions.login(response.data()));
-            props.navigation.navigate("BottomNavigator");
+            props.navigation.navigate("MainNavigator");
           })
           .catch(function (error) {console.error(error)});
       }

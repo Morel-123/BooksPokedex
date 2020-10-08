@@ -19,6 +19,7 @@ function Book(props) {
   const dispatch = useDispatch();
   const database = firebase.firestore();
   let book = useSelector((state) => state.books.selectedBook);
+  const [textReady, setTextReady] = useState(false);
 
   useEffect(() => {}, []);
 
@@ -156,13 +157,16 @@ function Book(props) {
           }}
         >
           <Text style={{ fontSize: 20 }}>Description</Text>
-          <ReadMore
-            numberOfLines={3}
-            renderTruncatedFooter={renderTruncatedFooter}
-            renderRevealedFooter={renderRevealedFooter}
-          >
-            <Text style={{ fontSize: 16 }}>{book.description}</Text>
-          </ReadMore>
+          <View style={{ opacity: textReady ? 1 : 0 }}>
+            <ReadMore
+              numberOfLines={3}
+              renderTruncatedFooter={renderTruncatedFooter}
+              renderRevealedFooter={renderRevealedFooter}
+              onReady={() => setTextReady(true)}
+            >
+              <Text style={{ fontSize: 16 }}>{book.description}</Text>
+            </ReadMore>
+          </View>
         </View>
         <Button title="Go Back" onPress={handleBack} />
       </View>
