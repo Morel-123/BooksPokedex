@@ -43,11 +43,9 @@ function Main(props) {
 
   const user = useSelector((state) => state.auth.user);
   const historyBooks = useSelector((state) => state.books.historyBooks);
-  console.log(books);
+
   useEffect(() => {
     setCurrentUser(firebase.auth().currentUser);
-    // console.log(debouncedSearchText);
-    // console.log(searchText);
     if (debouncedSearchText[0] == "") {
       if (historyBooks) {
         console.log(historyBooks);
@@ -56,7 +54,7 @@ function Main(props) {
       } else {
         console.log("else");
         fetch(
-          "https://www.googleapis.com/books/v1/volumes?q=subject:history&maxResults=20&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc",
+          "https://www.googleapis.com/books/v1/volumes?q=subject:history&maxResults=20&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc",
           {
             method: "GET",
           }
@@ -83,8 +81,12 @@ function Main(props) {
         console.log(debouncedSearchText[0]);
         setIsLoading(true);
         setInputChanged(false);
+        let language = "en";
+        if(containsHebrew(searchText)) {
+          language = "iw";
+        }
         fetch(
-          `https://www.googleapis.com/books/v1/volumes?q=${debouncedSearchText[0]}&maxResults=20&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
+          `https://www.googleapis.com/books/v1/volumes?q=${debouncedSearchText[0]}&maxResults=20&langRestrict=${language}&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
           {
             method: "GET",
           }
@@ -94,7 +96,7 @@ function Main(props) {
             let googleBooks = [];
             console.log(responseJson);
             responseJson.items.forEach((book) => {
-              googleBooks.push(book.volumeInfo);
+              googleBooks.push({ ...book.volumeInfo, id: book.id });
             });
             // dispatch(booksActions.setHistoryBooks(googleBooks));
             setBooks(googleBooks);
@@ -106,6 +108,10 @@ function Main(props) {
       }
     }
   }, [debouncedSearchText]);
+
+  const containsHebrew = (str) => {
+    return /[\u0590-\u05FF]/.test(str);
+  };
 
   const handleLogout = () => {
     firebase

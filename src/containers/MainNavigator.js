@@ -58,7 +58,7 @@ function MainNavigator(props) {
         headerMode="screen"
         screenOptions={{
           headerStyle: { backgroundColor: "#ff4336" },
-          headerTitleStyle: { color: "white" },
+          headerTitleStyle: { color: "white", fontSize: 24 },
           headerTintColor: "white",
         }}
       >
