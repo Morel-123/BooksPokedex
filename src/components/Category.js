@@ -16,19 +16,13 @@ function Category(props) {
   return (
     <TouchableOpacity
       onPress={() => props.onPress(props.id)}
-    //   rippleColor="rgba(0, 0, 0, .32)"
-    //   rippleColor="rgba(0, 0, 0, 0)"
-    //   borderless={true}
       style={styles(props).container}
     >
-    <>
-      <Image
-        source={require(`../../assets/help.svg`)}
-        style={{ width: 40, height: 40 }}
-      />
-      <Text style={{ color: "white", fontSize: 16, marginTop: 5 }}>
-        {props.name}
-      </Text>
+      <>
+        <Image source={props.iconImage} style={{ width: 40, height: 40 }} />
+        <Text style={{ color: "white", fontSize: 16, marginTop: 5 }}>
+          {props.name}
+        </Text>
       </>
     </TouchableOpacity>
   );
@@ -39,7 +33,9 @@ const styles = (props) =>
     container: {
       height: props.height ? props.height : "100%",
       width: props.width ? props.width : "100%",
-      backgroundColor: props.selected(props.id) ? "rgb(26, 112, 255)" : "rgb(68, 138, 255)",
+      backgroundColor: props.selected(props.id)
+        ? "rgb(26, 112, 255)"
+        : "rgb(68, 138, 255)",
       borderTopLeftRadius: 15,
       borderTopRightRadius: 15,
       borderBottomLeftRadius: 15,

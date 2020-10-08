@@ -43,6 +43,7 @@ function MyBooks(props) {
 
   const user = useSelector((state) => state.auth.user);
   const historyBooks = useSelector((state) => state.books.historyBooks);
+  console.log(books);
   useEffect(() => {
     setCurrentUser(firebase.auth().currentUser);
     // console.log(debouncedSearchText);
@@ -83,7 +84,7 @@ function MyBooks(props) {
         setIsLoading(true);
         setInputChanged(false);
         fetch(
-          `https://www.googleapis.com/books/v1/volumes?q=${debouncedSearchText}&maxResults=20&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
+          `https://www.googleapis.com/books/v1/volumes?q=${debouncedSearchText[0]}&maxResults=20&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
           {
             method: "GET",
           }
@@ -125,13 +126,38 @@ function MyBooks(props) {
 
   return (
     <View style={styles.container}>
+      <SearchBar
+        platform="android"
+        containerStyle={{
+          height: "15%",
+          width: "85%",
+          // position: "absolute",
+          backgroundColor: "#cbcbcb",
+          top: 0,
+          zIndex: 100,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+          borderBottomLeftRadius: 25,
+          borderBottomRightRadius: 25,
+        }}
+        placeholder="Type Here..."
+        onChangeText={(search) => {
+          setInputChanged(true);
+          setSearchText(search);
+        }}
+        onClear={()=> setIsLoading(true)}
+        value={searchText}
+      />
       <View
         style={{
-          position: "absolute",
+          // position: "absolute",
           top: 0,
-          height: 200,
+          height: 100,
           width: "100%",
-          zIndex: 200,
+          // zIndex: 200,
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-around",
@@ -141,7 +167,7 @@ function MyBooks(props) {
         <Category
           height={80}
           width={104}
-          iconImage="money.svg"
+          iconImage={require("../../assets/money.png")}
           name="Business"
           id={1}
           onPress={(id) => setSelectedCategoryID(id)}
@@ -150,7 +176,7 @@ function MyBooks(props) {
         <Category
           height={80}
           width={104}
-          iconImage="help.svg"
+          iconImage={require("../../assets/help.png")}
           name="Self Help"
           id={2}
           onPress={(id) => setSelectedCategoryID(id)}
@@ -159,30 +185,13 @@ function MyBooks(props) {
         <Category
           height={80}
           width={104}
-          iconImage="fantasy.svg"
+          iconImage={require("../../assets/fantasy.png")}
           name="Fantasy"
           id={3}
           onPress={(id) => setSelectedCategoryID(id)}
           selected={(id) => selectedCategoryID === id}
         ></Category>
       </View>
-      <SearchBar
-        platform="android"
-        containerStyle={{
-          height: "15%",
-          width: "80%",
-          position: "absolute",
-          backgroundColor: "red",
-          top: 0,
-          zIndex: 100,
-        }}
-        placeholder="Type Here..."
-        onChangeText={(search) => {
-          setInputChanged(true);
-          setSearchText(search);
-        }}
-        value={searchText}
-      />
       {isLoading ? (
         <View style={styles.loadingContainer}>
           <Text>Loading</Text>
@@ -201,9 +210,13 @@ function MyBooks(props) {
                 <View>
                   <Image
                     style={{ height: 200, width: 150 }}
-                    source={{
-                      uri: item.imageLinks.thumbnail,
-                    }}
+                    source={
+                      item.imageLinks
+                        ? {
+                            uri: item.imageLinks.thumbnail,
+                          }
+                        : require("../../assets/no_cover_thumb.png")
+                    }
                     resizeMode="stretch"
                   />
                 </View>
@@ -221,6 +234,14 @@ function MyBooks(props) {
               if (dis.distanceFromEnd < 0) {
                 return;
               }
+              if (debouncedSearchText[0] == "") {
+                dispatch(
+                  booksActions.setHistoryBooks([
+                    ...historyBooks,
+                    ...historyBooks.slice(0, 10),
+                  ])
+                );
+              }
               setBooks((data) => {
                 return [...data, ...data.slice(0, 10)];
               });
@@ -230,7 +251,7 @@ function MyBooks(props) {
         </SafeAreaView>
       )}
 
-      <Button title="Log Out" onPress={handleLogout} />
+      {/* <Button title="Log Out" onPress={handleLogout} /> */}
     </View>
   );
 }
@@ -250,7 +271,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   booksScrollView: {
-    height: Dimensions.get("window").height * 0.75,
+    // height: Dimensions.get("window").height * 0.75,
+    height: Dimensions.get("window").height * 0.5,
     width: "100%",
     marginTop: 5,
     marginBottom: 5,
@@ -272,12 +294,21 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height * 0.08,
   },
   loadingContainer: {
-    flex: 1,
+    // flex: 1,
+    // justifyContent: "center",
+    // alignItems: "center",
+    // height: Dimensions.get("window").height * 0.5,
+    // backgroundColor: "pink",
+    // width: "100%",
+    // marginBottom: 5,
+    height: Dimensions.get("window").height * 0.5,
+    width: "100%",
+    marginTop: 5,
+    marginBottom: 5,
+    backgroundColor: "pink",
+    display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: Dimensions.get("window").height * 0.75,
-    width: "100%",
-    marginBottom: 5,
   },
   rightIconsContainer: {
     flexDirection: "row",

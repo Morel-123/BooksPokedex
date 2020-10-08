@@ -4,17 +4,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Main from "./Main";
+import Profile from "./Profile";
 import { BottomNavigation } from "react-native-paper";
-
-function Profile(props) {
-  useEffect(() => {
-  }, []);
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Profile!</Text>
-    </View>
-  );
-}
 
 const Tab = createMaterialBottomTabNavigator();
 

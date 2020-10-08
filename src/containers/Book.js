@@ -56,9 +56,13 @@ function Book(props) {
         <View style={{ display: "flex", flexDirection: "row", width: "100%" }}>
           <Image
             style={{ height: 220, width: 150, marginLeft: 10, marginRight: 5 }}
-            source={{
-              uri: book.imageLinks.thumbnail,
-            }}
+            source={
+              book.imageLinks
+                ? {
+                    uri: book.imageLinks.thumbnail,
+                  }
+                : require("../../assets/no_cover_thumb.png")
+            }
             resizeMode="stretch"
           />
           <View style={{ display: "flex", width: "55%" }}>
@@ -73,7 +77,12 @@ function Book(props) {
               {book.title}
             </Text>
             <Text
-              style={{ fontSize: 16, textAlign: "center", color: "#757575", marginTop: 5 }}
+              style={{
+                fontSize: 16,
+                textAlign: "center",
+                color: "#757575",
+                marginTop: 5,
+              }}
             >
               {book.authors[0]}
             </Text>
@@ -96,7 +105,7 @@ function Book(props) {
                   styles.extraInfoDetailValue,
                 ]}
               >
-                {book.categories[0]}
+                {book.categories ? book.categories[0] : "Not Specified"}
               </Text>
             </View>
             <View style={styles.extraInfoDetailContainer}>
@@ -114,7 +123,7 @@ function Book(props) {
                   styles.extraInfoDetailValue,
                 ]}
               >
-                {book.pageCount}
+                {book.pageCount ? book.pageCount : "N/A"}
               </Text>
             </View>
             <View style={styles.extraInfoDetailContainer}>
@@ -137,7 +146,14 @@ function Book(props) {
             </View>
           </View>
         </View>
-        <View style={{ marginTop: 5, marginLeft: 7, width: "100%" }}>
+        <View
+          style={{
+            marginTop: 5,
+            marginLeft: 9,
+            width: "100%",
+            paddingRight: 5,
+          }}
+        >
           <Text style={{ fontSize: 20 }}>Description</Text>
           <ReadMore
             numberOfLines={3}
