@@ -21,6 +21,7 @@ function UserCollection(props) {
   const dispatch = useDispatch();
   let favoriteBooks = useSelector((state) => state.books.favoriteBooks);
   console.log(favoriteBooks);
+  let collection = useSelector((state) => state.books.collection);
 
   useEffect(() => {}, []);
 
@@ -71,6 +72,47 @@ function UserCollection(props) {
       ) : (
         <Text style={{marginLeft: 5}}>Start Liking To See Books Here</Text>
       )}
+
+      <Text style={{marginLeft: 5, fontSize: 20, fontWeight: "bold"}}>Collection</Text>
+      {Object.keys(collection).length > 0 ? (
+        <SafeAreaView style={styles.collectionContainer}>
+          <FlatList
+            data={Object.values(collection)}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                key={item.id}
+                style={{ marginLeft: 5, marginBottom: 5, height: 200, marginRight: 5 }}
+                onPress={() => onBookPress(item)}
+              >
+                <View>
+                  <Image
+                    style={{ height: 200, width: 150 }}
+                    source={
+                      item.imageLinks
+                        ? {
+                            uri: item.imageLinks.thumbnail,
+                          }
+                        : require("../../assets/no_cover_thumb.png")
+                    }
+                    resizeMode="stretch"
+                  />
+                </View>
+              </TouchableOpacity>
+            )}
+            numColumns={2}
+            // horizontal={true}
+              columnWrapperStyle={{
+                display: "flex",
+                // justifyContent: "space-evenly",
+                justifyContent: "space-between",
+                marginBottom: 10,
+              }}
+            keyExtractor={(item) => item.id}
+          />
+        </SafeAreaView>
+      ) : (
+        <Text style={{marginLeft: 5}}>Start Adding To Your Collection To See Books Here</Text>
+      )}
     </View>
   );
 }
@@ -94,8 +136,15 @@ const styles = StyleSheet.create({
     height: 220,
     width: "100%",
     marginTop: 5,
-    marginBottom: 5,
+    // marginBottom: 5,
     // display: "flex",
     // alignItems: "center",
   },
+  collectionContainer: {
+    //289 is 220 for scrollview div, plus 2 titles each 27 plus margins
+    height: Dimensions.get("window").height - 64 - 54 - 289,
+    width: "100%",
+    marginTop: 5,
+    // marginBottom: 5
+  }
 });
