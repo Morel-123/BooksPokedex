@@ -4,12 +4,16 @@ import {
   ADD_FAVORITE_BOOK,
   REMOVE_FAVORITE_BOOK,
   SET_FAVORITE_BOOKS,
+  ADD_TO_COLLECTION,
+  REMOVE_FROM_COLLECTION,
+  SET_COLLECTION,
 } from "../actions/Books";
 
 const initialState = {
   selectedBook: null,
   historyBooks: null,
   favoriteBooks: {},
+  collection: {},
 };
 
 export default (state = initialState, action) => {
@@ -43,6 +47,25 @@ export default (state = initialState, action) => {
       return {
         ...state,
         favoriteBooks: action.favoriteBooks,
+      };
+    case ADD_TO_COLLECTION:
+      let newCollection = { ...state.collection };
+      newCollection[action.addToCollection.id] = action.addToCollection;
+      return {
+        ...state,
+        collection: newCollection,
+      };
+    case REMOVE_FROM_COLLECTION:
+      let updatedCollection = { ...state.collection };
+      delete updatedCollection[action.removeFromCollection.id];
+      return {
+        ...state,
+        collection: updatedCollection,
+      };
+    case SET_COLLECTION:
+      return {
+        ...state,
+        collection: action.collection,
       };
     default:
       return state;

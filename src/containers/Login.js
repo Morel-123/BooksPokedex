@@ -71,6 +71,7 @@ function Login(props) {
                 userEmail: result.additionalUserInfo.profile.email,
                 gender: "male",
                 favoriteBooks: [],
+                collection: [],
               })
               .then(function () {
                 dispatch({
@@ -131,6 +132,12 @@ function Login(props) {
           favoriteBooks[favoriteBook.bookID] = favoriteBook.book;
         });
         dispatch(booksActions.setFavoriteBooks(favoriteBooks));
+        let collectionFromDB = responseData.collection;
+        let collection = {};
+        collectionFromDB.forEach((item) => {
+          collection[item.bookID] = item.book;
+        });
+        dispatch(booksActions.setCollection(collection));
         props.navigation.navigate("Main");
       })
       .catch((error) => setErrorMessage(error.message));

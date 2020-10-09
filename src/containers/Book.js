@@ -14,14 +14,27 @@ import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
 import ReadMore from "react-native-read-more-text";
 import { TouchableRipple } from "react-native-paper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as booksActions from "../actions/Books";
 
 function Book(props) {
   const dispatch = useDispatch();
   const database = firebase.firestore();
-  let book = useSelector((state) => state.books.selectedBook);
   const [textReady, setTextReady] = useState(false);
+  let book = useSelector((state) => state.books.selectedBook);
+  let collection = useSelector((state) => state.books.collection);
+  const [isInCollection, setIsInCollection] = useState(
+    book ? (collection[book.id] ? true : false) : false
+  );
+  const user = useSelector((state) => state.auth.user);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (book && collection[book.id]) {
+      setIsInCollection(true);
+    } else {
+      setIsInCollection(false);
+    }
+  }, [book, collection]);
 
   const handleBack = () => {
     // props.navigation.navigate("My Books");
@@ -52,6 +65,34 @@ function Book(props) {
     );
   };
 
+  const onAddOrRemoveBookToCollection = () => {
+    database
+      .collection("users")
+      .doc(user.uid)
+      .update({
+        collection: isInCollection
+          ? firebase.firestore.FieldValue.arrayRemove({
+              bookID: book.id,
+              book: book,
+            })
+          : firebase.firestore.FieldValue.arrayUnion({
+              bookID: book.id,
+              book: book,
+            }),
+      })
+      .then(function () {
+        if (isInCollection) {
+          dispatch(booksActions.removeFromCollection(book));
+        } else {
+          dispatch(booksActions.addToCollection(book));
+        }
+        setIsInCollection((value) => !value);
+      })
+      .catch(function (error) {
+        console.log(error.message);
+      });
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -67,7 +108,7 @@ function Book(props) {
             }
             resizeMode="stretch"
           />
-          <View style={{ display: "flex", width: "55%" }}>
+          <View style={{ display: "flex", width: "55%", marginRight: 5 }}>
             <Text
               style={{
                 fontSize: 24,
@@ -88,6 +129,28 @@ function Book(props) {
             >
               {book.authors ? book.authors[0] : "Not Specified"}
             </Text>
+            {isInCollection ? (
+              <View
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: 40,
+                  width: 40,
+                  alignSelf: "center",
+                  borderTopLeftRadius: 50,
+                  borderTopRightRadius: 50,
+                  borderBottomLeftRadius: 50,
+                  borderBottomRightRadius: 50,
+                  backgroundColor: "#4BCA81",
+                  marginTop: 5,
+                }}
+              >
+                <MaterialCommunityIcons name="book" color="white" size={20} />
+              </View>
+            ) : (
+              false
+            )}
           </View>
         </View>
         <View style={styles.extraInfoWrapper}>
@@ -107,7 +170,9 @@ function Book(props) {
                   styles.extraInfoDetailValue,
                 ]}
               >
-                {book.categories ? book.categories[0] : "Not Specified"}
+                {book.categories
+                  ? book.categories[0].split(" ")[0]
+                  : "Not Specified"}
               </Text>
             </View>
             <View style={styles.extraInfoDetailContainer}>
@@ -168,7 +233,18 @@ function Book(props) {
             </ReadMore>
           </View>
         </View>
-        <Button title="Go Back" onPress={handleBack} />
+        {isInCollection ? (
+          <Button
+            title="Remove From Collection"
+            onPress={onAddOrRemoveBookToCollection}
+          />
+        ) : (
+          <Button
+            title="Add To Collection"
+            onPress={onAddOrRemoveBookToCollection}
+          />
+        )}
+        {/* <Button title="Go Back" onPress={handleBack} /> */}
       </View>
     </ScrollView>
   );

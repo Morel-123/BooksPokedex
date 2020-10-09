@@ -3,6 +3,9 @@ export const SET_HISTORY_BOOKS = "SET_HISTORY_BOOKS";
 export const ADD_FAVORITE_BOOK = "ADD_FAVORITE_BOOK";
 export const REMOVE_FAVORITE_BOOK = "REMOVE_FAVORITE_BOOK";
 export const SET_FAVORITE_BOOKS = "SET_FAVORITE_BOOKS";
+export const ADD_TO_COLLECTION = "ADD_TO_COLLECTION";
+export const REMOVE_FROM_COLLECTION = "REMOVE_FROM_COLLECTION";
+export const SET_COLLECTION = "SET_COLLECTION";
 
 export const setCurrentBook = (book) => ({
   type: SET_CURRENT_BOOK,
@@ -27,4 +30,19 @@ export const removeFavoriteBook = (book) => ({
 export const setFavoriteBooks = (books) => ({
   type: SET_FAVORITE_BOOKS,
   favoriteBooks: books,
+});
+
+export const addToCollection = (book) => ({
+  type: ADD_TO_COLLECTION,
+  addToCollection: book,
+});
+
+export const removeFromCollection = (book) => ({
+  type: REMOVE_FROM_COLLECTION,
+  removeFromCollection: book,
+});
+
+export const setCollection = (books) => ({
+  type: SET_COLLECTION,
+  collection: books,
 });
