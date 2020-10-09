@@ -16,6 +16,7 @@ import ReadMore from "react-native-read-more-text";
 import { TouchableRipple } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as booksActions from "../actions/Books";
+import { useHeaderHeight } from "@react-navigation/stack";
 
 function Book(props) {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ function Book(props) {
     book ? (collection[book.id] ? true : false) : false
   );
   const user = useSelector((state) => state.auth.user);
+  const headerHeight = useHeaderHeight();
 
   useEffect(() => {
     if (book && collection[book.id]) {
@@ -94,8 +96,9 @@ function Book(props) {
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    // <ScrollView>
+    <View style={{...styles.container, height: Dimensions.get("window").height - headerHeight}}>
+      <ScrollView style={{ height: Dimensions.get("window").height - headerHeight }}>
         <View style={{ display: "flex", flexDirection: "row", width: "100%" }}>
           <Image
             style={{ height: 220, width: 150, marginLeft: 10, marginRight: 5 }}
@@ -108,7 +111,7 @@ function Book(props) {
             }
             resizeMode="stretch"
           />
-          <View style={{ display: "flex", width: "55%", marginRight: 5 }}>
+          <View style={{ display: "flex", width: Dimensions.get("window").width - 175, marginRight: 5 }}>
             <Text
               style={{
                 fontSize: 24,
@@ -218,7 +221,7 @@ function Book(props) {
             marginTop: 5,
             marginLeft: 9,
             width: "100%",
-            paddingRight: 5,
+            paddingRight: 8,
           }}
         >
           <Text style={{ fontSize: 20 }}>Description</Text>
@@ -245,8 +248,9 @@ function Book(props) {
           />
         )}
         {/* <Button title="Go Back" onPress={handleBack} /> */}
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
+    // </ScrollView>
   );
 }
 

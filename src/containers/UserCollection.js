@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   },
   collectionContainer: {
     //289 is 220 for scrollview div, plus 2 titles each 27 plus margins
-    height: Dimensions.get("window").height - 64 - 54 - 289,
+    height: Dimensions.get("window").height - 64 - 54 - 312,
     width: "100%",
     marginTop: 5,
     // marginBottom: 5
