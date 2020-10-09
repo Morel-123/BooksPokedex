@@ -55,7 +55,7 @@ function Main(props) {
       } else {
         console.log("else");
         fetch(
-          "https://www.googleapis.com/books/v1/volumes?q=subject:history&maxResults=20&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc",
+          "https://www.googleapis.com/books/v1/volumes?q=subject:business&maxResults=20&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc",
           {
             method: "GET",
           }
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 5,
     marginBottom: 5,
-    backgroundColor: "pink",
+    // backgroundColor: "pink",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

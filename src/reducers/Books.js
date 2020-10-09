@@ -3,6 +3,7 @@ import {
   SET_HISTORY_BOOKS,
   ADD_FAVORITE_BOOK,
   REMOVE_FAVORITE_BOOK,
+  SET_FAVORITE_BOOKS,
 } from "../actions/Books";
 
 const initialState = {
@@ -37,6 +38,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         favoriteBooks: updatedFavoriteBooks,
+      };
+    case SET_FAVORITE_BOOKS:
+      return {
+        ...state,
+        favoriteBooks: action.favoriteBooks,
       };
     default:
       return state;

@@ -27,6 +27,7 @@ function Signup(props) {
             userPhoneNumber: user.phoneNumber,
             userEmail: user.email,
             gender: user.gender,
+            favoriteBooks: [],
           })
           .then(function () {
             dispatch({

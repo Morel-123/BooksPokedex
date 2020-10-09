@@ -10,6 +10,7 @@ import MyTabs from "./BottomNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 import { TouchableRipple } from "react-native-paper";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import { firebase } from "../firebase/Config";
 
 const Stack = createStackNavigator();
 
@@ -19,7 +20,9 @@ function MainNavigator(props) {
   const [liked, setLiked] = useState(
     selectedBook ? (favoriteBooks[selectedBook.id] ? true : false) : false
   );
+  const database = firebase.firestore();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     if (selectedBook && favoriteBooks[selectedBook.id]) {
@@ -30,12 +33,31 @@ function MainNavigator(props) {
   }, [selectedBook, favoriteBooks]);
 
   const onBookLikePress = () => {
-    if (liked) {
-      dispatch(booksActions.removeFavoriteBook(selectedBook));
-    } else {
-      dispatch(booksActions.addFavoriteBook(selectedBook));
-    }
-    setLiked((value) => !value);
+    database
+      .collection("users")
+      .doc(user.uid)
+      .update({
+        favoriteBooks: liked
+          ? firebase.firestore.FieldValue.arrayRemove({
+              bookID: selectedBook.id,
+              book: selectedBook,
+            })
+          : firebase.firestore.FieldValue.arrayUnion({
+              bookID: selectedBook.id,
+              book: selectedBook,
+            }),
+      })
+      .then(function () {
+        if (liked) {
+          dispatch(booksActions.removeFavoriteBook(selectedBook));
+        } else {
+          dispatch(booksActions.addFavoriteBook(selectedBook));
+        }
+        setLiked((value) => !value);
+      })
+      .catch(function (error) {
+        console.log(error.message);
+      });
   };
 
   function getHeaderTitle(route) {

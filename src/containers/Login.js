@@ -13,6 +13,7 @@ import {
 import { firebase } from "../firebase/Config";
 import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
+import * as booksActions from "../actions/Books";
 import { Card, ListItem, Button, Input, Icon } from "react-native-elements";
 import { useForm, Controller } from "react-hook-form";
 import * as WebBrowser from "expo-web-browser";
@@ -69,6 +70,7 @@ function Login(props) {
                 userPhoneNumber: result.user.phoneNumber,
                 userEmail: result.additionalUserInfo.profile.email,
                 gender: "male",
+                favoriteBooks: [],
               })
               .then(function () {
                 dispatch({
@@ -121,7 +123,14 @@ function Login(props) {
       .doc(uid)
       .get()
       .then(function (response) {
-        dispatch(authActions.login(response.data()));
+        const responseData = response.data();
+        dispatch(authActions.login(responseData));
+        let favoriteBooksFromDB = responseData.favoriteBooks;
+        let favoriteBooks = {};
+        favoriteBooksFromDB.forEach((favoriteBook) => {
+          favoriteBooks[favoriteBook.bookID] = favoriteBook.book;
+        });
+        dispatch(booksActions.setFavoriteBooks(favoriteBooks));
         props.navigation.navigate("Main");
       })
       .catch((error) => setErrorMessage(error.message));
