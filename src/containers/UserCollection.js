@@ -69,7 +69,7 @@ function UserCollection(props) {
           />
         </SafeAreaView>
       ) : (
-        <Text>Start Liking To See Books Here</Text>
+        <Text style={{marginLeft: 5}}>Start Liking To See Books Here</Text>
       )}
     </View>
   );

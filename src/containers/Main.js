@@ -25,6 +25,7 @@ import { TouchableRipple } from "react-native-paper";
 import { SearchBar } from "react-native-elements";
 import { useDebounce } from "use-debounce";
 import Category from "../components/Category";
+import Spinner from "../components/Spinner";
 
 const Stack = createStackNavigator();
 
@@ -82,7 +83,7 @@ function Main(props) {
         setIsLoading(true);
         setInputChanged(false);
         let language = "en";
-        if(containsHebrew(searchText)) {
+        if (containsHebrew(searchText)) {
           language = "iw";
         }
         fetch(
@@ -203,7 +204,10 @@ function Main(props) {
       {isLoading ? (
         <View style={styles.loadingContainer}>
           <Text>Loading</Text>
-          <ActivityIndicator size="large" />
+          <Spinner
+            size={Platform.OS === "android" ? 10 : "large"}
+            color={Platform.OS === "android" ? "#448aff" : undefined}
+          />
         </View>
       ) : (
         <SafeAreaView style={styles.booksScrollView}>
