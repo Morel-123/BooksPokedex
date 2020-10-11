@@ -177,7 +177,7 @@ function Login(props) {
         title="Sign Up"
         style={styles.signUpButtonWrapper}
         opacity={1}
-        onPress={() => props.navigation.navigate("SignUp")}
+        onPress={() => props.navigation.navigate("Signup")}
       >
         <Text style={styles.signUpButton}>Sign Up</Text>
       </TouchableOpacity>
@@ -328,6 +328,7 @@ const styles = StyleSheet.create({
   loginButton: {
     borderRadius: 25,
     width: "75vw",
+    elevation: 1,
   },
   loginContainer: {
     height: "100%",

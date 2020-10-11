@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View, Button } from "react-native";
-import { firebase } from "../firebase/Config";
+import { firebase, firebaseAuth } from "../firebase/Config";
 import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
 import User from "../entities/User";
@@ -10,6 +10,10 @@ function Signup(props) {
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch();
   const database = firebase.firestore();
+
+  const handleOnBackPress = () => {
+    props.navigation.navigate("Login");
+  }
 
   const handleSignUp = (user, inputPassword) => {
     firebase
@@ -84,6 +88,7 @@ function Signup(props) {
       isPasswordSignup={true}
       handleSignUp={handleSignUp}
       handleGoogleAuthentication={handleGoogleAuthentication}
+      handleOnBackPress={handleOnBackPress}
     />
   );
 }

@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 // import the different screens
 import Loading from "./src/containers/Loading";
-import SignUp from "./src/containers/Signup";
+import Signup from "./src/containers/Signup";
 import Login from "./src/containers/Login";
 import MainNavigator from "./src/containers/MainNavigator";
 
@@ -22,12 +22,12 @@ const AppContainer = createAppContainer(
   createSwitchNavigator(
     {
       Loading,
-      SignUp,
+      Signup,
       Login,
       MainNavigator,
     },
     {
-      initialRouteName: "Loading",
+      initialRouteName: "Login",
     }
   )
 );
