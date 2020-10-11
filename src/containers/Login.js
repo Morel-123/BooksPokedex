@@ -60,6 +60,7 @@ function Login(props) {
           let uid = result.user.uid;
           if (result.additionalUserInfo.isNewUser) {
             //need to add it to firebase
+            console.log("new user");
             database
               .collection("users")
               .doc(uid)
@@ -74,16 +75,27 @@ function Login(props) {
                 collection: [],
               })
               .then(function () {
+                let userObj = new User(
+                  uid,
+                  result.additionalUserInfo.profile.given_name,
+                  result.additionalUserInfo.profile.family_name,
+                  result.user.phoneNumber,
+                  result.additionalUserInfo.profile.email,
+                  "male"
+                );
+                userObj.favoriteBooks = [];
+                userObj.collection = [];
                 dispatch({
                   type: authActions.SIGNUP,
-                  user: new User(
-                    uid,
-                    result.additionalUserInfo.profile.given_name,
-                    result.additionalUserInfo.profile.family_name,
-                    result.user.phoneNumber,
-                    result.additionalUserInfo.profile.email,
-                    "male"
-                  ),
+                  user: userObj,
+                  // user: new User(
+                  //   uid,
+                  //   result.additionalUserInfo.profile.given_name,
+                  //   result.additionalUserInfo.profile.family_name,
+                  //   result.user.phoneNumber,
+                  //   result.additionalUserInfo.profile.email,
+                  //   "male"
+                  // ),
                 });
                 props.navigation.navigate("Main");
               })

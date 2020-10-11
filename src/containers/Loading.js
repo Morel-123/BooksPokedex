@@ -13,31 +13,33 @@ function Loading(props) {
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        database
-          .collection("users")
-          .doc(user.uid)
-          .get()
-          .then(function (response) {
-            const responseData = response.data();
-            dispatch(authActions.login(responseData));
-            let favoriteBooksFromDB = responseData.favoriteBooks;
-            let favoriteBooks = {};
-            favoriteBooksFromDB.forEach((favoriteBook) => {
-              favoriteBooks[favoriteBook.bookID] = favoriteBook.book;
-            });
-            dispatch(booksActions.setFavoriteBooks(favoriteBooks));
-            let collectionFromDB = responseData.collection;
-            let collection = {};
-            collectionFromDB.forEach((item) => {
-              collection[item.bookID] = item.book;
-            });
-            dispatch(booksActions.setCollection(collection));
-            props.navigation.navigate("MainNavigator");
-          })
-          .catch(function (error) {
-            console.error(error);
-          });
+        // database
+        //   .collection("users")
+        //   .doc(user.uid)
+        //   .get()
+        //   .then(function (response) {
+        //     const responseData = response.data();
+        //     dispatch(authActions.login(responseData));
+        //     // let favoriteBooksFromDB = responseData.favoriteBooks;
+        //     // let favoriteBooks = {};
+        //     // favoriteBooksFromDB.forEach((favoriteBook) => {
+        //     //   favoriteBooks[favoriteBook.bookID] = favoriteBook.book;
+        //     // });
+        //     // dispatch(booksActions.setFavoriteBooks(favoriteBooks));
+        //     // let collectionFromDB = responseData.collection;
+        //     // let collection = {};
+        //     // collectionFromDB.forEach((item) => {
+        //     //   collection[item.bookID] = item.book;
+        //     // });
+        //     // dispatch(booksActions.setCollection(collection));
+        //     props.navigation.navigate("MainNavigator");
+        //   })
+        //   .catch(function (error) {
+        //     console.error(error);
+        //   });
+        props.navigation.navigate("MainNavigator");
       } else {
+        console.log("logout");
         props.navigation.navigate("Login");
       }
     });
