@@ -1,129 +1,280 @@
 import React, { useContext, useState } from "react";
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import User from "../entities/User";
+import { useForm, Controller } from "react-hook-form";
+import { Icon } from "react-native-elements";
 
-function Registration({ isPasswordSignup, handleSignUp, handleGoogleAuthentication, handleOnBackPress }) {
+function Registration({
+  isPasswordSignup,
+  handleSignUp,
+  handleGoogleAuthentication,
+  handleOnBackPress,
+}) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [gender, setGender] = useState("Female");
   const [password, setPassword] = useState(null);
-  const [reEnterPassword, setReEnterPassword] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [formFilled, setFormFilled] = useState(false);
+  const { control, handleSubmit, errors, register } = useForm({
+    mode: "onTouched",
+  });
 
-  const isFormFilled = () => {
-    let bool = true;
-    if (firstName == "") bool = false;
-    if (lastName == "") bool = false;
-    if (email == "") bool = false;
-    if (phoneNumber == "") bool = false;
-    if (password == "") bool = false;
-    if (reEnterPassword == "") bool = false;
-    if(password != reEnterPassword) bool = false;
-    console.log("bool");
-    return bool;
-  }
+  const isEmailAddressValid = (input) => {
+    return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+      input
+    );
+  };
+
+  const isPhoneNumberValid = (input) => {
+    return /^05\d([-]{0,1})\d{7}$/.test(input);
+  };
+
+  const handleSignUpPressed = (data) => {
+    handleSignUp(
+      new User(null, firstName, lastName, email, phoneNumber, gender),
+      password
+    );
+  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
-      style={styles.backButton}
+        style={styles.backButton}
         onPress={() => {
           console.log("backPress");
           handleOnBackPress();
-        }}>
+        }}
+      >
         <FontAwesome name="arrow-left" color="#fff" size={24} />
       </TouchableOpacity>
       <View style={styles.regform}>
         <Text style={styles.header}>Registration</Text>
         <Text style={styles.genderTitle}>Who are you?</Text>
         <View style={styles.genderIconsContainer}>
-          <TouchableOpacity style={(gender == "Male") ? styles.noOpacity : styles.opacity}
+          <TouchableOpacity
+            style={gender == "Male" ? styles.noOpacity : styles.opacity}
             onPress={() => {
               setGender("Male");
-            }}>
+            }}
+          >
             <ImageBackground
               style={styles.maleIcon}
               resizeMode={"cover"}
-              source={require("../../assets/icons/actor.png")}>
-            </ImageBackground>
+              source={require("../../assets/icons/actor.png")}
+            ></ImageBackground>
           </TouchableOpacity>
-          <TouchableOpacity style={(gender == "Female") ? styles.noOpacity : styles.opacity}
+          <TouchableOpacity
+            style={gender == "Female" ? styles.noOpacity : styles.opacity}
             onPress={() => {
-              setGender("Female")
-            }}>
+              setGender("Female");
+            }}
+          >
             <ImageBackground
               style={styles.femaleIcon}
               resizeMode={"cover"}
-              source={require("../../assets/icons/actress.png")}>
-            </ImageBackground>
+              source={require("../../assets/icons/actress.png")}
+            ></ImageBackground>
           </TouchableOpacity>
         </View>
-        <View style={styles.inputMargin}>
-          <TextInput
-            placeholder="First Name"
-            placeholderTextColor="#b2b2b2"
-            style={styles.textInput}
-
-            onChange={setFirstName}
-          ></TextInput>
-        </View>
-        <View style={styles.inputMargin}>
-          <TextInput
-            placeholder="Last Name"
-            placeholderTextColor="#b2b2b2"
-            style={styles.inputMargin, styles.textInput}
-            onChange={setLastName}
-          ></TextInput>
-        </View>
-        <View style={styles.inputMargin}>
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor="#b2b2b2"
-            style={styles.inputMargin, styles.textInput}
-            onChange={setEmail}
-          ></TextInput>
-        </View>
-        <View style={styles.inputMargin}>
-          <TextInput
-            placeholder="Phone Number"
-            placeholderTextColor="#b2b2b2"
-            style={styles.inputMargin, styles.textInput}
-            onChange={setPhoneNumber}
-          ></TextInput>
-        </View>
-        {isPasswordSignup ? <View style={styles.inputMargin}>
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor="#b2b2b2"
-            style={styles.inputMargin, styles.textInput}
-            onChange={setPassword}
-          ></TextInput> </View> : null}
-        {isPasswordSignup ? <View style={styles.inputMargin}>
-          <TextInput
-            placeholder="Re-enter password"
-            placeholderTextColor="#b2b2b2"
-            style={styles.inputMargin, styles.textInput}
-            onChange={setReEnterPassword}
-          ></TextInput></View> : null}
+        <Controller
+          control={control}
+          render={({ onChange, onBlur, value }) => (
+            <View style={styles.inputMargin}>
+              <TextInput
+                placeholder="First Name"
+                placeholderTextColor="#b2b2b2"
+                style={styles.textInput}
+                onChangeText={(value) => {
+                  onChange(value);
+                  setFirstName(value);
+                }}
+                onBlur={onBlur}
+                value={value}
+              ></TextInput>
+              {errors.firstName && errors.firstName.type === "required" && (
+                <Text style={styles.errorMessage}>First Name is required.</Text>
+              )}
+            </View>
+          )}
+          name="firstName"
+          rules={{
+            required: true,
+          }}
+          defaultValue=""
+        />
+        <Controller
+          control={control}
+          render={({ onChange, onBlur, value }) => (
+            <View style={styles.inputMargin}>
+              <TextInput
+                placeholder="Last Name"
+                placeholderTextColor="#b2b2b2"
+                style={(styles.inputMargin, styles.textInput)}
+                onChangeText={(value) => {
+                  onChange(value);
+                  setLastName(value);
+                }}
+                onBlur={onBlur}
+                value={value}
+              ></TextInput>
+              {errors.lastName && errors.lastName.type === "required" && (
+                <Text style={styles.errorMessage}>Last Name is required.</Text>
+              )}
+            </View>
+          )}
+          name="lastName"
+          rules={{
+            required: true,
+          }}
+          defaultValue=""
+        />
+        <Controller
+          control={control}
+          render={({ onChange, onBlur, value }) => (
+            <View style={styles.inputMargin}>
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor="#b2b2b2"
+                style={(styles.inputMargin, styles.textInput)}
+                onChangeText={(email) => {
+                  onChange(email);
+                  setEmail(email);
+                }}
+                onBlur={onBlur}
+                value={value}
+              />
+              {errors.email && errors.email.type === "required" && (
+                <Text style={styles.errorMessage}>Email is required.</Text>
+              )}
+              {errors.email && errors.email.type === "validate" && (
+                <Text style={styles.errorMessage}>
+                  Please provide a valid email.
+                </Text>
+              )}
+            </View>
+          )}
+          name="email"
+          rules={{
+            required: true,
+            validate: (value) => isEmailAddressValid(value),
+          }}
+          defaultValue=""
+        />
+        <Controller
+          control={control}
+          render={({ onChange, onBlur, value }) => (
+            <View style={styles.inputMargin}>
+              <TextInput
+                placeholder="Phone Number"
+                placeholderTextColor="#b2b2b2"
+                style={(styles.inputMargin, styles.textInput)}
+                onChangeText={(value) => {
+                  onChange(value);
+                  setPhoneNumber(value);
+                }}
+                onBlur={onBlur}
+                value={value}
+              />
+              {errors.phoneNumber && errors.phoneNumber.type === "required" && (
+                <Text style={styles.errorMessage}>
+                  Phone Number is required.
+                </Text>
+              )}
+              {errors.phoneNumber && errors.phoneNumber.type === "validate" && (
+                <Text style={styles.errorMessage}>
+                  Please provide a valid phone number.
+                </Text>
+              )}
+            </View>
+          )}
+          name="phoneNumber"
+          rules={{
+            required: true,
+            validate: (value) => isPhoneNumberValid(value),
+          }}
+          defaultValue=""
+        />
+        {isPasswordSignup ? (
+          <Controller
+            control={control}
+            render={({ onChange, onBlur, value }) => (
+              <View style={styles.inputMargin}>
+                <TextInput
+                  placeholder="Password"
+                  placeholderTextColor="#b2b2b2"
+                  style={(styles.inputMargin, styles.textInput)}
+                  onChangeText={(password) => {
+                    onChange(password);
+                    setPassword(password);
+                  }}
+                  onBlur={onBlur}
+                  value={value}
+                  secureTextEntry={!showPassword}
+                />
+                {errors.password && errors.password.type === "required" && (
+                  <Text style={styles.errorMessage}>Password is required.</Text>
+                )}
+                {errors.password && errors.password.type === "minLength" && (
+                  <Text style={styles.errorMessage}>
+                    Password must be at least 6 characters long.
+                  </Text>
+                )}
+                {showPassword ? (
+                  <Icon
+                    name="eye"
+                    type="font-awesome"
+                    containerStyle={{
+                      height: 24,
+                      position: "absolute",
+                      top: 8,
+                      right: 0,
+                    }}
+                    onPress={() => setShowPassword(false)}
+                  />
+                ) : (
+                  <Icon
+                    name="eye-slash"
+                    type="font-awesome"
+                    containerStyle={{
+                      height: 24,
+                      position: "absolute",
+                      top: 8,
+                      right: 0,
+                    }}
+                    onPress={() => setShowPassword(true)}
+                  />
+                )}
+              </View>
+            )}
+            name="password"
+            rules={{
+              required: true,
+              minLength: 6,
+            }}
+            defaultValue=""
+          />
+        ) : null}
         <TouchableOpacity
-          // disabled={() => isFormFilled()}
           title="Register"
           style={styles.registerButton}
           opacity={1}
-          onPress={() => {
-            handleSignUp(
-              new User(null, firstName, lastName, phoneNumber, email, gender),
-              password
-            );
-          }}
+          onPress={handleSubmit(handleSignUpPressed)}
         >
           <Text style={styles.registerButtonText}>Register</Text>
         </TouchableOpacity>
       </View>
-    </View >
+    </View>
   );
 }
 
@@ -154,10 +305,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   opacity: {
-    opacity: 0.3
+    opacity: 0.3,
   },
   noOpacity: {
-    opacity: 1
+    opacity: 1,
   },
   genderTitle: {
     color: "#fdfdfd30",
@@ -170,7 +321,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 40,
-    marginBottom: 40,
+    marginBottom: 10,
   },
   maleIcon: {
     height: 75,
@@ -200,7 +351,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   backButtonIcon: {
-    color:"#fff"
+    color: "#fff",
   },
   backButton: {
     marginTop: 20,
@@ -209,17 +360,17 @@ const styles = StyleSheet.create({
     top: 20,
   },
   buttonDisabled: {
-    backgroundColor: "#4d4d4d"
+    backgroundColor: "#4d4d4d",
   },
   buttonEnabled: {
-    backgroundColor: "#2288dc"
+    backgroundColor: "#2288dc",
   },
   registerButton: {
     width: "auto",
     height: "auto",
     marginLeft: 10,
     marginRight: 10,
-    marginTop: 30,
+    marginTop: 10,
     marginBottom: 20,
     paddingTop: 10,
     paddingBottom: 10,
@@ -228,11 +379,14 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    elevation: 1
+    elevation: 1,
   },
   registerButtonText: {
     color: "#d4f4f3",
     alignSelf: "center",
     fontWeight: "bold",
+  },
+  errorMessage: {
+    color: "red",
   },
 });

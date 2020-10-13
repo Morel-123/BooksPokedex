@@ -46,13 +46,15 @@ function Signup(props) {
                 user.gender
               ),
             });
-            props.navigation.navigate("Main");
+            props.navigation.navigate("MainNavigator");
           })
           .catch(function (error) {
+            console.log(error)
             setErrorMessage(error.message);
           });
       })
       .catch((error) => {
+        console.log(error);
         setErrorMessage(error.message);
       });
   };
