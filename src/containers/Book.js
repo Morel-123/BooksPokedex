@@ -9,14 +9,16 @@ import {
   ScrollView,
   Dimensions,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
 import ReadMore from "react-native-read-more-text";
-import { TouchableRipple } from "react-native-paper";
+import { TouchableRipple, Snackbar } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as booksActions from "../actions/Books";
 import { useHeaderHeight } from "@react-navigation/stack";
+import { Icon } from "react-native-elements";
 
 function Book(props) {
   const dispatch = useDispatch();
@@ -27,8 +29,13 @@ function Book(props) {
   const [isInCollection, setIsInCollection] = useState(
     book ? (collection[book.id] ? true : false) : false
   );
+  let favoriteBooks = useSelector((state) => state.books.favoriteBooks);
+  const [liked, setLiked] = useState(
+    book ? (favoriteBooks[book.id] ? true : false) : false
+  );
   const user = useSelector((state) => state.auth.user);
   const headerHeight = useHeaderHeight();
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (book && collection[book.id]) {
@@ -36,7 +43,12 @@ function Book(props) {
     } else {
       setIsInCollection(false);
     }
-  }, [book, collection]);
+    if (book && favoriteBooks[book.id]) {
+      setLiked(true);
+    } else {
+      setLiked(false);
+    }
+  }, [book, collection, favoriteBooks]);
 
   const handleBack = () => {
     // props.navigation.navigate("My Books");
@@ -95,23 +107,105 @@ function Book(props) {
       });
   };
 
+  const onBookLikePress = () => {
+    setLiked((val) => !val);
+    database
+      .collection("users")
+      .doc(user.uid)
+      .update({
+        favoriteBooks: liked
+          ? firebase.firestore.FieldValue.arrayRemove({
+              bookID: book.id,
+              book: book,
+            })
+          : firebase.firestore.FieldValue.arrayUnion({
+              bookID: book.id,
+              book: book,
+            }),
+      })
+      .then(function () {
+        if (liked) {
+          dispatch(booksActions.removeFavoriteBook(book));
+        } else {
+          dispatch(booksActions.addFavoriteBook(book));
+        }
+        onToggleSnackBar();
+      })
+      .catch(function (error) {
+        console.log(error.message);
+      });
+  };
+
+  const onToggleSnackBar = () => setVisible(!visible);
+
+  const onDismissSnackBar = () => setVisible(false);
+
   return (
     // <ScrollView>
-    <View style={{...styles.container, height: Dimensions.get("window").height - headerHeight}}>
-      <ScrollView style={{ height: Dimensions.get("window").height - headerHeight }}>
+    <View
+      style={{
+        ...styles.container,
+        height: Dimensions.get("window").height - headerHeight,
+      }}
+    >
+      <ScrollView
+        style={{ height: Dimensions.get("window").height - headerHeight }}
+      >
         <View style={{ display: "flex", flexDirection: "row", width: "100%" }}>
-          <Image
-            style={{ height: 220, width: 150, marginLeft: 10, marginRight: 5 }}
-            source={
-              book.imageLinks
-                ? {
-                    uri: book.imageLinks.thumbnail,
-                  }
-                : require("../../assets/no_cover_thumb.png")
-            }
-            resizeMode="stretch"
-          />
-          <View style={{ display: "flex", width: Dimensions.get("window").width - 175, marginRight: 5 }}>
+          <View style={{ position: "relative", height: 220, width: 170 }}>
+            <Image
+              style={{
+                height: 220,
+                width: 150,
+                marginLeft: 10,
+                marginRight: 5,
+              }}
+              source={
+                book.imageLinks
+                  ? {
+                      uri: book.imageLinks.thumbnail,
+                    }
+                  : require("../../assets/no_cover_thumb.png")
+              }
+              resizeMode="stretch"
+            />
+            <TouchableRipple
+              onPress={onBookLikePress}
+              rippleColor="rgba(0, 0, 0, .32)"
+              style={styles.likeButton}
+              borderless={true}
+              centered={true}
+            >
+              <View style={styles.iconContainer}>
+                {liked ? (
+                  <Icon
+                    color="white"
+                    type="ionicon"
+                    name={Platform.OS === "ios" ? "ios-heart" : "md-heart"}
+                    iconStyle={{ width: 26, textAlign: "center" }}
+                  />
+                ) : (
+                  <Icon
+                    color="white"
+                    type="ionicon"
+                    name={
+                      Platform.OS === "ios"
+                        ? "ios-heart-empty"
+                        : "md-heart-empty"
+                    }
+                    iconStyle={{ width: 26, textAlign: "center" }}
+                  />
+                )}
+              </View>
+            </TouchableRipple>
+          </View>
+          <View
+            style={{
+              display: "flex",
+              width: Dimensions.get("window").width - 175,
+              marginRight: 5,
+            }}
+          >
             <Text
               style={{
                 fontSize: 24,
@@ -249,6 +343,14 @@ function Book(props) {
         )}
         {/* <Button title="Go Back" onPress={handleBack} /> */}
       </ScrollView>
+      <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        duration={1500}
+        style={{ backgroundColor: "#448aff" }}
+      >
+        {liked ? "Added to Favorites" : "Removed from Favorites"}
+      </Snackbar>
     </View>
     // </ScrollView>
   );
@@ -303,5 +405,21 @@ const styles = StyleSheet.create({
   extraInfoDetailValue: {
     fontSize: 20,
     fontWeight: "bold",
+  },
+  likeButton: {
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+    position: "absolute",
+    bottom: 0,
+    right: 2,
+    backgroundColor: "#448aff",
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

@@ -9,35 +9,36 @@ import Spinner from "../components/Spinner";
 function Loading(props) {
   const dispatch = useDispatch();
   const database = firebase.firestore();
+  const userInState = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        // database
-        //   .collection("users")
-        //   .doc(user.uid)
-        //   .get()
-        //   .then(function (response) {
-        //     const responseData = response.data();
-        //     dispatch(authActions.login(responseData));
-        //     // let favoriteBooksFromDB = responseData.favoriteBooks;
-        //     // let favoriteBooks = {};
-        //     // favoriteBooksFromDB.forEach((favoriteBook) => {
-        //     //   favoriteBooks[favoriteBook.bookID] = favoriteBook.book;
-        //     // });
-        //     // dispatch(booksActions.setFavoriteBooks(favoriteBooks));
-        //     // let collectionFromDB = responseData.collection;
-        //     // let collection = {};
-        //     // collectionFromDB.forEach((item) => {
-        //     //   collection[item.bookID] = item.book;
-        //     // });
-        //     // dispatch(booksActions.setCollection(collection));
-        //     props.navigation.navigate("MainNavigator");
-        //   })
-        //   .catch(function (error) {
-        //     console.error(error);
-        //   });
-        props.navigation.navigate("MainNavigator");
+      if (user && !userInState) {
+        database
+          .collection("users")
+          .doc(user.uid)
+          .get()
+          .then(function (response) {
+            const responseData = response.data();
+            dispatch(authActions.login(responseData));
+            let favoriteBooksFromDB = responseData.favoriteBooks;
+            let favoriteBooks = {};
+            favoriteBooksFromDB.forEach((favoriteBook) => {
+              favoriteBooks[favoriteBook.bookID] = favoriteBook.book;
+            });
+            dispatch(booksActions.setFavoriteBooks(favoriteBooks));
+            let collectionFromDB = responseData.collection;
+            let collection = {};
+            collectionFromDB.forEach((item) => {
+              collection[item.bookID] = item.book;
+            });
+            dispatch(booksActions.setCollection(collection));
+            props.navigation.navigate("MainNavigator");
+          })
+          .catch(function (error) {
+            console.error(error);
+          });
+        // props.navigation.navigate("MainNavigator");
       } else {
         console.log("logout");
         props.navigation.navigate("Login");

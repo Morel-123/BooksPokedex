@@ -15,50 +15,10 @@ import { firebase } from "../firebase/Config";
 const Stack = createStackNavigator();
 
 function MainNavigator(props) {
-  let selectedBook = useSelector((state) => state.books.selectedBook);
-  let favoriteBooks = useSelector((state) => state.books.favoriteBooks);
-  const [liked, setLiked] = useState(
-    selectedBook ? (favoriteBooks[selectedBook.id] ? true : false) : false
-  );
-  const database = firebase.firestore();
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
-    if (selectedBook && favoriteBooks[selectedBook.id]) {
-      setLiked(true);
-    } else {
-      setLiked(false);
-    }
-  }, [selectedBook, favoriteBooks]);
+  }, []);
 
-  const onBookLikePress = () => {
-    database
-      .collection("users")
-      .doc(user.uid)
-      .update({
-        favoriteBooks: liked
-          ? firebase.firestore.FieldValue.arrayRemove({
-              bookID: selectedBook.id,
-              book: selectedBook,
-            })
-          : firebase.firestore.FieldValue.arrayUnion({
-              bookID: selectedBook.id,
-              book: selectedBook,
-            }),
-      })
-      .then(function () {
-        if (liked) {
-          dispatch(booksActions.removeFavoriteBook(selectedBook));
-        } else {
-          dispatch(booksActions.addFavoriteBook(selectedBook));
-        }
-        setLiked((value) => !value);
-      })
-      .catch(function (error) {
-        console.log(error.message);
-      });
-  };
 
   function getHeaderTitle(route) {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
@@ -94,39 +54,6 @@ function MainNavigator(props) {
         <Stack.Screen
           name="Book Info"
           component={Book}
-          options={{
-            headerRight: (props) => (
-              <View style={styles.rightIconsContainer}>
-                <TouchableRipple
-                  onPress={onBookLikePress}
-                  rippleColor="rgba(0, 0, 0, .32)"
-                  style={styles.roundIcon}
-                  borderless={true}
-                  centered={true}
-                >
-                  <View style={styles.iconContainer}>
-                    {liked ? (
-                      <Icon
-                        color="white"
-                        type="ionicon"
-                        name={Platform.OS === "ios" ? "ios-heart" : "md-heart"}
-                      />
-                    ) : (
-                      <Icon
-                        color="white"
-                        type="ionicon"
-                        name={
-                          Platform.OS === "ios"
-                            ? "ios-heart-empty"
-                            : "md-heart-empty"
-                        }
-                      />
-                    )}
-                  </View>
-                </TouchableRipple>
-              </View>
-            ),
-          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
