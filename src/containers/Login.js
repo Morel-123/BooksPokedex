@@ -97,7 +97,7 @@ function Login(props) {
                   //   "male"
                   // ),
                 });
-                props.navigation.navigate("Main");
+                props.navigation.navigate("MainNavigator");
               })
               .catch(function (error) {
                 console.log(error.message);
@@ -150,7 +150,7 @@ function Login(props) {
           collection[item.bookID] = item.book;
         });
         dispatch(booksActions.setCollection(collection));
-        props.navigation.navigate("Main");
+        props.navigation.navigate("MainNavigator");
       })
       .catch((error) => setErrorMessage(error.message));
   };

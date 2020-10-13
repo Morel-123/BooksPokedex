@@ -27,7 +27,7 @@ const AppContainer = createAppContainer(
       MainNavigator,
     },
     {
-      initialRouteName: "Login",
+      initialRouteName: "Loading",
     }
   )
 );

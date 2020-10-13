@@ -1,9 +1,10 @@
 {
-  "name": "booksPokedex",
-  "displayName": "booksPokedex",
+  "name": "bookspokedex",
+  "displayName": "bookspokedex",
   "expo": {
-    "name": "booksPokedex",
-    "slug": "booksPokedex",
+    "name": "bookspokedex",
+    "slug": "bookspokedex",
+    "scheme": "com.bookspokedex",
     "version": "1.0.0",
     "assetBundlePatterns": ["**/*"],
     "ios": {
