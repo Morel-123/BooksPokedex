@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   FlatList,
+  Keyboard,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { firebase } from "../firebase/Config";
@@ -38,12 +39,36 @@ function Main(props) {
   const [inputChanged, setInputChanged] = useState(false);
   const [selectedCategoryID, setSelectedCategoryID] = useState(1);
   const debouncedSearchText = useDebounce(searchText, 500);
+  const [search, setSearch] = useState(null);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [firstTime, setFirstTime] = useState(true);
 
   const dispatch = useDispatch();
   const database = firebase.firestore();
 
   const user = useSelector((state) => state.auth.user);
   const historyBooks = useSelector((state) => state.books.historyBooks);
+
+  const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
+  const [keyboardDidHideListener, setKeyboardDidHideListener] = useState(null);
+
+  if (firstTime) {
+    setFirstTime(false);
+    setKeyboardDidShowListener(
+      Keyboard.addListener("keyboardDidShow", () => {
+        setKeyboardVisible(true); // or some other action
+      })
+    );
+    setKeyboardDidHideListener(
+      Keyboard.addListener("keyboardDidHide", () => {
+        setKeyboardVisible(false); // or some other action
+        if (search) {
+          search.cancel();
+          search.blur();
+        }
+      })
+    );
+  }
 
   useEffect(() => {
     setCurrentUser(firebase.auth().currentUser);
@@ -108,6 +133,10 @@ function Main(props) {
           });
       }
     }
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
   }, [debouncedSearchText]);
 
   const containsHebrew = (str) => {
@@ -134,6 +163,7 @@ function Main(props) {
   return (
     <View style={styles.container}>
       <SearchBar
+        ref={(search) => {console.log(search);setSearch(search);}}
         platform="android"
         containerStyle={{
           height: 60,
