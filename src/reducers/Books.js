@@ -1,6 +1,9 @@
 import {
   SET_CURRENT_BOOK,
   SET_HISTORY_BOOKS,
+  SET_BUSINESS_BOOKS,
+  SET_SELF_HELP_BOOKS,
+  SET_FANTASY_BOOKS,
   ADD_FAVORITE_BOOK,
   REMOVE_FAVORITE_BOOK,
   SET_FAVORITE_BOOKS,
@@ -12,6 +15,9 @@ import {
 const initialState = {
   selectedBook: null,
   historyBooks: null,
+  businessBooks: null,
+  selfHelpBooks: null,
+  fantasyBooks: null,
   favoriteBooks: {},
   collection: {},
 };
@@ -28,6 +34,21 @@ export default (state = initialState, action) => {
       return {
         ...state,
         historyBooks: action.books,
+      };
+    case SET_BUSINESS_BOOKS:
+      return {
+        ...state,
+        businessBooks: action.books,
+      };
+    case SET_SELF_HELP_BOOKS:
+      return {
+        ...state,
+        selfHelpBooks: action.books,
+      };
+    case SET_FANTASY_BOOKS:
+      return {
+        ...state,
+        fantasyBooks: action.books,
       };
     case ADD_FAVORITE_BOOK:
       let newFavoriteBooks = { ...state.favoriteBooks };

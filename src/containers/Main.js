@@ -37,7 +37,7 @@ function Main(props) {
   const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [inputChanged, setInputChanged] = useState(false);
-  const [selectedCategoryID, setSelectedCategoryID] = useState(1);
+  const [selectedCategoryID, setSelectedCategoryID] = useState(0);
   const debouncedSearchText = useDebounce(searchText, 500);
   const [search, setSearch] = useState(null);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
@@ -48,6 +48,31 @@ function Main(props) {
 
   const user = useSelector((state) => state.auth.user);
   const historyBooks = useSelector((state) => state.books.historyBooks);
+  const businessBooks = useSelector((state) => state.books.businessBooks);
+  const selfHelpBooks = useSelector((state) => state.books.selfHelpBooks);
+  const fantasyBooks = useSelector((state) => state.books.fantasyBooks);
+
+  const [allCategoriesBooks, setAllCategoriesBooks] = useState([
+    businessBooks,
+    selfHelpBooks,
+    fantasyBooks,
+    historyBooks,
+  ]);
+  const [allCategoriesNames, setAllCategoriesNames] = useState([
+    "business",
+    "self help",
+    "fantasy",
+    "history",
+  ]);
+  const [
+    allCategoriesStoreFunctions,
+    setAllCategoriesStoreFunctions,
+  ] = useState([
+    booksActions.setBusinessBooks,
+    booksActions.setSelfHelpBooks,
+    booksActions.setFantasyBooks,
+    booksActions.setHistoryBooks,
+  ]);
 
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
   const [keyboardDidHideListener, setKeyboardDidHideListener] = useState(null);
@@ -73,14 +98,15 @@ function Main(props) {
   useEffect(() => {
     setCurrentUser(firebase.auth().currentUser);
     if (debouncedSearchText[0] == "") {
-      if (historyBooks) {
-        console.log(historyBooks);
-        setBooks(historyBooks);
+      if (allCategoriesBooks[selectedCategoryID]) {
+        console.log(allCategoriesBooks[selectedCategoryID]);
+        setBooks(allCategoriesBooks[selectedCategoryID]);
         setIsLoading(false);
       } else {
         console.log("else");
+        setIsLoading(true);
         fetch(
-          "https://www.googleapis.com/books/v1/volumes?q=subject:business&maxResults=20&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc",
+          `https://www.googleapis.com/books/v1/volumes?q=subject:${allCategoriesNames[selectedCategoryID]}&maxResults=20&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
           {
             method: "GET",
           }
@@ -93,7 +119,14 @@ function Main(props) {
               responseJson.items.forEach((book) => {
                 googleBooks.push({ ...book.volumeInfo, id: book.id });
               });
-              dispatch(booksActions.setHistoryBooks(googleBooks));
+              setAllCategoriesBooks((books) => {
+                let updatedBooks = [...books];
+                updatedBooks[selectedCategoryID] = googleBooks;
+                return updatedBooks;
+              });
+              dispatch(
+                allCategoriesStoreFunctions[selectedCategoryID](googleBooks)
+              );
               setBooks(googleBooks);
             }
             setIsLoading(false);
@@ -160,10 +193,18 @@ function Main(props) {
     props.navigation.navigate("Book Info");
   };
 
+  const onCategoryPress = (id) => {
+    setBooks(allCategoriesBooks[id]);
+    setSelectedCategoryID(id);
+  };
+
   return (
     <View style={styles.container}>
       <SearchBar
-        ref={(search) => {console.log(search);setSearch(search);}}
+        ref={(search) => {
+          console.log(search);
+          setSearch(search);
+        }}
         platform="android"
         containerStyle={{
           height: 60,
@@ -208,8 +249,8 @@ function Main(props) {
           width={104}
           iconImage={require("../../assets/money.png")}
           name="Business"
-          id={1}
-          onPress={(id) => setSelectedCategoryID(id)}
+          id={0}
+          onPress={onCategoryPress}
           selected={(id) => selectedCategoryID === id}
         ></Category>
         <Category
@@ -217,8 +258,8 @@ function Main(props) {
           width={104}
           iconImage={require("../../assets/help.png")}
           name="Self Help"
-          id={2}
-          onPress={(id) => setSelectedCategoryID(id)}
+          id={1}
+          onPress={onCategoryPress}
           selected={(id) => selectedCategoryID === id}
         ></Category>
         <Category
@@ -226,8 +267,8 @@ function Main(props) {
           width={104}
           iconImage={require("../../assets/fantasy.png")}
           name="Fantasy"
-          id={3}
-          onPress={(id) => setSelectedCategoryID(id)}
+          id={2}
+          onPress={onCategoryPress}
           selected={(id) => selectedCategoryID === id}
         ></Category>
       </View>
@@ -277,10 +318,18 @@ function Main(props) {
                 return;
               }
               if (debouncedSearchText[0] == "") {
+                setAllCategoriesBooks((books) => {
+                  let updatedBooks = [...books];
+                  updatedBooks[selectedCategoryID] = [
+                    ...updatedBooks[selectedCategoryID],
+                    ...updatedBooks[selectedCategoryID].slice(0, 10),
+                  ];
+                  return updatedBooks;
+                });
                 dispatch(
-                  booksActions.setHistoryBooks([
-                    ...historyBooks,
-                    ...historyBooks.slice(0, 10),
+                  allCategoriesStoreFunctions[selectedCategoryID]([
+                    ...allCategoriesBooks[selectedCategoryID],
+                    ...allCategoriesBooks[selectedCategoryID].slice(0, 10),
                   ])
                 );
               }
