@@ -34,15 +34,19 @@ function Main(props) {
   const [currentUser, setCurrentUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [books, setBooks] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [inputChanged, setInputChanged] = useState(false);
   const [selectedCategoryID, setSelectedCategoryID] = useState(0);
+  const [previousSelectedCategoryID, setPreviousSelectedCategoryID] = useState(
+    0
+  );
   const debouncedSearchText = useDebounce(searchText, 500);
   const [search, setSearch] = useState(null);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [firstTime, setFirstTime] = useState(true);
-
+  const [scrollIndex, setScrollIndex] = useState(0);
+  const [needToUpdateScroll, setNeedToUpdateScroll] = useState(false);
   const dispatch = useDispatch();
   const database = firebase.firestore();
 
@@ -96,48 +100,53 @@ function Main(props) {
   }
 
   useEffect(() => {
+    let pageCount = 20;
+    if (books && books.length > 0) {
+      setScrollIndex((books.length - pageCount) / 2);
+    }
+  }, [books]);
+
+  useEffect(() => {
     setCurrentUser(firebase.auth().currentUser);
     if (debouncedSearchText[0] == "") {
       if (allCategoriesBooks[selectedCategoryID]) {
-        console.log(allCategoriesBooks[selectedCategoryID]);
         setBooks(allCategoriesBooks[selectedCategoryID]);
         setIsLoading(false);
       } else {
-        console.log("else");
-        setIsLoading(true);
-        fetch(
-          `https://www.googleapis.com/books/v1/volumes?q=subject:${allCategoriesNames[selectedCategoryID]}&maxResults=20&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
-          {
-            method: "GET",
-          }
-        )
-          .then((response) => response.json())
-          .then((responseJson) => {
-            let googleBooks = [];
-            console.log(responseJson);
-            if (responseJson) {
-              responseJson.items.forEach((book) => {
-                googleBooks.push({ ...book.volumeInfo, id: book.id });
-              });
-              setAllCategoriesBooks((books) => {
-                let updatedBooks = [...books];
-                updatedBooks[selectedCategoryID] = googleBooks;
-                return updatedBooks;
-              });
-              dispatch(
-                allCategoriesStoreFunctions[selectedCategoryID](googleBooks)
-              );
-              setBooks(googleBooks);
+        if (!isLoading) {
+          setIsLoading(true);
+          fetch(
+            `https://www.googleapis.com/books/v1/volumes?q=subject:${allCategoriesNames[selectedCategoryID]}&maxResults=20&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
+            {
+              method: "GET",
             }
-            setIsLoading(false);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+          )
+            .then((response) => response.json())
+            .then((responseJson) => {
+              let googleBooks = [];
+              if (responseJson) {
+                responseJson.items.forEach((book) => {
+                  googleBooks.push({ ...book.volumeInfo, id: book.id });
+                });
+                setAllCategoriesBooks((books) => {
+                  let updatedBooks = [...books];
+                  updatedBooks[selectedCategoryID] = googleBooks;
+                  return updatedBooks;
+                });
+                dispatch(
+                  allCategoriesStoreFunctions[selectedCategoryID](googleBooks)
+                );
+                setBooks(googleBooks);
+              }
+              setIsLoading(false);
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        }
       }
     } else {
       if (searchText === debouncedSearchText[0] && inputChanged) {
-        console.log(debouncedSearchText[0]);
         setIsLoading(true);
         setInputChanged(false);
         let language = "en";
@@ -153,7 +162,6 @@ function Main(props) {
           .then((response) => response.json())
           .then((responseJson) => {
             let googleBooks = [];
-            console.log(responseJson);
             responseJson.items.forEach((book) => {
               googleBooks.push({ ...book.volumeInfo, id: book.id });
             });
@@ -170,7 +178,7 @@ function Main(props) {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
     };
-  }, [debouncedSearchText]);
+  }, [debouncedSearchText[0], selectedCategoryID]);
 
   const containsHebrew = (str) => {
     return /[\u0590-\u05FF]/.test(str);
@@ -188,21 +196,20 @@ function Main(props) {
   };
 
   const onBookPress = (book) => {
-    console.log(book);
     dispatch(booksActions.setCurrentBook(book));
     props.navigation.navigate("Book Info");
   };
 
   const onCategoryPress = (id) => {
-    setBooks(allCategoriesBooks[id]);
+    setPreviousSelectedCategoryID(selectedCategoryID);
     setSelectedCategoryID(id);
+    setBooks(allCategoriesBooks[id]);
   };
 
   return (
     <View style={styles.container}>
       <SearchBar
         ref={(search) => {
-          console.log(search);
           setSearch(search);
         }}
         platform="android"
@@ -284,6 +291,12 @@ function Main(props) {
         <SafeAreaView style={styles.booksScrollView}>
           <FlatList
             data={books}
+            getItemLayout={(data, index) => ({
+              length: 215,
+              offset: index % 2 == 0 ? 215 * index : 215 * (index - 1),
+              index,
+            })}
+            initialScrollIndex={scrollIndex}
             renderItem={({ item }) => (
               <TouchableOpacity
                 key={item.id}
@@ -313,29 +326,57 @@ function Main(props) {
             }}
             keyExtractor={(item) => item.id}
             onEndReached={(dis) => {
-              console.log(dis);
               if (dis.distanceFromEnd < 0) {
                 return;
               }
               if (debouncedSearchText[0] == "") {
-                setAllCategoriesBooks((books) => {
-                  let updatedBooks = [...books];
-                  updatedBooks[selectedCategoryID] = [
-                    ...updatedBooks[selectedCategoryID],
-                    ...updatedBooks[selectedCategoryID].slice(0, 10),
-                  ];
-                  return updatedBooks;
+                setIsLoading(true);
+                fetch(
+                  `https://www.googleapis.com/books/v1/volumes?q=subject:${allCategoriesNames[selectedCategoryID]}&maxResults=20&startIndex=${allCategoriesBooks[selectedCategoryID].length}&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
+                  {
+                    method: "GET",
+                  }
+                )
+                  .then((response) => response.json())
+                  .then((responseJson) => {
+                    let googleBooks = [];
+                    if (responseJson) {
+                      responseJson.items.forEach((book) => {
+                        googleBooks.push({ ...book.volumeInfo, id: book.id });
+                      });
+                      setAllCategoriesBooks((books) => {
+                        let updatedBooks = [...books];
+                        updatedBooks[selectedCategoryID] = [
+                          ...updatedBooks[selectedCategoryID],
+                          ...googleBooks,
+                        ];
+                        return updatedBooks;
+                      });
+                      dispatch(
+                        allCategoriesStoreFunctions[selectedCategoryID]([
+                          ...allCategoriesBooks[selectedCategoryID],
+                          ...googleBooks,
+                        ])
+                      );
+                      // setBooks([
+                      //   ...allCategoriesBooks[selectedCategoryID],
+                      //   ...googleBooks,
+                      // ]);
+                      setBooks((data) => {
+                        return [...data, ...googleBooks];
+                      });
+                      setNeedToUpdateScroll(true);
+                    }
+                    setIsLoading(false);
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              } else {
+                setBooks((data) => {
+                  return [...data, ...data.slice(0, 10)];
                 });
-                dispatch(
-                  allCategoriesStoreFunctions[selectedCategoryID]([
-                    ...allCategoriesBooks[selectedCategoryID],
-                    ...allCategoriesBooks[selectedCategoryID].slice(0, 10),
-                  ])
-                );
               }
-              setBooks((data) => {
-                return [...data, ...data.slice(0, 10)];
-              });
             }}
             onEndReachedThreshold={0.1}
           />
