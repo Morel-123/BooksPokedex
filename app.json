@@ -6,6 +6,7 @@
     "slug": "bookspokedex",
     "scheme": "com.bookspokedex",
     "version": "1.0.0",
+    "icon": "./assets/pokedex.png",
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "com.bookspokedex",
