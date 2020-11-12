@@ -20,7 +20,7 @@ import * as socialActions from "../actions/Social";
 import { TouchableRipple } from "react-native-paper";
 import { Icon } from "react-native-elements";
 import { SearchBar } from "react-native-elements";
-import { useDebounce } from "use-debounce";
+// import { useDebounce } from "use-debounce";
 import Spinner from "../components/Spinner";
 
 function Social(props) {
@@ -50,7 +50,7 @@ function Social(props) {
   const [inputChanged, setInputChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  const debouncedSearchText = useDebounce(searchText, 300);
+//   const debouncedSearchText = useDebounce(searchText, 300);
   const database = firebase.firestore();
 
   let stylesProps = { friendsLength: Object.keys(friends).length };
