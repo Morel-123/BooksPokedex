@@ -28,6 +28,8 @@ function MainNavigator(props) {
         return "Home";
       case "Collection":
         return "My Collection";
+      case "Social":
+        return "Social";
       case "Profile":
         return "My Profile";
     }

@@ -5,6 +5,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Main from "./Main";
 import UserCollection from "./UserCollection";
+import Social from "./Social";
 import Profile from "./Profile";
 import { BottomNavigation } from "react-native-paper";
 
@@ -36,6 +37,16 @@ function MyTabs() {
           tabBarLabel: "Collection",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="book" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Social"
+        component={Social}
+        options={{
+          tabBarLabel: "Social",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="account-group" color={color} size={26} />
           ),
         }}
       />

@@ -14,6 +14,7 @@ import { firebase } from "../firebase/Config";
 import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
 import * as booksActions from "../actions/Books";
+import * as socialActions from "../actions/Social";
 import { Card, ListItem, Button, Input, Icon } from "react-native-elements";
 import { useForm, Controller } from "react-hook-form";
 import * as WebBrowser from "expo-web-browser";
@@ -73,6 +74,7 @@ function Login(props) {
                 gender: "male",
                 favoriteBooks: [],
                 collection: [],
+                friends: [],
               })
               .then(function () {
                 let userObj = new User(
@@ -85,6 +87,7 @@ function Login(props) {
                 );
                 userObj.favoriteBooks = [];
                 userObj.collection = [];
+                userObj.friends = [];
                 dispatch({
                   type: authActions.SIGNUP,
                   user: userObj,
@@ -150,6 +153,12 @@ function Login(props) {
           collection[item.bookID] = item.book;
         });
         dispatch(booksActions.setCollection(collection));
+        let friendsFromDB = responseData.friends;
+        let friends = {};
+        friendsFromDB.forEach((item) => {
+          friends[item.uid] = item.friend;
+        });
+        dispatch(socialActions.setFriends(friends));
         props.navigation.navigate("MainNavigator");
       })
       .catch((error) => setErrorMessage(error.message));

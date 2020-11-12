@@ -33,6 +33,7 @@ function Signup(props) {
             gender: user.gender,
             favoriteBooks: [],
             collection: [],
+            friends: [],
           })
           .then(function () {
             dispatch({

@@ -11,10 +11,12 @@ import MainNavigator from "./src/containers/MainNavigator";
 
 import authReducer from "./src/reducers/Auth";
 import booksReducer from "./src/reducers/Books";
+import socialReducer from "./src/reducers/Social";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   books: booksReducer,
+  social: socialReducer,
 });
 export const store = createStore(rootReducer);
 

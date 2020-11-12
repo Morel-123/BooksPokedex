@@ -4,6 +4,7 @@ import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../actions/Auth";
 import * as booksActions from "../actions/Books";
+import * as socialActions from "../actions/Social";
 import Spinner from "../components/Spinner";
 
 function Loading(props) {
@@ -33,6 +34,12 @@ function Loading(props) {
               collection[item.bookID] = item.book;
             });
             dispatch(booksActions.setCollection(collection));
+            let friendsFromDB = responseData.friends;
+            let friends = {};
+            friendsFromDB.forEach((item) => {
+              friends[item.uid] = item.friend;
+            });
+            dispatch(socialActions.setFriends(friends));
             props.navigation.navigate("MainNavigator");
           })
           .catch(function (error) {

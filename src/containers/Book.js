@@ -319,7 +319,7 @@ function Book(props) {
           }}
         >
           <Text style={{ fontSize: 20 }}>Description</Text>
-          <View style={{ opacity: textReady ? 1 : 0 }}>
+          <View style={{ width: '98%', opacity: textReady ? 1 : 0 }}>
             <ReadMore
               numberOfLines={3}
               renderTruncatedFooter={renderTruncatedFooter}
