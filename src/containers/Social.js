@@ -50,7 +50,7 @@ function Social(props) {
   const [inputChanged, setInputChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
-//   const debouncedSearchText = useDebounce(searchText, 300);
+  //   const debouncedSearchText = useDebounce(searchText, 300);
   const database = firebase.firestore();
 
   let stylesProps = { friendsLength: Object.keys(friends).length };
@@ -137,10 +137,15 @@ function Social(props) {
       >
         <TouchableOpacity
           style={{
-            height: "50px",
-            width: "50px",
-            borderRadius: "50%",
-            background: "aqua",
+            height: 50,
+            width: 50,
+            borderTopLeftRadius: 50,
+            borderTopRightRadius: 50,
+            borderBottomLeftRadius: 50,
+            borderBottomRightRadius: 50,
+            backgroundColor: showAddFriends
+              ? "rgb(26, 112, 255)"
+              : "rgb(68, 138, 255)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -152,7 +157,7 @@ function Social(props) {
         >
           <View>
             <Icon
-              color="white"
+              color={showAddFriends ? "white" : "#bdbdbd"}
               type="ionicon"
               name={Platform.OS === "ios" ? "ios-person-add" : "md-person-add"}
               iconStyle={{ width: 26, textAlign: "center" }}
@@ -166,8 +171,8 @@ function Social(props) {
               renderItem={({ item }) => (
                 <View
                   style={{
-                    height: "60px",
-                    width: "60px",
+                    height: 60,
+                    width: 60,
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -176,10 +181,16 @@ function Social(props) {
                   <TouchableOpacity
                     key={item.uid}
                     style={{
-                      height: "50px",
-                      width: "50px",
-                      borderRadius: "50%",
-                      background: "aqua",
+                      height: 50,
+                      width: 50,
+                      borderTopLeftRadius: 50,
+                      borderTopRightRadius: 50,
+                      borderBottomLeftRadius: 50,
+                      borderBottomRightRadius: 50,
+                      backgroundColor:
+                        !showAddFriends && item.uid === selectedFriend.uid
+                          ? "rgb(26, 112, 255)"
+                          : "rgb(68, 138, 255)",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
@@ -189,7 +200,16 @@ function Social(props) {
                     onPress={() => selectFriend(item)}
                   >
                     <View>
-                      <Text style={{ fontWeight: "bold", lineHeight: "14px" }}>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          lineHeight: 14,
+                          color:
+                            !showAddFriends && item.uid === selectedFriend.uid
+                              ? "white"
+                              : "#bdbdbd",
+                        }}
+                      >
                         {displayInitials(item)}
                       </Text>
                     </View>
@@ -240,8 +260,8 @@ function Social(props) {
                 renderItem={({ item }) => (
                   <View
                     style={{
-                      height: "50px",
-                      //   width: "50px",
+                      height: 50,
+                      //   width: 50,
                       //   borderRadius: "50%",
                       backgroundColor: "ff4336",
                       display: "flex",
@@ -266,7 +286,7 @@ function Social(props) {
                       <Text
                         style={{
                           fontWeight: "bold",
-                          lineHeight: "14px",
+                          lineHeight: 14,
                         }}
                       >
                         {item.firstName + " " + item.lastName}
@@ -306,7 +326,7 @@ function Social(props) {
                           borderTopRightRadius: 25,
                           borderBottomLeftRadius: 25,
                           borderBottomRightRadius: 25,
-                          background: "red",
+                          backgroundColor: "red",
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
@@ -320,7 +340,7 @@ function Social(props) {
                           <Text
                             style={{
                               fontWeight: "bold",
-                              lineHeight: "14px",
+                              lineHeight: 14,
                               color: "white",
                             }}
                           >
@@ -463,8 +483,8 @@ const styles = (props) =>
     },
   });
 
-// height: 40px;
-// width: 40px;
+// height: 40;
+// width: 40;
 // border-radius: 50%;
 // background: aqua;
 // display: flex;
