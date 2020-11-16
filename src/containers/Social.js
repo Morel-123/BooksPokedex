@@ -33,19 +33,18 @@ function Social(props) {
   //     2: { uid: "2", firstName: "אוראל", lastName: "זילברמן", collection: null },
   //   };
   const [showAddFriends, setShowAddFriends] = useState(false);
+  let friendsCollections = useSelector(
+    (state) => state.social.friendsCollections
+  );
   let selectedFriend = useSelector((state) => state.social.selectedFriend);
-  if (
-    !showAddFriends &&
-    !selectedFriend &&
-    friends &&
-    Object.keys(friends).length > 0
-  ) {
-    selectedFriend = friends[Object.keys(friends)[0]];
-  }
-  console.log("selectefriend");
-  console.log(selectedFriend);
+  const [selectedFriendState, setSelectedFriendState] = useState(
+    selectedFriend
+  );
 
-  let collection = selectedFriend ? selectedFriend.collection : null;
+  // let collection = selectedFriend ? selectedFriend.collection : null;
+  const [collection, setCollection] = useState(
+    selectedFriend ? selectedFriend.collection : null
+  );
   const [searchText, setSearchText] = useState("");
   const [inputChanged, setInputChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -56,6 +55,52 @@ function Social(props) {
   let stylesProps = { friendsLength: Object.keys(friends).length };
 
   useEffect(() => {
+    if (
+      !showAddFriends &&
+      !selectedFriend &&
+      friends &&
+      Object.keys(friends).length > 0
+    ) {
+      selectedFriend = friends[Object.keys(friends)[0]];
+    }
+    setSelectedFriendState(selectedFriend);
+    console.log("selectefriend");
+    console.log(selectedFriend);
+    console.log(showAddFriends);
+    console.log(Object.values(friends));
+    if (selectedFriend) {
+      setShowAddFriends(false);
+      if (friendsCollections[selectedFriend.uid]) {
+        setCollection(friendsCollections[selectedFriend.uid]);
+      } else {
+        setCollection(null);
+        setIsLoading(true);
+        database
+          .collection("users")
+          .doc(selectedFriend.uid)
+          .get()
+          .then((response) => {
+            console.log(response);
+            let friendCollection = response.data().collection;
+            dispatch(
+              socialActions.addFriendCollection(
+                selectedFriend.uid,
+                friendCollection
+              )
+            );
+            setCollection(friendCollection);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    } else {
+      setShowAddFriends(true);
+    }
+  }, [selectedFriend]);
+
+  useEffect(() => {
     setIsLoading(true);
     database
       .collection("users")
@@ -64,7 +109,11 @@ function Social(props) {
         console.log(response);
         let usersFromDB = [];
         response.docs.map((doc) => {
-          usersFromDB.push(doc.data());
+          usersFromDB.push({
+            uid: doc.data().uid,
+            firstName: doc.data().firstName,
+            lastName: doc.data().lastName,
+          });
         });
         setUsers(usersFromDB);
         setIsLoading(false);
@@ -93,7 +142,7 @@ function Social(props) {
   const selectFriend = (friend) => {
     console.log(friend);
     dispatch(socialActions.setCurrentFriend(friend));
-    setShowAddFriends(false);
+    // setShowAddFriends(false);
   };
 
   const onAddFriendsPressed = () => {
@@ -168,6 +217,7 @@ function Social(props) {
           <SafeAreaView style={styles(stylesProps).booksScrollView}>
             <FlatList
               data={Object.values(friends)}
+              extraData={selectedFriendState}
               renderItem={({ item }) => (
                 <View
                   style={{
@@ -188,7 +238,9 @@ function Social(props) {
                       borderBottomLeftRadius: 50,
                       borderBottomRightRadius: 50,
                       backgroundColor:
-                        !showAddFriends && item.uid === selectedFriend.uid
+                        !showAddFriends &&
+                        selectedFriendState &&
+                        item.uid == selectedFriendState.uid
                           ? "rgb(26, 112, 255)"
                           : "rgb(68, 138, 255)",
                       display: "flex",
@@ -205,7 +257,9 @@ function Social(props) {
                           fontWeight: "bold",
                           lineHeight: 14,
                           color:
-                            !showAddFriends && item.uid === selectedFriend.uid
+                            !showAddFriends &&
+                            selectedFriendState &&
+                            item.uid == selectedFriendState.uid
                               ? "white"
                               : "#bdbdbd",
                         }}
@@ -241,7 +295,7 @@ function Social(props) {
         )}
       </View>
 
-      {!selectedFriend || showAddFriends ? (
+      {!selectedFriendState || showAddFriends ? (
         // <Text style={{ marginLeft: 5 }}>Need to add search bar here</Text>
         <View style={{ flex: 1 }}>
           {isLoading ? (
@@ -364,7 +418,9 @@ function Social(props) {
           )}
         </View>
       ) : (
-        <View style={{ flex: 1, marginTop: 2, marginBottom: 5 }}>
+        <View
+          style={{ flex: 1, marginTop: 2, marginBottom: 5, direction: "ltr" }}
+        >
           <Text
             style={{
               marginLeft: 5,
@@ -373,9 +429,9 @@ function Social(props) {
               direction: "ltr",
             }}
           >
-            {selectedFriend
-              ? selectedFriend.firstName.substring(0, 1).toUpperCase() +
-                selectedFriend.firstName.substring(1) +
+            {selectedFriendState
+              ? selectedFriendState.firstName.substring(0, 1).toUpperCase() +
+                selectedFriendState.firstName.substring(1) +
                 "'s "
               : ""}
             Collection {collection ? Object.keys(collection).length : 0}
@@ -421,10 +477,18 @@ function Social(props) {
                 keyExtractor={(item) => item.bookID}
               />
             </SafeAreaView>
+          ) : isLoading ? (
+            <View style={styles(stylesProps).loadingContainer}>
+              <Text>Loading</Text>
+              <Spinner
+                size={Platform.OS === "android" ? 10 : "large"}
+                color={Platform.OS === "android" ? "#448aff" : undefined}
+              />
+            </View>
           ) : (
             <Text style={{ marginLeft: 5, direction: "ltr" }}>
-              {selectedFriend.firstName.substring(0, 1).toUpperCase() +
-                selectedFriend.firstName.substring(1) +
+              {selectedFriendState.firstName.substring(0, 1).toUpperCase() +
+                selectedFriendState.firstName.substring(1) +
                 " has no books in their collection."}
             </Text>
           )}
@@ -468,6 +532,7 @@ const styles = (props) =>
           : 0.684 * Dimensions.get("window").height,
       width: "100%",
       marginTop: 5,
+      marginBottom: 5,
       flex: 1,
       // marginBottom: 5
     },

@@ -315,7 +315,7 @@ function Book(props) {
             marginTop: 5,
             marginLeft: 9,
             width: "100%",
-            paddingRight: 8,
+            paddingRight: 18,
           }}
         >
           <Text style={{ fontSize: 20 }}>Description</Text>
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   extraInfoContainer: {
-    width: "97%",
+    width: "95%",
     height: "100%",
     backgroundColor: "#f44336",
     borderTopLeftRadius: 15,
@@ -388,6 +388,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     padding: 5,
     marginTop: 5,
+    marginRight: 5,
   },
   extraInfoDetailContainer: {
     display: "flex",

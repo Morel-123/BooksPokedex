@@ -1,7 +1,14 @@
-import { ADD_FRIEND, REMOVE_FRIEND, SET_CURRENT_FRIEND, SET_FRIENDS } from "../actions/Social";
+import {
+  ADD_FRIEND,
+  REMOVE_FRIEND,
+  SET_CURRENT_FRIEND,
+  SET_FRIENDS,
+  ADD_FRIEND_COLLECTION,
+} from "../actions/Social";
 
 const initialState = {
   friends: {},
+  friendsCollections: {},
   selectedFriend: null,
 };
 
@@ -31,6 +38,13 @@ export default (state = initialState, action) => {
       return {
         ...state,
         friends: action.friends,
+      };
+    case ADD_FRIEND_COLLECTION:
+      let newFriendsCollections = { ...state.friendsCollections };
+      newFriendsCollections[action.friendID] = action.friendCollection;
+      return {
+        ...state,
+        friendsCollections: newFriendsCollections,
       };
     default:
       return state;
