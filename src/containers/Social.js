@@ -421,21 +421,40 @@ function Social(props) {
         <View
           style={{ flex: 1, marginTop: 2, marginBottom: 5, direction: "ltr" }}
         >
-          <Text
-            style={{
-              marginLeft: 5,
-              fontSize: 20,
-              fontWeight: "bold",
-              direction: "ltr",
-            }}
-          >
-            {selectedFriendState
-              ? selectedFriendState.firstName.substring(0, 1).toUpperCase() +
-                selectedFriendState.firstName.substring(1) +
-                "'s "
-              : ""}
-            Collection {collection ? Object.keys(collection).length : 0}
-          </Text>
+          <View style={{ display: "flex", flexDirection: "row" }}>
+            <Text
+              style={{
+                marginLeft: 5,
+                fontSize: 20,
+                fontWeight: "bold",
+                direction: "ltr",
+              }}
+            >
+              {selectedFriendState
+                ? selectedFriendState.firstName.substring(0, 1).toUpperCase() +
+                  selectedFriendState.firstName.substring(1)
+                : ""}
+            </Text>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                direction: "ltr",
+              }}
+            >
+              {selectedFriendState ? "'s" : ""}
+            </Text>
+            <Text
+              style={{
+                marginLeft: 5,
+                fontSize: 20,
+                fontWeight: "bold",
+                direction: "ltr",
+              }}
+            >
+              Collection {collection ? Object.keys(collection).length : 0}
+            </Text>
+          </View>
           {collection && Object.keys(collection).length > 0 ? (
             <SafeAreaView style={styles(stylesProps).collectionContainer}>
               <FlatList
@@ -486,11 +505,15 @@ function Social(props) {
               />
             </View>
           ) : (
-            <Text style={{ marginLeft: 5, direction: "ltr" }}>
-              {selectedFriendState.firstName.substring(0, 1).toUpperCase() +
-                selectedFriendState.firstName.substring(1) +
-                " has no books in their collection."}
-            </Text>
+            <View style={{ display: "flex", flexDirection: "row" }}>
+              <Text style={{ marginLeft: 5, direction: "ltr" }}>
+                {selectedFriendState.firstName.substring(0, 1).toUpperCase() +
+                  selectedFriendState.firstName.substring(1)}
+              </Text>
+              <Text style={{ marginLeft: 5, direction: "ltr" }}>
+                has no books in their collection.
+              </Text>
+            </View>
           )}
         </View>
       )}
