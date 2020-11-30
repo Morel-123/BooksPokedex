@@ -1,7 +1,8 @@
-import { LOGIN, SIGNUP, LOGOUT } from "../actions/Auth";
+import { LOGIN, SIGNUP, LOGOUT, SET_EXPO_PUSH_TOKEN } from "../actions/Auth";
 
 const initialState = {
   user: null,
+  expoPushToken: null,
 };
 
 export default (state = initialState, action) => {
@@ -22,6 +23,11 @@ export default (state = initialState, action) => {
         ...state,
         user: null,
       };
+    case SET_EXPO_PUSH_TOKEN:
+      return {
+        ...state,
+        expoPushToken: action.token,
+      }
     default:
       return state;
   }

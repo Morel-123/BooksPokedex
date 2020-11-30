@@ -113,6 +113,7 @@ function Social(props) {
             uid: doc.data().uid,
             firstName: doc.data().firstName,
             lastName: doc.data().lastName,
+            expoPushToken: doc.data().expoPushToken,
           });
         });
         setUsers(usersFromDB);
@@ -146,6 +147,7 @@ function Social(props) {
   };
 
   const onAddFriendsPressed = () => {
+    dispatch(socialActions.setCurrentFriend(null));
     setShowAddFriends(true);
   };
 

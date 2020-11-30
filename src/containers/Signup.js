@@ -34,6 +34,7 @@ function Signup(props) {
             favoriteBooks: [],
             collection: [],
             friends: [],
+            expoPushToken: null,
           })
           .then(function () {
             dispatch({

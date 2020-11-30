@@ -75,6 +75,7 @@ function Login(props) {
                 favoriteBooks: [],
                 collection: [],
                 friends: [],
+                expoPushToken: null,
               })
               .then(function () {
                 let userObj = new User(
@@ -88,6 +89,7 @@ function Login(props) {
                 userObj.favoriteBooks = [];
                 userObj.collection = [];
                 userObj.friends = [];
+                userObj.expoPushToken = null;
                 dispatch({
                   type: authActions.SIGNUP,
                   user: userObj,

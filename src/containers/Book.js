@@ -94,18 +94,54 @@ function Book(props) {
               book: book,
             }),
       })
-      .then(function () {
+      .then(async function () {
+        let needToNotifyFriends = false;
         if (isInCollection) {
           dispatch(booksActions.removeFromCollection(book));
         } else {
           dispatch(booksActions.addToCollection(book));
+          needToNotifyFriends = true;
         }
         setIsInCollection((value) => !value);
+        if(needToNotifyFriends) {
+          await notifyFriendOnAddToCollection(book);
+        }
       })
       .catch(function (error) {
         console.log(error.message);
       });
   };
+
+  async function notifyFriendOnAddToCollection(book) {
+    let recipients = [];
+    console.log(user);
+    for (let i = 0; i < user.friends.length; i++) {
+      if (user.friends[i].friend.expoPushToken) {
+        recipients.push(user.friends[i].friend.expoPushToken);
+      }
+    }
+    console.log(recipients);
+    const message = {
+      to: recipients,
+      sound: "default",
+      title: `${user.firstName.substring(0, 1).toUpperCase() +
+                  user.firstName.substring(1)} just finished a book`,
+      body: `${book.title} was added to their collection!`,
+      data: { data: "goes here" },
+    };
+    console.log(message)
+    console.log(JSON.stringify(message));
+
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }
 
   const onBookLikePress = () => {
     setLiked((val) => !val);
@@ -319,7 +355,7 @@ function Book(props) {
           }}
         >
           <Text style={{ fontSize: 20 }}>Description</Text>
-          <View style={{ width: '98%', opacity: textReady ? 1 : 0 }}>
+          <View style={{ width: "98%", opacity: textReady ? 1 : 0 }}>
             <ReadMore
               numberOfLines={3}
               renderTruncatedFooter={renderTruncatedFooter}
