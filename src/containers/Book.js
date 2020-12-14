@@ -4,7 +4,6 @@ import {
   Text,
   ActivityIndicator,
   StyleSheet,
-  Button,
   Image,
   ScrollView,
   Dimensions,
@@ -18,7 +17,7 @@ import { TouchableRipple, Snackbar } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as booksActions from "../actions/Books";
 import { useHeaderHeight } from "@react-navigation/stack";
-import { Icon } from "react-native-elements";
+import { Icon, Button } from "react-native-elements";
 
 function Book(props) {
   const dispatch = useDispatch();
@@ -36,6 +35,9 @@ function Book(props) {
   const user = useSelector((state) => state.auth.user);
   const headerHeight = useHeaderHeight();
   const [visible, setVisible] = useState(false);
+  const [loadingCollectionRequest, setLoadingCollectionRequest] = useState(
+    false
+  );
 
   useEffect(() => {
     if (book && collection[book.id]) {
@@ -80,6 +82,8 @@ function Book(props) {
   };
 
   const onAddOrRemoveBookToCollection = () => {
+    console.log("clicked")
+    setLoadingCollectionRequest(true);
     database
       .collection("users")
       .doc(user.uid)
@@ -103,7 +107,8 @@ function Book(props) {
           needToNotifyFriends = true;
         }
         setIsInCollection((value) => !value);
-        if(needToNotifyFriends) {
+        setLoadingCollectionRequest(false);
+        if (needToNotifyFriends) {
           await notifyFriendOnAddToCollection(book);
         }
       })
@@ -124,12 +129,14 @@ function Book(props) {
     const message = {
       to: recipients,
       sound: "default",
-      title: `${user.firstName.substring(0, 1).toUpperCase() +
-                  user.firstName.substring(1)} just finished a book`,
+      title: `${
+        user.firstName.substring(0, 1).toUpperCase() +
+        user.firstName.substring(1)
+      } just finished a book`,
       body: `${book.title} was added to their collection!`,
       data: { data: "goes here" },
     };
-    console.log(message)
+    console.log(message);
     console.log(JSON.stringify(message));
 
     await fetch("https://exp.host/--/api/v2/push/send", {
@@ -369,12 +376,48 @@ function Book(props) {
         {isInCollection ? (
           <Button
             title="Remove From Collection"
+            titleStyle={{ paddingBottom: 0, paddingTop: 0 }}
             onPress={onAddOrRemoveBookToCollection}
+            buttonStyle={{
+              borderTopLeftRadius: 25,
+              borderTopRightRadius: 25,
+              borderBottomLeftRadius: 25,
+              borderBottomRightRadius: 25,
+              width: Dimensions.get("window").width * 0.6,
+              marginTop: 15,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            containerStyle={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            loading={loadingCollectionRequest}
           />
         ) : (
           <Button
             title="Add To Collection"
+            titleStyle={{ paddingBottom: 0, paddingTop: 0 }}
             onPress={onAddOrRemoveBookToCollection}
+            buttonStyle={{
+              borderTopLeftRadius: 25,
+              borderTopRightRadius: 25,
+              borderBottomLeftRadius: 25,
+              borderBottomRightRadius: 25,
+              width: Dimensions.get("window").width * 0.6,
+              marginTop: 15,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            containerStyle={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            loading={loadingCollectionRequest}
           />
         )}
         {/* <Button title="Go Back" onPress={handleBack} /> */}
@@ -456,6 +499,17 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 40,
     height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  collectionButton: {
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+    width: Dimensions.get("window").width * 0.6,
+    marginTop: 15,
+    display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
