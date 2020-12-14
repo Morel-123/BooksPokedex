@@ -18,6 +18,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as booksActions from "../actions/Books";
 import { useHeaderHeight } from "@react-navigation/stack";
 import { Icon, Button } from "react-native-elements";
+import Root from "../components/Root";
+import Popup from "../components/Popup";
 
 function Book(props) {
   const dispatch = useDispatch();
@@ -82,7 +84,7 @@ function Book(props) {
   };
 
   const onAddOrRemoveBookToCollection = () => {
-    console.log("clicked")
+    console.log("clicked");
     setLoadingCollectionRequest(true);
     database
       .collection("users")
@@ -100,14 +102,20 @@ function Book(props) {
       })
       .then(async function () {
         let needToNotifyFriends = false;
+        let message = "The book was added successfully";
         if (isInCollection) {
           dispatch(booksActions.removeFromCollection(book));
+          message = "The book was removed successfully";
         } else {
           dispatch(booksActions.addToCollection(book));
           needToNotifyFriends = true;
         }
-        setIsInCollection((value) => !value);
-        setLoadingCollectionRequest(false);
+        let callback = () => {
+          console.log("calling callback")
+          // setIsInCollection((value) => !value);
+          setLoadingCollectionRequest(false);
+        };
+        displySuccessPopup(message, callback);
         if (needToNotifyFriends) {
           await notifyFriendOnAddToCollection(book);
         }
@@ -183,254 +191,271 @@ function Book(props) {
 
   const onDismissSnackBar = () => setVisible(false);
 
+  const displySuccessPopup = (message, userCallback) => {
+    Popup.show({
+      type: "Success",
+      title: "Awesome",
+      button: true,
+      textBody: message,
+      buttonText: "Ok",
+      callback: () => {
+        Popup.hide();
+        userCallback();
+      },
+    });
+  };
+
   return (
-    // <ScrollView>
-    <View
-      style={{
-        ...styles.container,
-        height: Dimensions.get("window").height - headerHeight,
-      }}
-    >
-      <ScrollView
-        style={{ height: Dimensions.get("window").height - headerHeight }}
+    <Root>
+      <View
+        style={{
+          ...styles.container,
+          height: Dimensions.get("window").height - headerHeight,
+        }}
       >
-        <View style={{ display: "flex", flexDirection: "row", width: "100%" }}>
-          <View style={{ position: "relative", height: 220, width: 170 }}>
-            <Image
+        <ScrollView
+          style={{ height: Dimensions.get("window").height - headerHeight }}
+        >
+          <View
+            style={{ display: "flex", flexDirection: "row", width: "100%" }}
+          >
+            <View style={{ position: "relative", height: 220, width: 170 }}>
+              <Image
+                style={{
+                  height: 220,
+                  width: 150,
+                  marginLeft: 10,
+                  marginRight: 5,
+                }}
+                source={
+                  book.imageLinks
+                    ? {
+                        uri: book.imageLinks.thumbnail,
+                      }
+                    : require("../../assets/no_cover_thumb.png")
+                }
+                resizeMode="stretch"
+              />
+              <TouchableRipple
+                onPress={onBookLikePress}
+                rippleColor="rgba(0, 0, 0, .32)"
+                style={styles.likeButton}
+                borderless={true}
+                centered={true}
+              >
+                <View style={styles.iconContainer}>
+                  {liked ? (
+                    <Icon
+                      color="white"
+                      type="ionicon"
+                      name={Platform.OS === "ios" ? "ios-heart" : "md-heart"}
+                      iconStyle={{ width: 26, textAlign: "center" }}
+                    />
+                  ) : (
+                    <Icon
+                      color="white"
+                      type="ionicon"
+                      name={
+                        Platform.OS === "ios"
+                          ? "ios-heart-empty"
+                          : "md-heart-empty"
+                      }
+                      iconStyle={{ width: 26, textAlign: "center" }}
+                    />
+                  )}
+                </View>
+              </TouchableRipple>
+            </View>
+            <View
               style={{
-                height: 220,
-                width: 150,
-                marginLeft: 10,
+                display: "flex",
+                width: Dimensions.get("window").width - 175,
                 marginRight: 5,
               }}
-              source={
-                book.imageLinks
-                  ? {
-                      uri: book.imageLinks.thumbnail,
-                    }
-                  : require("../../assets/no_cover_thumb.png")
-              }
-              resizeMode="stretch"
-            />
-            <TouchableRipple
-              onPress={onBookLikePress}
-              rippleColor="rgba(0, 0, 0, .32)"
-              style={styles.likeButton}
-              borderless={true}
-              centered={true}
             >
-              <View style={styles.iconContainer}>
-                {liked ? (
-                  <Icon
-                    color="white"
-                    type="ionicon"
-                    name={Platform.OS === "ios" ? "ios-heart" : "md-heart"}
-                    iconStyle={{ width: 26, textAlign: "center" }}
-                  />
-                ) : (
-                  <Icon
-                    color="white"
-                    type="ionicon"
-                    name={
-                      Platform.OS === "ios"
-                        ? "ios-heart-empty"
-                        : "md-heart-empty"
-                    }
-                    iconStyle={{ width: 26, textAlign: "center" }}
-                  />
-                )}
-              </View>
-            </TouchableRipple>
-          </View>
-          <View
-            style={{
-              display: "flex",
-              width: Dimensions.get("window").width - 175,
-              marginRight: 5,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 24,
-                textAlign: "center",
-                color: "#212121",
-                fontWeight: "bold",
-              }}
-            >
-              {book.title}
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                textAlign: "center",
-                color: "#757575",
-                marginTop: 5,
-              }}
-            >
-              {book.authors ? book.authors[0] : "Not Specified"}
-            </Text>
-            {isInCollection ? (
-              <View
+              <Text
                 style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: 40,
-                  width: 40,
-                  alignSelf: "center",
-                  borderTopLeftRadius: 50,
-                  borderTopRightRadius: 50,
-                  borderBottomLeftRadius: 50,
-                  borderBottomRightRadius: 50,
-                  backgroundColor: "#4BCA81",
+                  fontSize: 24,
+                  textAlign: "center",
+                  color: "#212121",
+                  fontWeight: "bold",
+                }}
+              >
+                {book.title}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  textAlign: "center",
+                  color: "#757575",
                   marginTop: 5,
                 }}
               >
-                <MaterialCommunityIcons name="book" color="white" size={20} />
+                {book.authors ? book.authors[0] : "Not Specified"}
+              </Text>
+              {isInCollection ? (
+                <View
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: 40,
+                    width: 40,
+                    alignSelf: "center",
+                    borderTopLeftRadius: 50,
+                    borderTopRightRadius: 50,
+                    borderBottomLeftRadius: 50,
+                    borderBottomRightRadius: 50,
+                    backgroundColor: "#4BCA81",
+                    marginTop: 5,
+                  }}
+                >
+                  <MaterialCommunityIcons name="book" color="white" size={20} />
+                </View>
+              ) : (
+                false
+              )}
+            </View>
+          </View>
+          <View style={styles.extraInfoWrapper}>
+            <View style={styles.extraInfoContainer}>
+              <View style={styles.extraInfoDetailContainer}>
+                <Text
+                  style={[
+                    styles.extraInfoDetailText,
+                    styles.extraInfoDetailTitle,
+                  ]}
+                >
+                  Genre
+                </Text>
+                <Text
+                  style={[
+                    styles.extraInfoDetailText,
+                    styles.extraInfoDetailValue,
+                  ]}
+                >
+                  {book.categories
+                    ? book.categories[0].split(" ")[0]
+                    : "Not Specified"}
+                </Text>
               </View>
-            ) : (
-              false
-            )}
-          </View>
-        </View>
-        <View style={styles.extraInfoWrapper}>
-          <View style={styles.extraInfoContainer}>
-            <View style={styles.extraInfoDetailContainer}>
-              <Text
-                style={[
-                  styles.extraInfoDetailText,
-                  styles.extraInfoDetailTitle,
-                ]}
-              >
-                Genre
-              </Text>
-              <Text
-                style={[
-                  styles.extraInfoDetailText,
-                  styles.extraInfoDetailValue,
-                ]}
-              >
-                {book.categories
-                  ? book.categories[0].split(" ")[0]
-                  : "Not Specified"}
-              </Text>
-            </View>
-            <View style={styles.extraInfoDetailContainer}>
-              <Text
-                style={[
-                  styles.extraInfoDetailText,
-                  styles.extraInfoDetailTitle,
-                ]}
-              >
-                Pages
-              </Text>
-              <Text
-                style={[
-                  styles.extraInfoDetailText,
-                  styles.extraInfoDetailValue,
-                ]}
-              >
-                {book.pageCount ? book.pageCount : "N/A"}
-              </Text>
-            </View>
-            <View style={styles.extraInfoDetailContainer}>
-              <Text
-                style={[
-                  styles.extraInfoDetailText,
-                  styles.extraInfoDetailTitle,
-                ]}
-              >
-                Released
-              </Text>
-              <Text
-                style={[
-                  styles.extraInfoDetailText,
-                  styles.extraInfoDetailValue,
-                ]}
-              >
-                {book.publishedDate.substring(0, 4)}
-              </Text>
+              <View style={styles.extraInfoDetailContainer}>
+                <Text
+                  style={[
+                    styles.extraInfoDetailText,
+                    styles.extraInfoDetailTitle,
+                  ]}
+                >
+                  Pages
+                </Text>
+                <Text
+                  style={[
+                    styles.extraInfoDetailText,
+                    styles.extraInfoDetailValue,
+                  ]}
+                >
+                  {book.pageCount ? book.pageCount : "N/A"}
+                </Text>
+              </View>
+              <View style={styles.extraInfoDetailContainer}>
+                <Text
+                  style={[
+                    styles.extraInfoDetailText,
+                    styles.extraInfoDetailTitle,
+                  ]}
+                >
+                  Released
+                </Text>
+                <Text
+                  style={[
+                    styles.extraInfoDetailText,
+                    styles.extraInfoDetailValue,
+                  ]}
+                >
+                  {book.publishedDate.substring(0, 4)}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
-        <View
-          style={{
-            marginTop: 5,
-            marginLeft: 9,
-            width: "100%",
-            paddingRight: 18,
-          }}
+          <View
+            style={{
+              marginTop: 5,
+              marginLeft: 9,
+              width: "100%",
+              paddingRight: 18,
+            }}
+          >
+            <Text style={{ fontSize: 20 }}>Description</Text>
+            <View style={{ width: "98%", opacity: textReady ? 1 : 0 }}>
+              <ReadMore
+                numberOfLines={3}
+                renderTruncatedFooter={renderTruncatedFooter}
+                renderRevealedFooter={renderRevealedFooter}
+                onReady={() => setTextReady(true)}
+              >
+                <Text style={{ fontSize: 16 }}>{book.description}</Text>
+              </ReadMore>
+            </View>
+          </View>
+          {isInCollection ? (
+            <Button
+              title="Remove From Collection"
+              titleStyle={{ paddingBottom: 0, paddingTop: 0 }}
+              onPress={onAddOrRemoveBookToCollection}
+              buttonStyle={{
+                borderTopLeftRadius: 25,
+                borderTopRightRadius: 25,
+                borderBottomLeftRadius: 25,
+                borderBottomRightRadius: 25,
+                width: Dimensions.get("window").width * 0.6,
+                marginTop: 15,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              containerStyle={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              loading={loadingCollectionRequest}
+            />
+          ) : (
+            <Button
+              title="Add To Collection"
+              titleStyle={{ paddingBottom: 0, paddingTop: 0 }}
+              onPress={onAddOrRemoveBookToCollection}
+              buttonStyle={{
+                borderTopLeftRadius: 25,
+                borderTopRightRadius: 25,
+                borderBottomLeftRadius: 25,
+                borderBottomRightRadius: 25,
+                width: Dimensions.get("window").width * 0.6,
+                marginTop: 15,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              containerStyle={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              loading={loadingCollectionRequest}
+            />
+          )}
+          {/* <Button title="Go Back" onPress={handleBack} /> */}
+        </ScrollView>
+        <Snackbar
+          visible={visible}
+          onDismiss={onDismissSnackBar}
+          duration={1500}
+          style={{ backgroundColor: "#448aff" }}
         >
-          <Text style={{ fontSize: 20 }}>Description</Text>
-          <View style={{ width: "98%", opacity: textReady ? 1 : 0 }}>
-            <ReadMore
-              numberOfLines={3}
-              renderTruncatedFooter={renderTruncatedFooter}
-              renderRevealedFooter={renderRevealedFooter}
-              onReady={() => setTextReady(true)}
-            >
-              <Text style={{ fontSize: 16 }}>{book.description}</Text>
-            </ReadMore>
-          </View>
-        </View>
-        {isInCollection ? (
-          <Button
-            title="Remove From Collection"
-            titleStyle={{ paddingBottom: 0, paddingTop: 0 }}
-            onPress={onAddOrRemoveBookToCollection}
-            buttonStyle={{
-              borderTopLeftRadius: 25,
-              borderTopRightRadius: 25,
-              borderBottomLeftRadius: 25,
-              borderBottomRightRadius: 25,
-              width: Dimensions.get("window").width * 0.6,
-              marginTop: 15,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            containerStyle={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            loading={loadingCollectionRequest}
-          />
-        ) : (
-          <Button
-            title="Add To Collection"
-            titleStyle={{ paddingBottom: 0, paddingTop: 0 }}
-            onPress={onAddOrRemoveBookToCollection}
-            buttonStyle={{
-              borderTopLeftRadius: 25,
-              borderTopRightRadius: 25,
-              borderBottomLeftRadius: 25,
-              borderBottomRightRadius: 25,
-              width: Dimensions.get("window").width * 0.6,
-              marginTop: 15,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            containerStyle={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            loading={loadingCollectionRequest}
-          />
-        )}
-        {/* <Button title="Go Back" onPress={handleBack} /> */}
-      </ScrollView>
-      <Snackbar
-        visible={visible}
-        onDismiss={onDismissSnackBar}
-        duration={1500}
-        style={{ backgroundColor: "#448aff" }}
-      >
-        {liked ? "Added to Favorites" : "Removed from Favorites"}
-      </Snackbar>
-    </View>
+          {liked ? "Added to Favorites" : "Removed from Favorites"}
+        </Snackbar>
+      </View>
+    </Root>
     // </ScrollView>
   );
 }
