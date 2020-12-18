@@ -111,7 +111,7 @@ function Book(props) {
           needToNotifyFriends = true;
         }
         let callback = () => {
-          console.log("calling callback")
+          console.log("calling callback");
           // setIsInCollection((value) => !value);
           setLoadingCollectionRequest(false);
         };
@@ -372,7 +372,9 @@ function Book(props) {
                     styles.extraInfoDetailValue,
                   ]}
                 >
-                  {book.publishedDate.substring(0, 4)}
+                  {book.publishedDate.length > 0
+                    ? book.publishedDate.substring(0, 4)
+                    : "N/A"}
                 </Text>
               </View>
             </View>
@@ -393,7 +395,11 @@ function Book(props) {
                 renderRevealedFooter={renderRevealedFooter}
                 onReady={() => setTextReady(true)}
               >
-                <Text style={{ fontSize: 16 }}>{book.description}</Text>
+                <Text style={{ fontSize: 16 }}>
+                  {book.description.length > 0
+                    ? book.description
+                    : "No description at the moment."}
+                </Text>
               </ReadMore>
             </View>
           </View>

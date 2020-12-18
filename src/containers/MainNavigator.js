@@ -15,6 +15,7 @@ import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import * as authActions from "../actions/Auth";
+import NewBookForm from "../components/NewBookForm";
 
 const Stack = createStackNavigator();
 
@@ -106,6 +107,7 @@ function MainNavigator(props) {
           })}
         />
         <Stack.Screen name="Book Info" component={Book} />
+        <Stack.Screen name="Add Book" component={NewBookForm} />
       </Stack.Navigator>
     </NavigationContainer>
   );
