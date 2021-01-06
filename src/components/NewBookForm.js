@@ -37,6 +37,31 @@ function NewBookForm(props) {
   const database = firebase.firestore();
   const dispatch = useDispatch();
 
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+  const btoa = (input) => {
+    let str = input;
+    let output = "";
+
+    for (
+      let block = 0, charCode, i = 0, map = chars;
+      str.charAt(i | 0) || ((map = "="), i % 1);
+      output += map.charAt(63 & (block >> (8 - (i % 1) * 8)))
+    ) {
+      charCode = str.charCodeAt((i += 3 / 4));
+
+      if (charCode > 0xff) {
+        throw new Error(
+          "'btoa' failed: The string to be encoded contains characters outside of the Latin1 range."
+        );
+      }
+
+      block = (block << 8) | charCode;
+    }
+
+    return output;
+  };
+
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
@@ -57,17 +82,77 @@ function NewBookForm(props) {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
-
+    // console.log(fileType);
     if (!result.cancelled) {
       setImage(result.uri);
     }
   };
 
-  const uploadImageToFirebase = () => {
+  const uploadImageToFirebase = async () => {
     console.log("uploading image");
+    // console.log(image)
     setLoading(true);
+    if (Platform.OS == "android") {
+      console.log("android");
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          console.log(e);
+          reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", image, true);
+        xhr.send(null);
+      });
+      firebase
+        .storage()
+        .ref(bookName)
+        .put(blob)
+        .then((snapshot) => {
+          blob.close();
+          let imageRef = firebase.storage().ref("/" + bookName);
+          imageRef
+            .getDownloadURL()
+            .then((url) => {
+              let userBook = {};
+              userBook["authors"] = [authorName];
+              userBook["categories"] = null;
+              userBook["description"] = description;
+              userBook["pageCount"] = pageCount;
+              userBook["title"] = bookName;
+              userBook["imageLinks"] = { thumbnail: url };
+              userBook["publishedDate"] = "";
+              userBook["id"] = bookName;
+              database
+                .collection("books")
+                .doc(bookName)
+                .set(userBook)
+                .then(() => {
+                  console.log("added new book");
+                  dispatch(booksActions.setCurrentBook(userBook));
+                  setLoading(false);
+                  props.navigation.pop();
+                  props.navigation.navigate("Book Info");
+                })
+                .catch((e) => {
+                  console.log("unable to add new book1");
+                  setLoading(false);
+                });
+            })
+            .catch((e) => {
+              console.log("unable to add new book1");
+              setLoading(false);
+            });
+        })
+        .catch((e) => {
+          console.log("unable to add new book1");
+          setLoading(false);
+        });
+      return;
+    }
     firebase
       .storage()
       .ref(bookName)
@@ -114,19 +199,15 @@ function NewBookForm(props) {
   };
 
   const handleSubmitPressed = async (data) => {
-    setSubmitPressed(true);
     if (!image) {
       return;
     }
     const bookRef = database.collection("books").doc(bookName);
     const result = await bookRef.get();
-    console.log(result);
-    console.log(bookName);
     if (result.exists) {
       onToggleSnackBar();
       return;
     }
-    console.log(data);
     uploadImageToFirebase();
   };
 
@@ -324,7 +405,10 @@ function NewBookForm(props) {
           //   console.log(errors);
           //   handleSubmit(handleSubmitPressed);
           // }}
-          onPress={handleSubmit(handleSubmitPressed)}
+          onPress={() => {
+            setSubmitPressed(true);
+            handleSubmit(handleSubmitPressed)();
+          }}
         >
           <Text style={styles.registerButtonText}>Add Book</Text>
         </TouchableOpacity>
@@ -464,18 +548,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     marginBottom: 5,
-    borderTopColor: "red",
-    borderTopStyle: "solid",
+    borderColor: "red",
+    borderStyle: "solid",
     borderTopWidth: 2,
-    borderRightColor: "red",
-    borderRightStyle: "solid",
-    borderRightWidth: 2,
-    borderBottomColor: "red",
-    borderBottomStyle: "solid",
     borderBottomWidth: 2,
-    borderLeftColor: "red",
-    borderLeftStyle: "solid",
     borderLeftWidth: 2,
+    borderRightWidth: 2,
   },
   textArea: {
     alignSelf: "stretch",

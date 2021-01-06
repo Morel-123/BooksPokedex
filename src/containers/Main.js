@@ -27,6 +27,7 @@ import { SearchBar } from "react-native-elements";
 import { useDebounce } from "use-debounce";
 import Category from "../components/Category";
 import Spinner from "../components/Spinner";
+import { TabView, SceneMap } from "react-native-tab-view";
 
 const Stack = createStackNavigator();
 
@@ -80,6 +81,14 @@ function Main(props) {
 
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
   const [keyboardDidHideListener, setKeyboardDidHideListener] = useState(null);
+
+  const [userBooks, setUserBooks] = useState(null);
+  const [isLoadingUserBooks, setIsLoadingUserBooks] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: "google", title: "Google's Books" },
+    { key: "user", title: "User's Books" },
+  ]);
 
   if (firstTime) {
     setFirstTime(false);
@@ -147,6 +156,8 @@ function Main(props) {
       }
     } else {
       if (searchText === debouncedSearchText[0] && inputChanged) {
+        setIndex(0);
+        setUserBooks(null);
         setIsLoading(true);
         setInputChanged(false);
         let language = "en";
@@ -180,6 +191,35 @@ function Main(props) {
     };
   }, [debouncedSearchText[0], selectedCategoryID]);
 
+  useEffect(() => {
+    //if we are on the user's book's tab
+    if (index == 1 && debouncedSearchText[0] != "" && userBooks == null) {
+      setIsLoadingUserBooks(true);
+      database
+        .collection("books")
+        .get()
+        .then((res) => {
+          let matchingBooks = [];
+          res.docs.map((doc) => {
+            console.log(doc.data());
+            if (
+              doc
+                .data()
+                .title.toLowerCase()
+                .indexOf(debouncedSearchText[0].toLowerCase()) !== -1
+            ) {
+              matchingBooks.push(doc.data());
+            }
+          });
+          setUserBooks(matchingBooks);
+          setIsLoadingUserBooks(false);
+        })
+        .catch(function (error) {
+          console.log(error.message);
+        });
+    }
+  }, [index]);
+
   const containsHebrew = (str) => {
     return /[\u0590-\u05FF]/.test(str);
   };
@@ -200,187 +240,408 @@ function Main(props) {
     props.navigation.navigate("Book Info");
   };
 
+  const onAddBookPress = () => {
+    props.navigation.navigate("Add Book");
+  };
+
   const onCategoryPress = (id) => {
     setPreviousSelectedCategoryID(selectedCategoryID);
     setSelectedCategoryID(id);
     setBooks(allCategoriesBooks[id]);
   };
 
+  const RenderGoogleBooksResult = (props) => {
+    return (
+      <SafeAreaView
+        style={[
+          props.inTabView
+            ? styles.innerBooksScrollViewExpanded
+            : debouncedSearchText[0] == ""
+            ? styles.booksScrollView
+            : styles.booksScrollViewExpanded,
+        ]}
+      >
+        <FlatList
+          data={books}
+          getItemLayout={(data, index) => ({
+            length: 215,
+            offset: index % 2 == 0 ? 215 * index : 215 * (index - 1),
+            index,
+          })}
+          initialScrollIndex={scrollIndex}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              key={item.id}
+              style={{ marginLeft: 5, marginBottom: 5 }}
+              onPress={() => onBookPress(item)}
+            >
+              <View>
+                <Image
+                  style={{ height: 200, width: 150 }}
+                  source={
+                    item.imageLinks
+                      ? {
+                          uri: item.imageLinks.thumbnail,
+                        }
+                      : require("../../assets/no_cover_thumb.png")
+                  }
+                  resizeMode="stretch"
+                />
+              </View>
+            </TouchableOpacity>
+          )}
+          numColumns={2}
+          columnWrapperStyle={{
+            display: "flex",
+            justifyContent: "space-evenly",
+            marginBottom: 10,
+          }}
+          keyExtractor={(item) => item.id}
+          onEndReached={(dis) => {
+            if (dis.distanceFromEnd < 0) {
+              return;
+            }
+            if (debouncedSearchText[0] == "") {
+              setIsLoading(true);
+              fetch(
+                `https://www.googleapis.com/books/v1/volumes?q=subject:${allCategoriesNames[selectedCategoryID]}&maxResults=20&startIndex=${allCategoriesBooks[selectedCategoryID].length}&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
+                {
+                  method: "GET",
+                }
+              )
+                .then((response) => response.json())
+                .then((responseJson) => {
+                  let googleBooks = [];
+                  if (responseJson) {
+                    responseJson.items.forEach((book) => {
+                      googleBooks.push({ ...book.volumeInfo, id: book.id });
+                    });
+                    setAllCategoriesBooks((books) => {
+                      let updatedBooks = [...books];
+                      updatedBooks[selectedCategoryID] = [
+                        ...updatedBooks[selectedCategoryID],
+                        ...googleBooks,
+                      ];
+                      return updatedBooks;
+                    });
+                    dispatch(
+                      allCategoriesStoreFunctions[selectedCategoryID]([
+                        ...allCategoriesBooks[selectedCategoryID],
+                        ...googleBooks,
+                      ])
+                    );
+                    // setBooks([
+                    //   ...allCategoriesBooks[selectedCategoryID],
+                    //   ...googleBooks,
+                    // ]);
+                    setBooks((data) => {
+                      return [...data, ...googleBooks];
+                    });
+                    setNeedToUpdateScroll(true);
+                  }
+                  setIsLoading(false);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            }
+            // else {
+            //   setBooks((data) => {
+            //     return [...data, ...data.slice(0, 10)];
+            //   });
+            // }
+          }}
+          onEndReachedThreshold={0.1}
+        />
+      </SafeAreaView>
+    );
+  };
+
+  const renderScene = ({ route }) => {
+    switch (route.key) {
+      case "google":
+        // RenderGoogleBooksResult();
+        return <RenderGoogleBooksResult inTabView={true} />;
+      case "user":
+        return isLoadingUserBooks ? (
+          <View style={styles.loadingContainerExpanded}>
+            <Text>Loading</Text>
+            <Spinner
+              size={Platform.OS === "android" ? 10 : "large"}
+              color={Platform.OS === "android" ? "#448aff" : undefined}
+            />
+          </View>
+        ) : !userBooks || userBooks.length == 0 ? (
+          <View style={{ marginLeft: 5 }}>
+            <Text>No matching results</Text>
+          </View>
+        ) : (
+          <SafeAreaView style={styles.booksScrollViewExpanded}>
+            <FlatList
+              data={userBooks}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={{ marginLeft: 5, marginBottom: 5 }}
+                  onPress={() => onBookPress(item)}
+                >
+                  <View>
+                    <Image
+                      style={{ height: 200, width: 150 }}
+                      source={
+                        item.imageLinks
+                          ? {
+                              uri: item.imageLinks.thumbnail,
+                            }
+                          : require("../../assets/no_cover_thumb.png")
+                      }
+                      resizeMode="stretch"
+                    />
+                  </View>
+                </TouchableOpacity>
+              )}
+              numColumns={2}
+              columnWrapperStyle={{
+                display: "flex",
+                justifyContent: "space-evenly",
+                marginBottom: 10,
+              }}
+              keyExtractor={(item) => item.id}
+              onEndReachedThreshold={0.1}
+            />
+          </SafeAreaView>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <SearchBar
-        ref={(search) => {
-          setSearch(search);
-        }}
-        platform="android"
-        containerStyle={{
-          height: 60,
-          // height: "12%",
-          // height: Dimensions.get("window").height * 0.1,
-          width: "85%",
-          // position: "absolute",
-          backgroundColor: "#cbcbcb",
-          top: 0,
-          zIndex: 100,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          borderTopLeftRadius: 25,
-          borderTopRightRadius: 25,
-          borderBottomLeftRadius: 25,
-          borderBottomRightRadius: 25,
-        }}
-        placeholder="Type Here..."
-        onChangeText={(search) => {
-          setInputChanged(true);
-          setSearchText(search);
-        }}
-        onClear={() => setIsLoading(true)}
-        value={searchText}
-      />
       <View
         style={{
-          // position: "absolute",
-          top: 0,
-          height: 100,
-          width: "100%",
-          // zIndex: 200,
           display: "flex",
           flexDirection: "row",
-          justifyContent: "space-around",
-          alignItems: "center",
+          justifyContent: "space-between",
+          width: "90%",
         }}
       >
-        <Category
-          height={80}
-          width={104}
-          iconImage={require("../../assets/money.png")}
-          name="Business"
-          id={0}
-          onPress={onCategoryPress}
-          selected={(id) => selectedCategoryID === id}
-        ></Category>
-        <Category
-          height={80}
-          width={104}
-          iconImage={require("../../assets/help.png")}
-          name="Self Help"
-          id={1}
-          onPress={onCategoryPress}
-          selected={(id) => selectedCategoryID === id}
-        ></Category>
-        <Category
-          height={80}
-          width={104}
-          iconImage={require("../../assets/fantasy.png")}
-          name="Fantasy"
-          id={2}
-          onPress={onCategoryPress}
-          selected={(id) => selectedCategoryID === id}
-        ></Category>
+        <SearchBar
+          ref={(search) => {
+            setSearch(search);
+          }}
+          platform="android"
+          containerStyle={{
+            height: 60,
+            // height: "12%",
+            // height: Dimensions.get("window").height * 0.1,
+            width: "88%",
+            // position: "absolute",
+            backgroundColor: "#cbcbcb",
+            top: 0,
+            zIndex: 100,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderTopLeftRadius: 25,
+            borderTopRightRadius: 25,
+            borderBottomLeftRadius: 25,
+            borderBottomRightRadius: 25,
+          }}
+          placeholder="Type Here..."
+          onChangeText={(search) => {
+            setInputChanged(true);
+            setSearchText(search);
+          }}
+          onClear={() => setIsLoading(true)}
+          value={searchText}
+        />
+        <TouchableRipple
+          onPress={onAddBookPress}
+          rippleColor="rgba(0, 0, 0, .32)"
+          style={styles.addButton}
+          borderless={true}
+          centered={true}
+        >
+          <View style={styles.iconContainer}>
+            <Icon
+              color="white"
+              type="ionicon"
+              name={Platform.OS === "ios" ? "ios-add" : "md-add"}
+              iconStyle={{ width: 26, textAlign: "center" }}
+            />
+          </View>
+        </TouchableRipple>
       </View>
+      {debouncedSearchText[0] == "" ? (
+        <View
+          style={{
+            // position: "absolute",
+            top: 0,
+            height: 100,
+            width: "100%",
+            // zIndex: 200,
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
+          }}
+        >
+          <Category
+            height={80}
+            width={104}
+            iconImage={require("../../assets/money.png")}
+            name="Business"
+            id={0}
+            onPress={onCategoryPress}
+            selected={(id) => selectedCategoryID === id}
+          ></Category>
+          <Category
+            height={80}
+            width={104}
+            iconImage={require("../../assets/help.png")}
+            name="Self Help"
+            id={1}
+            onPress={onCategoryPress}
+            selected={(id) => selectedCategoryID === id}
+          ></Category>
+          <Category
+            height={80}
+            width={104}
+            iconImage={require("../../assets/fantasy.png")}
+            name="Fantasy"
+            id={2}
+            onPress={onCategoryPress}
+            selected={(id) => selectedCategoryID === id}
+          ></Category>
+        </View>
+      ) : (
+        false
+      )}
       {isLoading ? (
-        <View style={styles.loadingContainer}>
+        <View
+          style={[
+            debouncedSearchText[0] == ""
+              ? styles.loadingContainer
+              : styles.loadingContainerExpanded,
+          ]}
+        >
           <Text>Loading</Text>
           <Spinner
             size={Platform.OS === "android" ? 10 : "large"}
             color={Platform.OS === "android" ? "#448aff" : undefined}
           />
         </View>
+      ) : debouncedSearchText[0] == "" ? (
+        <RenderGoogleBooksResult />
       ) : (
-        <SafeAreaView style={styles.booksScrollView}>
-          <FlatList
-            data={books}
-            getItemLayout={(data, index) => ({
-              length: 215,
-              offset: index % 2 == 0 ? 215 * index : 215 * (index - 1),
-              index,
-            })}
-            initialScrollIndex={scrollIndex}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                key={item.id}
-                style={{ marginLeft: 5, marginBottom: 5 }}
-                onPress={() => onBookPress(item)}
-              >
-                <View>
-                  <Image
-                    style={{ height: 200, width: 150 }}
-                    source={
-                      item.imageLinks
-                        ? {
-                            uri: item.imageLinks.thumbnail,
-                          }
-                        : require("../../assets/no_cover_thumb.png")
-                    }
-                    resizeMode="stretch"
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-            numColumns={2}
-            columnWrapperStyle={{
-              display: "flex",
-              justifyContent: "space-evenly",
-              marginBottom: 10,
-            }}
-            keyExtractor={(item) => item.id}
-            onEndReached={(dis) => {
-              if (dis.distanceFromEnd < 0) {
-                return;
-              }
-              if (debouncedSearchText[0] == "") {
-                setIsLoading(true);
-                fetch(
-                  `https://www.googleapis.com/books/v1/volumes?q=subject:${allCategoriesNames[selectedCategoryID]}&maxResults=20&startIndex=${allCategoriesBooks[selectedCategoryID].length}&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
-                  {
-                    method: "GET",
-                  }
-                )
-                  .then((response) => response.json())
-                  .then((responseJson) => {
-                    let googleBooks = [];
-                    if (responseJson) {
-                      responseJson.items.forEach((book) => {
-                        googleBooks.push({ ...book.volumeInfo, id: book.id });
-                      });
-                      setAllCategoriesBooks((books) => {
-                        let updatedBooks = [...books];
-                        updatedBooks[selectedCategoryID] = [
-                          ...updatedBooks[selectedCategoryID],
-                          ...googleBooks,
-                        ];
-                        return updatedBooks;
-                      });
-                      dispatch(
-                        allCategoriesStoreFunctions[selectedCategoryID]([
-                          ...allCategoriesBooks[selectedCategoryID],
-                          ...googleBooks,
-                        ])
-                      );
-                      // setBooks([
-                      //   ...allCategoriesBooks[selectedCategoryID],
-                      //   ...googleBooks,
-                      // ]);
-                      setBooks((data) => {
-                        return [...data, ...googleBooks];
-                      });
-                      setNeedToUpdateScroll(true);
-                    }
-                    setIsLoading(false);
-                  })
-                  .catch((error) => {
-                    console.error(error);
-                  });
-              } else {
-                setBooks((data) => {
-                  return [...data, ...data.slice(0, 10)];
-                });
-              }
-            }}
-            onEndReachedThreshold={0.1}
+        // <SafeAreaView
+        //   style={[
+        //     debouncedSearchText[0] == ""
+        //       ? styles.booksScrollView
+        //       : styles.booksScrollViewExpanded,
+        //   ]}
+        // >
+        //   <FlatList
+        //     data={books}
+        //     getItemLayout={(data, index) => ({
+        //       length: 215,
+        //       offset: index % 2 == 0 ? 215 * index : 215 * (index - 1),
+        //       index,
+        //     })}
+        //     initialScrollIndex={scrollIndex}
+        //     renderItem={({ item }) => (
+        //       <TouchableOpacity
+        //         key={item.id}
+        //         style={{ marginLeft: 5, marginBottom: 5 }}
+        //         onPress={() => onBookPress(item)}
+        //       >
+        //         <View>
+        //           <Image
+        //             style={{ height: 200, width: 150 }}
+        //             source={
+        //               item.imageLinks
+        //                 ? {
+        //                     uri: item.imageLinks.thumbnail,
+        //                   }
+        //                 : require("../../assets/no_cover_thumb.png")
+        //             }
+        //             resizeMode="stretch"
+        //           />
+        //         </View>
+        //       </TouchableOpacity>
+        //     )}
+        //     numColumns={2}
+        //     columnWrapperStyle={{
+        //       display: "flex",
+        //       justifyContent: "space-evenly",
+        //       marginBottom: 10,
+        //     }}
+        //     keyExtractor={(item) => item.id}
+        //     onEndReached={(dis) => {
+        //       if (dis.distanceFromEnd < 0) {
+        //         return;
+        //       }
+        //       if (debouncedSearchText[0] == "") {
+        //         setIsLoading(true);
+        //         fetch(
+        //           `https://www.googleapis.com/books/v1/volumes?q=subject:${allCategoriesNames[selectedCategoryID]}&maxResults=20&startIndex=${allCategoriesBooks[selectedCategoryID].length}&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
+        //           {
+        //             method: "GET",
+        //           }
+        //         )
+        //           .then((response) => response.json())
+        //           .then((responseJson) => {
+        //             let googleBooks = [];
+        //             if (responseJson) {
+        //               responseJson.items.forEach((book) => {
+        //                 googleBooks.push({ ...book.volumeInfo, id: book.id });
+        //               });
+        //               setAllCategoriesBooks((books) => {
+        //                 let updatedBooks = [...books];
+        //                 updatedBooks[selectedCategoryID] = [
+        //                   ...updatedBooks[selectedCategoryID],
+        //                   ...googleBooks,
+        //                 ];
+        //                 return updatedBooks;
+        //               });
+        //               dispatch(
+        //                 allCategoriesStoreFunctions[selectedCategoryID]([
+        //                   ...allCategoriesBooks[selectedCategoryID],
+        //                   ...googleBooks,
+        //                 ])
+        //               );
+        //               // setBooks([
+        //               //   ...allCategoriesBooks[selectedCategoryID],
+        //               //   ...googleBooks,
+        //               // ]);
+        //               setBooks((data) => {
+        //                 return [...data, ...googleBooks];
+        //               });
+        //               setNeedToUpdateScroll(true);
+        //             }
+        //             setIsLoading(false);
+        //           })
+        //           .catch((error) => {
+        //             console.error(error);
+        //           });
+        //       }
+        //       // else {
+        //       //   setBooks((data) => {
+        //       //     return [...data, ...data.slice(0, 10)];
+        //       //   });
+        //       // }
+        //     }}
+        //     onEndReachedThreshold={0.1}
+        //   />
+        // </SafeAreaView>
+        <View style={styles.booksScrollViewExpanded}>
+          <TabView
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
           />
-        </SafeAreaView>
+        </View>
       )}
 
       {/* <Button title="Log Out" onPress={handleLogout} /> */}
@@ -411,6 +672,22 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 5,
     marginBottom: 5,
+  },
+  booksScrollViewExpanded: {
+    // height: Dimensions.get("window").height * 0.75,
+    // height: Dimensions.get("window").height * 0.5,
+    height: "81%",
+    width: "100%",
+    marginTop: 5,
+    marginBottom: 5,
+  },
+  innerBooksScrollViewExpanded: {
+    // height: Dimensions.get("window").height * 0.75,
+    // height: Dimensions.get("window").height * 0.5,
+    height: "100%",
+    width: "100%",
+    marginTop: 5,
+    // marginBottom: 5,
   },
   plusButton: {
     position: "absolute",
@@ -446,6 +723,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  loadingContainerExpanded: {
+    height: "81%",
+    width: "100%",
+    marginTop: 5,
+    marginBottom: 5,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   rightIconsContainer: {
     flexDirection: "row",
     // justifyContent: "space-evenly",
@@ -464,5 +750,16 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: "center",
     alignItems: "center",
+  },
+  addButton: {
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+    backgroundColor: "#448aff",
+    height: 40,
+    width: 40,
+    alignSelf: "center",
+    marginLeft: 10,
   },
 });
