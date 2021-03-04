@@ -52,7 +52,6 @@ function Registration({
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => {
-          console.log("backPress");
           handleOnBackPress();
         }}
       >
@@ -279,7 +278,6 @@ function Registration({
 }
 
 function completeRegistration(user) {
-  console.log(user);
 }
 
 export default Registration;

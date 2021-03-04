@@ -55,7 +55,6 @@ function Book(props) {
   }, [book, collection, favoriteBooks]);
 
   const handleBack = () => {
-    // props.navigation.navigate("My Books");
     props.navigation.pop();
   };
 
@@ -84,7 +83,6 @@ function Book(props) {
   };
 
   const onAddOrRemoveBookToCollection = () => {
-    console.log("clicked");
     setLoadingCollectionRequest(true);
     database
       .collection("users")
@@ -111,8 +109,6 @@ function Book(props) {
           needToNotifyFriends = true;
         }
         let callback = () => {
-          console.log("calling callback");
-          // setIsInCollection((value) => !value);
           setLoadingCollectionRequest(false);
         };
         displySuccessPopup(message, callback);
@@ -127,13 +123,11 @@ function Book(props) {
 
   async function notifyFriendOnAddToCollection(book) {
     let recipients = [];
-    console.log(user);
     for (let i = 0; i < user.friends.length; i++) {
       if (user.friends[i].friend.expoPushToken) {
         recipients.push(user.friends[i].friend.expoPushToken);
       }
     }
-    console.log(recipients);
     const message = {
       to: recipients,
       sound: "default",
@@ -144,8 +138,6 @@ function Book(props) {
       body: `${book.title} was added to their collection!`,
       data: { data: "goes here" },
     };
-    console.log(message);
-    console.log(JSON.stringify(message));
 
     await fetch("https://exp.host/--/api/v2/push/send", {
       method: "POST",
@@ -452,17 +444,16 @@ function Book(props) {
           )}
           {/* <Button title="Go Back" onPress={handleBack} /> */}
         </ScrollView>
-        <Snackbar
+        {/* <Snackbar
           visible={visible}
           onDismiss={onDismissSnackBar}
           duration={1500}
           style={{ backgroundColor: "#448aff" }}
         >
           {liked ? "Added to Favorites" : "Removed from Favorites"}
-        </Snackbar>
+        </Snackbar> */}
       </View>
     </Root>
-    // </ScrollView>
   );
 }
 
@@ -480,7 +471,6 @@ const styles = StyleSheet.create({
   },
   extraInfoWrapper: {
     width: "100%",
-    // height: "12%",
     height: Dimensions.get("window").height * 0.1,
     display: "flex",
     alignItems: "center",
@@ -504,7 +494,6 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // textAlign: "center",
   },
   extraInfoDetailText: {
     color: "white",

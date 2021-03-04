@@ -78,22 +78,17 @@ function NewBookForm(props) {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      // allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-    // console.log(fileType);
     if (!result.cancelled) {
       setImage(result.uri);
     }
   };
 
   const uploadImageToFirebase = async () => {
-    console.log("uploading image");
-    // console.log(image)
     setLoading(true);
     if (Platform.OS == "android") {
-      console.log("android");
       const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
@@ -131,7 +126,6 @@ function NewBookForm(props) {
                 .doc(bookName)
                 .set(userBook)
                 .then(() => {
-                  console.log("added new book");
                   dispatch(booksActions.setCurrentBook(userBook));
                   setLoading(false);
                   props.navigation.pop();
@@ -176,7 +170,6 @@ function NewBookForm(props) {
               .doc(bookName)
               .set(userBook)
               .then(() => {
-                console.log("added new book");
                 dispatch(booksActions.setCurrentBook(userBook));
                 setLoading(false);
                 props.navigation.pop();
@@ -400,11 +393,6 @@ function NewBookForm(props) {
           title="Add Book"
           style={styles.registerButton}
           opacity={1}
-          // onPress={() => {
-          //   setSubmitPressed(true);
-          //   console.log(errors);
-          //   handleSubmit(handleSubmitPressed);
-          // }}
           onPress={() => {
             setSubmitPressed(true);
             handleSubmit(handleSubmitPressed)();

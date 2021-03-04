@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Image, Animated, Dimensions, Alert } from 'react-native'
 
 const WIDTH = Dimensions.get('window').width
-const HEIGHT = Dimensions.get('window').height - 64 //for the top nav bar
+const HEIGHT = Dimensions.get('window').height //for the top nav bar
 
 class Popup extends Component {
 	static popupInstance
@@ -213,8 +213,6 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold'
 	},
 	Success: {
-		// backgroundColor: '#AAF577',
-		// shadowColor: "#AAF577",
         backgroundColor: '#4bca81',
         shadowColor: '#4bca81',
 		shadowOffset: {

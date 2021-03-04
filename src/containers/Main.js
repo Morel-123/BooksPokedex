@@ -42,7 +42,7 @@ function Main(props) {
   const [previousSelectedCategoryID, setPreviousSelectedCategoryID] = useState(
     0
   );
-  const debouncedSearchText = useDebounce(searchText, 500);
+  const debouncedSearchText = useDebounce(searchText, 300);
   const [search, setSearch] = useState(null);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [firstTime, setFirstTime] = useState(true);
@@ -79,8 +79,6 @@ function Main(props) {
     booksActions.setHistoryBooks,
   ]);
 
-  const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
-  const [keyboardDidHideListener, setKeyboardDidHideListener] = useState(null);
 
   const [userBooks, setUserBooks] = useState(null);
   const [isLoadingUserBooks, setIsLoadingUserBooks] = useState(false);
@@ -90,23 +88,6 @@ function Main(props) {
     { key: "user", title: "User's Books" },
   ]);
 
-  if (firstTime) {
-    setFirstTime(false);
-    setKeyboardDidShowListener(
-      Keyboard.addListener("keyboardDidShow", () => {
-        setKeyboardVisible(true); // or some other action
-      })
-    );
-    setKeyboardDidHideListener(
-      Keyboard.addListener("keyboardDidHide", () => {
-        setKeyboardVisible(false); // or some other action
-        if (search) {
-          search.cancel();
-          search.blur();
-        }
-      })
-    );
-  }
 
   useEffect(() => {
     let pageCount = 20;
@@ -176,7 +157,6 @@ function Main(props) {
             responseJson.items.forEach((book) => {
               googleBooks.push({ ...book.volumeInfo, id: book.id });
             });
-            // dispatch(booksActions.setHistoryBooks(googleBooks));
             setBooks(googleBooks);
             setIsLoading(false);
           })
@@ -185,10 +165,6 @@ function Main(props) {
           });
       }
     }
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
   }, [debouncedSearchText[0], selectedCategoryID]);
 
   useEffect(() => {
@@ -201,7 +177,6 @@ function Main(props) {
         .then((res) => {
           let matchingBooks = [];
           res.docs.map((doc) => {
-            console.log(doc.data());
             if (
               doc
                 .data()
@@ -330,10 +305,6 @@ function Main(props) {
                         ...googleBooks,
                       ])
                     );
-                    // setBooks([
-                    //   ...allCategoriesBooks[selectedCategoryID],
-                    //   ...googleBooks,
-                    // ]);
                     setBooks((data) => {
                       return [...data, ...googleBooks];
                     });
@@ -345,11 +316,6 @@ function Main(props) {
                   console.error(error);
                 });
             }
-            // else {
-            //   setBooks((data) => {
-            //     return [...data, ...data.slice(0, 10)];
-            //   });
-            // }
           }}
           onEndReachedThreshold={0.1}
         />
@@ -360,7 +326,6 @@ function Main(props) {
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "google":
-        // RenderGoogleBooksResult();
         return <RenderGoogleBooksResult inTabView={true} />;
       case "user":
         return isLoadingUserBooks ? (
@@ -433,10 +398,7 @@ function Main(props) {
           platform="android"
           containerStyle={{
             height: 60,
-            // height: "12%",
-            // height: Dimensions.get("window").height * 0.1,
             width: "88%",
-            // position: "absolute",
             backgroundColor: "#cbcbcb",
             top: 0,
             zIndex: 100,
@@ -451,6 +413,7 @@ function Main(props) {
           placeholder="Type Here..."
           onChangeText={(search) => {
             setInputChanged(true);
+            setIsLoading(true);
             setSearchText(search);
           }}
           onClear={() => setIsLoading(true)}
@@ -476,11 +439,9 @@ function Main(props) {
       {debouncedSearchText[0] == "" ? (
         <View
           style={{
-            // position: "absolute",
             top: 0,
             height: 100,
             width: "100%",
-            // zIndex: 200,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-around",
@@ -535,106 +496,6 @@ function Main(props) {
       ) : debouncedSearchText[0] == "" ? (
         <RenderGoogleBooksResult />
       ) : (
-        // <SafeAreaView
-        //   style={[
-        //     debouncedSearchText[0] == ""
-        //       ? styles.booksScrollView
-        //       : styles.booksScrollViewExpanded,
-        //   ]}
-        // >
-        //   <FlatList
-        //     data={books}
-        //     getItemLayout={(data, index) => ({
-        //       length: 215,
-        //       offset: index % 2 == 0 ? 215 * index : 215 * (index - 1),
-        //       index,
-        //     })}
-        //     initialScrollIndex={scrollIndex}
-        //     renderItem={({ item }) => (
-        //       <TouchableOpacity
-        //         key={item.id}
-        //         style={{ marginLeft: 5, marginBottom: 5 }}
-        //         onPress={() => onBookPress(item)}
-        //       >
-        //         <View>
-        //           <Image
-        //             style={{ height: 200, width: 150 }}
-        //             source={
-        //               item.imageLinks
-        //                 ? {
-        //                     uri: item.imageLinks.thumbnail,
-        //                   }
-        //                 : require("../../assets/no_cover_thumb.png")
-        //             }
-        //             resizeMode="stretch"
-        //           />
-        //         </View>
-        //       </TouchableOpacity>
-        //     )}
-        //     numColumns={2}
-        //     columnWrapperStyle={{
-        //       display: "flex",
-        //       justifyContent: "space-evenly",
-        //       marginBottom: 10,
-        //     }}
-        //     keyExtractor={(item) => item.id}
-        //     onEndReached={(dis) => {
-        //       if (dis.distanceFromEnd < 0) {
-        //         return;
-        //       }
-        //       if (debouncedSearchText[0] == "") {
-        //         setIsLoading(true);
-        //         fetch(
-        //           `https://www.googleapis.com/books/v1/volumes?q=subject:${allCategoriesNames[selectedCategoryID]}&maxResults=20&startIndex=${allCategoriesBooks[selectedCategoryID].length}&langRestrict=en&key=AIzaSyAyH7CvHZd5lhtiXXVcxdUliGTOwxxMkZc`,
-        //           {
-        //             method: "GET",
-        //           }
-        //         )
-        //           .then((response) => response.json())
-        //           .then((responseJson) => {
-        //             let googleBooks = [];
-        //             if (responseJson) {
-        //               responseJson.items.forEach((book) => {
-        //                 googleBooks.push({ ...book.volumeInfo, id: book.id });
-        //               });
-        //               setAllCategoriesBooks((books) => {
-        //                 let updatedBooks = [...books];
-        //                 updatedBooks[selectedCategoryID] = [
-        //                   ...updatedBooks[selectedCategoryID],
-        //                   ...googleBooks,
-        //                 ];
-        //                 return updatedBooks;
-        //               });
-        //               dispatch(
-        //                 allCategoriesStoreFunctions[selectedCategoryID]([
-        //                   ...allCategoriesBooks[selectedCategoryID],
-        //                   ...googleBooks,
-        //                 ])
-        //               );
-        //               // setBooks([
-        //               //   ...allCategoriesBooks[selectedCategoryID],
-        //               //   ...googleBooks,
-        //               // ]);
-        //               setBooks((data) => {
-        //                 return [...data, ...googleBooks];
-        //               });
-        //               setNeedToUpdateScroll(true);
-        //             }
-        //             setIsLoading(false);
-        //           })
-        //           .catch((error) => {
-        //             console.error(error);
-        //           });
-        //       }
-        //       // else {
-        //       //   setBooks((data) => {
-        //       //     return [...data, ...data.slice(0, 10)];
-        //       //   });
-        //       // }
-        //     }}
-        //     onEndReachedThreshold={0.1}
-        //   />
-        // </SafeAreaView>
         <View style={styles.booksScrollViewExpanded}>
           <TabView
             navigationState={{ index, routes }}
@@ -643,8 +504,6 @@ function Main(props) {
           />
         </View>
       )}
-
-      {/* <Button title="Log Out" onPress={handleLogout} /> */}
     </View>
   );
 }
@@ -653,7 +512,6 @@ export default Main;
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     display: "flex",
     justifyContent: "space-evenly",
     alignItems: "center",
@@ -666,28 +524,21 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   booksScrollView: {
-    // height: Dimensions.get("window").height * 0.75,
-    // height: Dimensions.get("window").height * 0.5,
     height: "60%",
     width: "100%",
     marginTop: 5,
     marginBottom: 5,
   },
   booksScrollViewExpanded: {
-    // height: Dimensions.get("window").height * 0.75,
-    // height: Dimensions.get("window").height * 0.5,
     height: "81%",
     width: "100%",
     marginTop: 5,
     marginBottom: 5,
   },
   innerBooksScrollViewExpanded: {
-    // height: Dimensions.get("window").height * 0.75,
-    // height: Dimensions.get("window").height * 0.5,
     height: "100%",
     width: "100%",
     marginTop: 5,
-    // marginBottom: 5,
   },
   plusButton: {
     position: "absolute",
@@ -706,19 +557,10 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height * 0.08,
   },
   loadingContainer: {
-    // flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
-    // height: Dimensions.get("window").height * 0.5,
-    // backgroundColor: "pink",
-    // width: "100%",
-    // marginBottom: 5,
-    // height: Dimensions.get("window").height * 0.5,
     height: "60%",
     width: "100%",
     marginTop: 5,
     marginBottom: 5,
-    // backgroundColor: "pink",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -734,7 +576,6 @@ const styles = StyleSheet.create({
   },
   rightIconsContainer: {
     flexDirection: "row",
-    // justifyContent: "space-evenly",
     justifyContent: "flex-end",
     width: 120,
     marginRight: 5,

@@ -61,7 +61,6 @@ function Login(props) {
           let uid = result.user.uid;
           if (result.additionalUserInfo.isNewUser) {
             //need to add it to firebase
-            console.log("new user");
             database
               .collection("users")
               .doc(uid)
@@ -93,14 +92,6 @@ function Login(props) {
                 dispatch({
                   type: authActions.SIGNUP,
                   user: userObj,
-                  // user: new User(
-                  //   uid,
-                  //   result.additionalUserInfo.profile.given_name,
-                  //   result.additionalUserInfo.profile.family_name,
-                  //   result.user.phoneNumber,
-                  //   result.additionalUserInfo.profile.email,
-                  //   "male"
-                  // ),
                 });
                 props.navigation.navigate("MainNavigator");
               })
@@ -114,7 +105,6 @@ function Login(props) {
           var token = result.credential.accessToken;
           // The signed-in user info.
           var user = result.user;
-          // ...
         })
         .catch(function (error) {
           // Handle Errors here.
@@ -124,7 +114,6 @@ function Login(props) {
           var email = error.email;
           // The firebase.auth.AuthCredential type that was used.
           var credential = error.credential;
-          // ...
         });
     }
   }, [response]);

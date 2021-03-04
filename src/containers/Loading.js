@@ -45,9 +45,7 @@ function Loading(props) {
           .catch(function (error) {
             console.error(error);
           });
-        // props.navigation.navigate("MainNavigator");
       } else {
-        console.log("logout");
         props.navigation.navigate("Login");
       }
     });

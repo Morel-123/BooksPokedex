@@ -6,6 +6,7 @@ import * as booksActions from "../actions/Books";
 import { createStackNavigator } from "@react-navigation/stack";
 import UserCollection from "./UserCollection";
 import Book from "./Book";
+import BookDetail from "./BookDetail";
 import MyTabs from "./BottomNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 import { TouchableRipple } from "react-native-paper";
@@ -62,9 +63,7 @@ function MainNavigator(props) {
 
     // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
     responseListener.current = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        console.log(response);
-      }
+      (response) => {}
     );
 
     return () => {
@@ -97,6 +96,7 @@ function MainNavigator(props) {
           headerStyle: { backgroundColor: "#ff4336" },
           headerTitleStyle: { color: "white", fontSize: 24 },
           headerTintColor: "white",
+          // headerShown: false,
         }}
       >
         <Stack.Screen
@@ -106,7 +106,11 @@ function MainNavigator(props) {
             headerTitle: getHeaderTitle(route),
           })}
         />
-        <Stack.Screen name="Book Info" component={Book} />
+        <Stack.Screen
+          name="Book Info"
+          component={BookDetail}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="Add Book" component={NewBookForm} />
       </Stack.Navigator>
     </NavigationContainer>
@@ -148,12 +152,10 @@ async function registerForPushNotificationsAsync() {
       finalStatus = status;
     }
     if (finalStatus !== "granted") {
-      // alert("Failed to get push token for push notification!");
       console.log("Failed to get push token for push notification!");
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
   } else {
     alert("Must use physical device for Push Notifications");
   }

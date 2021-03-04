@@ -63,8 +63,6 @@ function Signup(props) {
 
   const handleGoogleAuthentication = () => {
     const firebaseAuth = new firebase.auth.GoogleAuthProvider();
-    console.log("Continue with Google");
-    console.log(firebaseAuth);
     firebase
       .auth()
       .signInWithPopup(firebaseAuth)
@@ -73,7 +71,6 @@ function Signup(props) {
         var token = result.credential.accessToken;
         // The signed-in user info.
         var user = result.user;
-        // ...
       })
       .catch(function (error) {
         // Handle Errors here.
@@ -83,7 +80,6 @@ function Signup(props) {
         var email = error.email;
         // The firebase.auth.AuthCredential type that was used.
         var credential = error.credential;
-        // ...
       });
   };
 

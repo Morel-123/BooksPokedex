@@ -20,7 +20,6 @@ import { TouchableRipple } from "react-native-paper";
 function UserCollection(props) {
   const dispatch = useDispatch();
   let favoriteBooks = useSelector((state) => state.books.favoriteBooks);
-  console.log(favoriteBooks);
   let collection = useSelector((state) => state.books.collection);
 
   let stylesProps = { favoritesLength: Object.keys(favoriteBooks).length };
@@ -28,7 +27,6 @@ function UserCollection(props) {
   useEffect(() => {}, []);
 
   const onBookPress = (book) => {
-    console.log(book);
     dispatch(booksActions.setCurrentBook(book));
     props.navigation.navigate("Book Info");
   };
@@ -68,13 +66,7 @@ function UserCollection(props) {
                 </View>
               </TouchableOpacity>
             )}
-            // numColumns={2}
             horizontal={true}
-            //   columnWrapperStyle={{
-            //     display: "flex",
-            //     justifyContent: "space-evenly",
-            //     marginBottom: 10,
-            //   }}
             keyExtractor={(item) => item.id}
           />
         </SafeAreaView>
@@ -116,10 +108,8 @@ function UserCollection(props) {
               </TouchableOpacity>
             )}
             numColumns={2}
-            // horizontal={true}
             columnWrapperStyle={{
               display: "flex",
-              // justifyContent: "space-evenly",
               justifyContent: "space-between",
               marginBottom: 10,
             }}
@@ -140,24 +130,17 @@ export default UserCollection;
 const styles = (props) =>
   StyleSheet.create({
     container: {
-      // flex: 1,
       height: Dimensions.get("window").height - 64 - 54,
       display: "flex",
-      // justifyContent: "center",
-      // alignItems: "center",
       marginTop: 5,
       marginBottom: 5,
       marginLeft: 5,
       marginRight: 5,
     },
     booksScrollView: {
-      // height: "50%",
       height: 220,
       width: "100%",
       marginTop: 5,
-      // marginBottom: 5,
-      // display: "flex",
-      // alignItems: "center",
     },
     collectionContainer: {
       //289 is 220 for scrollview div, plus 2 titles each 27 plus margins
@@ -167,6 +150,5 @@ const styles = (props) =>
           : 0.684 * Dimensions.get("window").height,
       width: "100%",
       marginTop: 5,
-      // marginBottom: 5
     },
   });

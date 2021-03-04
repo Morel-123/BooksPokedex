@@ -28,23 +28,17 @@ export default function NewBook() {
   }, []);
 
   const takePicture = async () => {
-    console.log("here");
-    // const photo = await camera.takePictureAsync({ skipProcessing: true });
     const photo = await camera.takePictureAsync();
-    console.log(photo);
     setPreviewVisible(true);
-    //setStartCamera(false)
     setCapturedImage(photo);
   };
 
   const savePhoto = () => {
-    console.log("save photo");
   };
 
   const retakePicture = () => {
     setCapturedImage(null);
     setPreviewVisible(false);
-    // __startCamera();
   };
 
   if (hasPermission === null) {
@@ -90,13 +84,6 @@ export default function NewBook() {
                 bottom: 20,
               }}
               onPress={takePicture}
-              //   onPress={async () => {
-              //     if (false) {
-              //       let photo = await cameraRef.takePictureAsync("photo");
-              //       console.log("photo", photo);
-              //       navigation.navigate("Image", { photo: photo });
-              //     }
-              //   }}
             >
               <View
                 style={{
@@ -160,7 +147,6 @@ const styles = StyleSheet.create({
 });
 
 const CameraPreview = ({ photo, retakePicture, savePhoto }) => {
-  console.log("sdsfds", photo);
   return (
     <View
       style={{

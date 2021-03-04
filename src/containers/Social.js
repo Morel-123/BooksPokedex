@@ -20,18 +20,12 @@ import * as socialActions from "../actions/Social";
 import { TouchableRipple } from "react-native-paper";
 import { Icon } from "react-native-elements";
 import { SearchBar } from "react-native-elements";
-// import { useDebounce } from "use-debounce";
 import Spinner from "../components/Spinner";
 
 function Social(props) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   let friends = useSelector((state) => state.social.friends);
-  console.log(friends);
-  //   friends = {
-  //     1: { uid: "1", firstName: "mor", lastName: "tzhory", collection: [] },
-  //     2: { uid: "2", firstName: "אוראל", lastName: "זילברמן", collection: null },
-  //   };
   const [showAddFriends, setShowAddFriends] = useState(false);
   let friendsCollections = useSelector(
     (state) => state.social.friendsCollections
@@ -41,7 +35,6 @@ function Social(props) {
     selectedFriend
   );
 
-  // let collection = selectedFriend ? selectedFriend.collection : null;
   const [collection, setCollection] = useState(
     selectedFriend ? selectedFriend.collection : null
   );
@@ -49,7 +42,6 @@ function Social(props) {
   const [inputChanged, setInputChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  //   const debouncedSearchText = useDebounce(searchText, 300);
   const database = firebase.firestore();
 
   let stylesProps = { friendsLength: Object.keys(friends).length };
@@ -64,10 +56,6 @@ function Social(props) {
       selectedFriend = friends[Object.keys(friends)[0]];
     }
     setSelectedFriendState(selectedFriend);
-    console.log("selectefriend");
-    console.log(selectedFriend);
-    console.log(showAddFriends);
-    console.log(Object.values(friends));
     if (selectedFriend) {
       setShowAddFriends(false);
       if (friendsCollections[selectedFriend.uid]) {
@@ -80,7 +68,6 @@ function Social(props) {
           .doc(selectedFriend.uid)
           .get()
           .then((response) => {
-            console.log(response);
             let friendCollection = response.data().collection;
             dispatch(
               socialActions.addFriendCollection(
@@ -106,7 +93,6 @@ function Social(props) {
       .collection("users")
       .get()
       .then((response) => {
-        console.log(response);
         let usersFromDB = [];
         response.docs.map((doc) => {
           usersFromDB.push({
@@ -118,8 +104,6 @@ function Social(props) {
         });
         setUsers(usersFromDB);
         setIsLoading(false);
-        // setTimeout(() => {
-        // }, 100);
       })
       .catch((error) => {
         console.error(error);
@@ -127,7 +111,6 @@ function Social(props) {
   }, []);
 
   const onBookPress = (book) => {
-    console.log(book);
     dispatch(booksActions.setCurrentBook(book));
     props.navigation.navigate("Book Info");
   };
@@ -141,9 +124,7 @@ function Social(props) {
   };
 
   const selectFriend = (friend) => {
-    console.log(friend);
     dispatch(socialActions.setCurrentFriend(friend));
-    // setShowAddFriends(false);
   };
 
   const onAddFriendsPressed = () => {
@@ -152,8 +133,6 @@ function Social(props) {
   };
 
   const addFriend = (friend) => {
-    console.log(friend);
-    // dispatch(socialActions.addFriend(friend));
     database
       .collection("users")
       .doc(user.uid)
@@ -202,7 +181,6 @@ function Social(props) {
             alignItems: "center",
             marginRight: 10,
             position: "relative",
-            // marginTop: 7,
           }}
           onPress={() => onAddFriendsPressed()}
         >
@@ -258,6 +236,7 @@ function Social(props) {
                         style={{
                           fontWeight: "bold",
                           lineHeight: 14,
+                          fontSize: 14,
                           color:
                             !showAddFriends &&
                             selectedFriendState &&
@@ -272,13 +251,7 @@ function Social(props) {
                   </TouchableOpacity>
                 </View>
               )}
-              // numColumns={2}
               horizontal={true}
-              //   columnWrapperStyle={{
-              //     display: "flex",
-              //     justifyContent: "space-evenly",
-              //     marginBottom: 10,
-              //   }}
               keyExtractor={(item) => item.uid}
             />
           </SafeAreaView>
@@ -298,7 +271,6 @@ function Social(props) {
       </View>
 
       {!selectedFriendState || showAddFriends ? (
-        // <Text style={{ marginLeft: 5 }}>Need to add search bar here</Text>
         <View style={{ flex: 1 }}>
           {isLoading ? (
             <View style={styles(stylesProps).loadingContainer}>
@@ -317,13 +289,10 @@ function Social(props) {
                   <View
                     style={{
                       height: 50,
-                      //   width: 50,
-                      //   borderRadius: "50%",
                       backgroundColor: "ff4336",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                      //   marginRight: 10,
                       position: "relative",
                       marginBottom: 2,
                       borderBottomColor: "#9e9e9eb3",
@@ -343,6 +312,7 @@ function Social(props) {
                         style={{
                           fontWeight: "bold",
                           lineHeight: 14,
+                          fontSize: 14,
                         }}
                       >
                         {item.firstName + " " + item.lastName}
@@ -397,6 +367,7 @@ function Social(props) {
                             style={{
                               fontWeight: "bold",
                               lineHeight: 14,
+                              fontSize: 14,
                               color: "white",
                             }}
                           >
@@ -407,13 +378,6 @@ function Social(props) {
                     )}
                   </View>
                 )}
-                // numColumns={2}
-                // horizontal={true}
-                //   columnWrapperStyle={{
-                //     display: "flex",
-                //     justifyContent: "space-evenly",
-                //     marginBottom: 10,
-                //   }}
                 keyExtractor={(item) => item.uid}
               />
             </SafeAreaView>
@@ -488,10 +452,8 @@ function Social(props) {
                   </TouchableOpacity>
                 )}
                 numColumns={2}
-                // horizontal={true}
                 columnWrapperStyle={{
                   display: "flex",
-                  // justifyContent: "space-evenly",
                   justifyContent: "space-between",
                   marginBottom: 10,
                 }}
@@ -528,26 +490,16 @@ export default Social;
 const styles = (props) =>
   StyleSheet.create({
     container: {
-      // flex: 1,
       height: Dimensions.get("window").height - 64 - 54,
       display: "flex",
-      // justifyContent: "center",
-      // alignItems: "center",
       marginTop: 5,
       marginBottom: 5,
       marginLeft: 5,
       marginRight: 5,
     },
     booksScrollView: {
-      // height: "50%",
       height: 60,
       width: Dimensions.get("window").width - 60,
-      //   marginTop: 7,
-      //   borderBottomColor: "#9e9e9eb3",
-      //   borderBottomWidth: 1,
-      //   marginBottom: 5,
-      //   display: "flex",
-      //   alignItems: "center",
     },
     collectionContainer: {
       //289 is 220 for scrollview div, plus 2 titles each 27 plus margins
@@ -559,26 +511,14 @@ const styles = (props) =>
       marginTop: 5,
       marginBottom: 5,
       flex: 1,
-      // marginBottom: 5
     },
     loadingContainer: {
       height: "60%",
       width: "100%",
       marginTop: 5,
       marginBottom: 5,
-      // backgroundColor: "pink",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
     },
   });
-
-// height: 40;
-// width: 40;
-// border-radius: 50%;
-// background: aqua;
-// display: flex;
-// justify-content: center;
-// align-items: center;
-// margin: 0;
-// position: relative;
