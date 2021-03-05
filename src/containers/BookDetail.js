@@ -518,11 +518,7 @@ const BookDetail = (props) => {
               alignSelf: "center",
               justifyContent: "center",
             }}
-            style={{
-              borderRadius: SIZES.radius,
-            }}
             loading={loadingCollectionRequest}
-            borderRadius={SIZES.radius}
           />
         ) : (
           <Button
@@ -552,7 +548,6 @@ const BookDetail = (props) => {
               justifyContent: "center",
             }}
             loading={loadingCollectionRequest}
-            borderRadius={SIZES.radius}
           />
         )}
       </View>

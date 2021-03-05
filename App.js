@@ -3,6 +3,7 @@ import { StyleSheet, Platform, Image, Text, View } from "react-native";
 import { createSwitchNavigator, createAppContainer } from "react-navigation";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
+import * as Font from 'expo-font';
 // import the different screens
 import Loading from "./src/containers/Loading";
 import Signup from "./src/containers/Signup";
@@ -35,6 +36,18 @@ const AppContainer = createAppContainer(
 );
 
 export default class App extends React.Component {
+  componentDidMount() {
+    this.loadAssetsAsync();
+  }
+
+  loadAssetsAsync = async () => {
+    await Font.loadAsync({
+      "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
+      "Roboto-Black": require("./assets/fonts/Roboto-Black.ttf"),
+      "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
+    });
+  };
+
   render() {
     return (
       <Provider store={store}>
