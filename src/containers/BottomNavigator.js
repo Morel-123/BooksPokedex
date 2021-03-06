@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Main from "./Main";
+import NewHome from "./NewHome";
 import UserCollection from "./UserCollection";
 import Social from "./Social";
 import Profile from "./Profile";
@@ -18,11 +19,12 @@ function MyTabs() {
       activeColor="white"
       inactiveColor="#bdbdbd"
       labelStyle={{ fontSize: 12 }}
-      barStyle={{ backgroundColor: "#448aff" }}
+      // barStyle={{ backgroundColor: "#448aff" }}
+      barStyle={{ backgroundColor: "#f96d41" }}
     >
       <Tab.Screen
         name="Home"
-        component={Main}
+        component={NewHome}
         options={{
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (

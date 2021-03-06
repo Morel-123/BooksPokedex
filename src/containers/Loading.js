@@ -6,6 +6,7 @@ import * as authActions from "../actions/Auth";
 import * as booksActions from "../actions/Books";
 import * as socialActions from "../actions/Social";
 import Spinner from "../components/Spinner";
+import { COLORS } from "../constants";
 
 function Loading(props) {
   const dispatch = useDispatch();
@@ -53,10 +54,10 @@ function Loading(props) {
 
   return (
     <View style={styles.container}>
-      <Text>Loading</Text>
+      <Text style={{ color: COLORS.white, marginBottom: 5 }}>Loading</Text>
       <Spinner
         size={Platform.OS === "android" ? 10 : "large"}
-        color={Platform.OS === "android" ? "#448aff" : undefined}
+        color={Platform.OS === "android" ? "#f96d41" : undefined}
       />
     </View>
   );
@@ -69,5 +70,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#1e1b26",
   },
 });

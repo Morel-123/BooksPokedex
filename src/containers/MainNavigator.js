@@ -104,6 +104,7 @@ function MainNavigator(props) {
           component={MyTabs}
           options={({ route }) => ({
             headerTitle: getHeaderTitle(route),
+            headerShown: false,
           })}
         />
         <Stack.Screen

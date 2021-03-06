@@ -265,7 +265,7 @@ const BookDetail = (props) => {
               shadowColor: "#000",
               shadowOffset: {
                 width: 0,
-                height: 0,
+                height: 6,
               },
               shadowOpacity: 0.3,
               shadowRadius: 7,
@@ -327,7 +327,15 @@ const BookDetail = (props) => {
           }}
         >
           {/* Genre */}
-          <View style={{ flex: 1, alignItems: "center" }}>
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              paddingHorizontal: 5,
+              textAlign: "center",
+            }}
+          >
             <Text style={{ ...FONTS.h3, color: COLORS.white }}>
               {book.categories
                 ? book.categories[0].split(" ")[0]
@@ -342,8 +350,10 @@ const BookDetail = (props) => {
           <View
             style={{
               flex: 1,
-              paddingHorizontal: SIZES.radius,
+              // paddingHorizontal: SIZES.radius,
               alignItems: "center",
+              justifyContent: "center",
+              paddingHorizontal: 5,
             }}
           >
             <Text style={{ ...FONTS.h3, color: COLORS.white }}>
@@ -355,9 +365,16 @@ const BookDetail = (props) => {
           <LineDivider />
 
           {/* Released */}
-          <View style={{ flex: 1, alignItems: "center" }}>
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              paddingHorizontal: 5,
+            }}
+          >
             <Text style={{ ...FONTS.h3, color: COLORS.white }}>
-              {book.publishedDate.length > 0
+              {book.publishedDate && book.publishedDate.length > 0
                 ? book.publishedDate.substring(0, 4)
                 : "N/A"}
             </Text>
@@ -446,7 +463,7 @@ const BookDetail = (props) => {
             Description
           </Text>
           <Text style={{ ...FONTS.body2, color: COLORS.lightGray }}>
-            {book.description.length > 0
+            {book.description && book.description.length > 0
               ? book.description
               : "No description at the moment."}
           </Text>

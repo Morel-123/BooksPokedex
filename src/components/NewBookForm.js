@@ -218,7 +218,7 @@ function NewBookForm(props) {
         <Text>Loading</Text>
         <Spinner
           size={Platform.OS === "android" ? 10 : "large"}
-          color={Platform.OS === "android" ? "#448aff" : undefined}
+          color={Platform.OS === "android" ? "#f96d41" : undefined}
         />
       </View>
     );

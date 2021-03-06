@@ -297,7 +297,7 @@ function Login(props) {
           />
         </Card>
       </View>
-      <View style={{ position: "absolute", bottom: 25, alignSelf: "center" }}>
+      <View style={{ position: "absolute", bottom: 25, alignSelf: "center", width: 200}}>
         <Button
           title="Login With Google"
           buttonStyle={{
