@@ -6,6 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Main from "./Main";
 import NewHome from "./NewHome";
 import UserCollection from "./UserCollection";
+import NewCollection from "./NewCollection";
 import Social from "./Social";
 import Profile from "./Profile";
 import { BottomNavigation } from "react-native-paper";
@@ -34,7 +35,7 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Collection"
-        component={UserCollection}
+        component={NewCollection}
         options={{
           tabBarLabel: "Collection",
           tabBarIcon: ({ color }) => (
