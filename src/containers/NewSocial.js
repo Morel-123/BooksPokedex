@@ -323,7 +323,7 @@ function NewSocial(props) {
             renderItem={({ item }) => renderBookItem({ item: item.book })}
             keyExtractor={(item) => `${item.bookID}`}
             showsVerticalScrollIndicator={false}
-            style={{ paddingLeft: 10 }}
+            style={{ paddingLeft: SIZES.padding }}
           />
         ) : isLoading ? (
           <View
@@ -379,6 +379,7 @@ function NewSocial(props) {
                   marginBottom: 2,
                   borderBottomColor: "#9e9e9eb3",
                   borderBottomWidth: 1,
+                  paddingLeft: SIZES.padding,
                 }}
               >
                 <View
@@ -387,7 +388,7 @@ function NewSocial(props) {
                     justifyContent: "center",
                     alignItems: "center",
                     alignSelf: "flex-start",
-                    marginLeft: 20,
+                    // marginLeft: 20,
                   }}
                 >
                   <Text
@@ -409,7 +410,7 @@ function NewSocial(props) {
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                      marginRight: 10,
+                      marginRight: SIZES.padding,
                       position: "absolute",
                       right: 0,
                     }}
@@ -439,7 +440,7 @@ function NewSocial(props) {
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                      marginRight: 10,
+                      marginRight: SIZES.padding,
                       position: "absolute",
                       right: 0,
                     }}
@@ -482,7 +483,7 @@ function NewSocial(props) {
           fontSize: 20,
           fontWeight: "bold",
           color: COLORS.white,
-          paddingHorizontal: 10,
+          paddingHorizontal: SIZES.padding,
         }}
       >
         Friends {Object.keys(friends).length}
@@ -495,7 +496,7 @@ function NewSocial(props) {
           borderBottomWidth: 1,
           alignItems: "center",
           height: 65,
-          paddingHorizontal: 10,
+          paddingHorizontal: SIZES.padding,
         }}
       >
         <TouchableOpacity
@@ -527,8 +528,8 @@ function NewSocial(props) {
         {renderFriendsSection()}
       </View>
       {!selectedFriendState || showAddFriends ? (
-        <ScrollView>
-          <View>{renderAddFriendsSection()}</View>
+        <ScrollView contentContainerStyle={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>{renderAddFriendsSection()}</View>
         </ScrollView>
       ) : (
         <View
@@ -539,7 +540,7 @@ function NewSocial(props) {
           >
             <Text
               style={{
-                paddingLeft: 10,
+                paddingLeft: SIZES.padding,
                 color: COLORS.white,
                 fontSize: 20,
                 fontWeight: "bold",
@@ -573,8 +574,8 @@ function NewSocial(props) {
               Collection {collection ? Object.keys(collection).length : 0}
             </Text>
           </View>
-          <ScrollView>
-            <View>{renderFriendsCollectionSection()}</View>
+          <ScrollView contentContainerStyle={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>{renderFriendsCollectionSection()}</View>
           </ScrollView>
         </View>
       )}
