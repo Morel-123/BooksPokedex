@@ -3,6 +3,7 @@ import { Text, View, Button, Image } from "react-native";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../actions/Auth";
+import { COLORS, FONTS, SIZES, icons } from "../constants";
 
 function Profile(props) {
   const dispatch = useDispatch();
@@ -41,8 +42,15 @@ function Profile(props) {
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Button title="Log Out" onPress={handleLogout} />
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: COLORS.black,
+      }}
+    >
+      <Button title="Log Out" onPress={handleLogout} color="#f96d41" />
     </View>
   );
 }

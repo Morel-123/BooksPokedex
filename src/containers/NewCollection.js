@@ -235,7 +235,7 @@ function NewCollection(props) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.black }}>
       {/* Body Section */}
-      <ScrollView style={{ marginTop: 36 }}>
+      <ScrollView style={{ marginTop: SIZES.padding2 }}>
         {/* Favorites Section */}
         <View>{renderFavoritesSection()}</View>
         {/* Collection Section */}

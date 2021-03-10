@@ -5,6 +5,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Main from "./Main";
 import NewHome from "./NewHome";
+import NewSocial from "./NewSocial";
 import UserCollection from "./UserCollection";
 import NewCollection from "./NewCollection";
 import Social from "./Social";
@@ -16,7 +17,7 @@ const Tab = createMaterialBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Profile"
       activeColor="white"
       inactiveColor="#bdbdbd"
       labelStyle={{ fontSize: 12 }}
@@ -45,7 +46,7 @@ function MyTabs() {
       />
       <Tab.Screen
         name="Social"
-        component={Social}
+        component={NewSocial}
         options={{
           tabBarLabel: "Social",
           tabBarIcon: ({ color }) => (
