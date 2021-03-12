@@ -17,6 +17,7 @@ import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import * as authActions from "../actions/Auth";
 import NewBookForm from "../components/NewBookForm";
+import RevampedNewBookForm from "../components/RevampedNewBookForm";
 
 const Stack = createStackNavigator();
 
@@ -96,7 +97,7 @@ function MainNavigator(props) {
           headerStyle: { backgroundColor: "#ff4336" },
           headerTitleStyle: { color: "white", fontSize: 24 },
           headerTintColor: "white",
-          // headerShown: false,
+          headerShown: false,
         }}
       >
         <Stack.Screen
@@ -112,7 +113,7 @@ function MainNavigator(props) {
           component={BookDetail}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="Add Book" component={NewBookForm} />
+        <Stack.Screen name="Add Book" component={RevampedNewBookForm} />
       </Stack.Navigator>
     </NavigationContainer>
   );
