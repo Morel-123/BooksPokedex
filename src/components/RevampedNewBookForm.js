@@ -218,8 +218,15 @@ function RevampedNewBookForm(props) {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text>Loading</Text>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: COLORS.black,
+        }}
+      >
+        <Text style={{ color: COLORS.white, marginBottom: 5 }}>Loading</Text>
         <Spinner
           size={Platform.OS === "android" ? 10 : "large"}
           color={Platform.OS === "android" ? "#f96d41" : undefined}
@@ -231,7 +238,14 @@ function RevampedNewBookForm(props) {
   return (
     <View style={styles.container}>
       <View
-        style={{ height: 40, position: "absolute", top: 0, left: 0, paddingLeft: 12 }}
+        style={{
+          height: 40,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          paddingLeft: 12,
+          marginTop: SIZES.padding2,
+        }}
       >
         <TouchableOpacity
           style={{ marginLeft: SIZES.base }}
@@ -500,7 +514,9 @@ function RevampedNewBookForm(props) {
           backgroundColor: "#448aff",
           position: "absolute",
           bottom: 10,
-          width: "60%",
+          width: Dimensions.get("window").width - 120,
+          marginHorizontal: 0,
+          left: 60,
         }}
       >
         {"This book already exists."}

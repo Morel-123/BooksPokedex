@@ -226,8 +226,10 @@ const NewHome = (props) => {
           <View style={{ marginRight: SIZES.padding }}>
             <Text style={{ ...FONTS.h3, color: COLORS.white }}>Welcome</Text>
             <Text style={{ ...FONTS.h2, color: COLORS.white }}>
-              {user.firstName.substring(0, 1).toUpperCase() +
-                user.firstName.substring(1)}
+              {user
+                ? user.firstName.substring(0, 1).toUpperCase() +
+                  user.firstName.substring(1)
+                : ""}
             </Text>
           </View>
         </View>

@@ -1,9 +1,17 @@
 import React from "react";
-import { StyleSheet, Platform, Image, Text, View } from "react-native";
+import {
+  StyleSheet,
+  Platform,
+  Image,
+  Text,
+  View,
+} from "react-native";
 import { createSwitchNavigator, createAppContainer } from "react-navigation";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
-import * as Font from 'expo-font';
+import * as Font from "expo-font";
+import { Asset } from "expo-asset";
+import { COLORS, FONTS, SIZES, icons } from "./src/constants";
 // import the different screens
 import Loading from "./src/containers/Loading";
 import Signup from "./src/containers/Signup";
@@ -36,8 +44,9 @@ const AppContainer = createAppContainer(
 );
 
 export default class App extends React.Component {
-  componentDidMount() {
-    this.loadAssetsAsync();
+
+  async componentDidMount() {
+    await this.loadAssetsAsync();
   }
 
   loadAssetsAsync = async () => {
@@ -46,6 +55,7 @@ export default class App extends React.Component {
       "Roboto-Black": require("./assets/fonts/Roboto-Black.ttf"),
       "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
     });
+    await Asset.fromModule(require("./assets/logo.png")).downloadAsync();
   };
 
   render() {

@@ -202,6 +202,7 @@ function NewSocial(props) {
                           item.uid == selectedFriendState.uid
                             ? "white"
                             : "#bdbdbd",
+                        marginTop: Platform.OS === "android" ? 3 : 0,
                       }}
                     >
                       {displayInitials(item)}
@@ -329,7 +330,9 @@ function NewSocial(props) {
           <View
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
-            <Text>Loading</Text>
+            <Text style={{ color: COLORS.white, marginBottom: 5 }}>
+              Loading
+            </Text>
             <Spinner
               size={Platform.OS === "android" ? 10 : "large"}
               color={Platform.OS === "android" ? "#f96d41" : undefined}
@@ -357,7 +360,9 @@ function NewSocial(props) {
           <View
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
-            <Text>Loading</Text>
+            <Text style={{ color: COLORS.white, marginBottom: 5 }}>
+              Loading
+            </Text>
             <Spinner
               size={Platform.OS === "android" ? 10 : "large"}
               color={Platform.OS === "android" ? "#f96d41" : undefined}
@@ -388,7 +393,6 @@ function NewSocial(props) {
                     justifyContent: "center",
                     alignItems: "center",
                     alignSelf: "flex-start",
-                    // marginLeft: 20,
                   }}
                 >
                   <Text
@@ -453,6 +457,7 @@ function NewSocial(props) {
                           lineHeight: 14,
                           fontSize: 14,
                           color: "white",
+                          marginTop: Platform.OS === "android" ? 3 : 0,
                         }}
                       >
                         Add Friend

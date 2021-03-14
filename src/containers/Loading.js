@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Platform } from "react-native";
+import { View, Text, StyleSheet, Platform, Dimensions, Image } from "react-native";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../actions/Auth";
@@ -7,6 +7,8 @@ import * as booksActions from "../actions/Books";
 import * as socialActions from "../actions/Social";
 import Spinner from "../components/Spinner";
 import { COLORS } from "../constants";
+
+const Pulse = require("react-native-pulse").default;
 
 function Loading(props) {
   const dispatch = useDispatch();
@@ -53,11 +55,28 @@ function Loading(props) {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={{ color: COLORS.white, marginBottom: 5 }}>Loading</Text>
-      <Spinner
-        size={Platform.OS === "android" ? 10 : "large"}
-        color={Platform.OS === "android" ? "#f96d41" : undefined}
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: COLORS.black,
+        position: "relative",
+      }}
+    >
+      <View style={styles.circle}>
+        <Pulse
+          color="#f96d41"
+          numPulses={1}
+          diameter={220}
+          speed={20}
+          duration={1}
+          initialDiameter={150}
+        />
+      </View>
+      <Image
+        style={{ height: 150, width: 150 }}
+        source={require("../../assets/logo.png")}
       />
     </View>
   );
@@ -71,5 +90,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#1e1b26",
+  },
+  circle: {
+    width: 100,
+    height: 100,
+    position: "absolute",
+    left: Dimensions.get("window").width / 2,
+    top: Dimensions.get("window").height / 2,
+    marginLeft: -100 / 2,
+    marginTop: -100 / 2,
   },
 });
