@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Platform, Dimensions, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  Dimensions,
+  Image,
+} from "react-native";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../actions/Auth";
@@ -92,12 +99,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#1e1b26",
   },
   circle: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     position: "absolute",
-    left: Dimensions.get("window").width / 2,
-    top: Dimensions.get("window").height / 2,
-    marginLeft: -100 / 2,
-    marginTop: -100 / 2,
+    // left: Dimensions.get("window").width / 2,
+    // top: Dimensions.get("window").height / 2,
+    left: "50%",
+    top: "50%",
+    marginLeft: -150 / 2,
+    marginTop: -150 / 2,
   },
 });

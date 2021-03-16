@@ -1,21 +1,18 @@
 import React from "react";
-import {
-  StyleSheet,
-  Platform,
-  Image,
-  Text,
-  View,
-} from "react-native";
+import { StyleSheet, Platform, Image, Text, View } from "react-native";
 import { createSwitchNavigator, createAppContainer } from "react-navigation";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { COLORS, FONTS, SIZES, icons } from "./src/constants";
+import { StatusBar } from "react-native";
+
 // import the different screens
 import Loading from "./src/containers/Loading";
 import Signup from "./src/containers/Signup";
 import Login from "./src/containers/Login";
+import RevampedLogin from "./src/containers/RevampedLogin";
 import MainNavigator from "./src/containers/MainNavigator";
 
 import authReducer from "./src/reducers/Auth";
@@ -34,7 +31,7 @@ const AppContainer = createAppContainer(
     {
       Loading,
       Signup,
-      Login,
+      RevampedLogin,
       MainNavigator,
     },
     {
@@ -44,7 +41,6 @@ const AppContainer = createAppContainer(
 );
 
 export default class App extends React.Component {
-
   async componentDidMount() {
     await this.loadAssetsAsync();
   }
@@ -61,6 +57,12 @@ export default class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
+        <StatusBar
+          barStyle="light-content"
+          hidden={false}
+          backgroundColor={COLORS.black}
+          translucent={true}
+        />
         <AppContainer />
       </Provider>
     );

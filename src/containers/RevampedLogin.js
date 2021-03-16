@@ -177,12 +177,12 @@ function RevampedLogin(props) {
       <View
         style={{
           position: "absolute",
-          bottom: 5,
+          bottom: 0,
           width: "100%",
         }}
       >
         <Image
-          source={require("../../assets/reader2.gif")}
+          source={require("../../assets/reader3.gif")}
           resizeMode="cover"
           style={{ width: "100%", height: 150, borderRadius: 10 }}
         />
@@ -192,7 +192,7 @@ function RevampedLogin(props) {
           position: "absolute",
           top: 0,
           backgroundColor: COLORS.black,
-          height: "40%",
+          height: "44%",
           width: "100%",
           borderBottomLeftRadius: 60,
           borderBottomRightRadius: 60,
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
     // fontSize: 18,
     // fontWeight: "bold",
     textAlign: "center",
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "600",
     color: "white",
   },
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     left: Dimensions.get("window").width / 2 - 75,
     // top: 60,
-    top: Dimensions.get("window").height * 0.2 - 66,
+    top: Dimensions.get("window").height * 0.22 - 66,
   },
   errorMessage: {
     color: "red",
