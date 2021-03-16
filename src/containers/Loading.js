@@ -49,7 +49,7 @@ function Loading(props) {
             console.error(error);
           });
       } else {
-        props.navigation.navigate("Login");
+        props.navigation.navigate("RevampedLogin");
       }
     });
   }, []);

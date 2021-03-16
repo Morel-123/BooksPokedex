@@ -12,7 +12,7 @@ function Signup(props) {
   const database = firebase.firestore();
 
   const handleOnBackPress = () => {
-    props.navigation.navigate("Login");
+    props.navigation.navigate("RevampedLogin");
   }
 
   const handleSignUp = (user, inputPassword) => {
