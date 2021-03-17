@@ -208,7 +208,12 @@ function RevampedLogin(props) {
       </TouchableOpacity>
       <View style={styles.logoContainer}>
         <Image style={styles.logo} source={require("../../assets/logo.png")} />
-        <Text style={styles.logoText}>BookDex</Text>
+        {/* <Text style={styles.logoText}>BookDex</Text> */}
+        <Image
+          source={require("../../assets/logo-bold2.png")}
+          resizeMode="contain"
+          style={{ width: 150, height: 40 }}
+        />
       </View>
 
       <View style={styles.loginInnerContainer}>
