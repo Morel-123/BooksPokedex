@@ -223,6 +223,7 @@ function NewSocial(props) {
               justifyContent: "center",
               alignItems: "center",
               fontSize: 20,
+              color: "white",
             }}
           >
             Start Adding Some Friends
@@ -339,12 +340,18 @@ function NewSocial(props) {
             />
           </View>
         ) : (
-          <View style={{ display: "flex", flexDirection: "row" }}>
-            <Text style={{ marginLeft: 5, direction: "ltr" }}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              paddingLeft: SIZES.padding,
+            }}
+          >
+            <Text style={{ marginLeft: 5, direction: "ltr", color: "white" }}>
               {selectedFriendState.firstName.substring(0, 1).toUpperCase() +
                 selectedFriendState.firstName.substring(1)}
             </Text>
-            <Text style={{ marginLeft: 5, direction: "ltr" }}>
+            <Text style={{ marginLeft: 5, direction: "ltr", color: "white" }}>
               has no books in their collection.
             </Text>
           </View>

@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
 import User from "../entities/User";
 import RegistrationForm from "../components/RegistrationForm";
+import RevampedRegistrationForm from "../components/RevampedRegistrationForm";
 
 function Signup(props) {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -84,7 +85,7 @@ function Signup(props) {
   };
 
   return (
-    <RegistrationForm
+    <RevampedRegistrationForm
       isPasswordSignup={true}
       handleSignUp={handleSignUp}
       handleGoogleAuthentication={handleGoogleAuthentication}

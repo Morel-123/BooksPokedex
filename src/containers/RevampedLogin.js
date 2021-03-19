@@ -15,7 +15,14 @@ import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
 import * as booksActions from "../actions/Books";
 import * as socialActions from "../actions/Social";
-import { Card, ListItem, Button, Input, Icon } from "react-native-elements";
+import {
+  Card,
+  ListItem,
+  Button,
+  Input,
+  Icon,
+  SocialIcon,
+} from "react-native-elements";
 import { useForm, Controller } from "react-hook-form";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
@@ -135,21 +142,27 @@ function RevampedLogin(props) {
         dispatch(authActions.login(responseData));
         let favoriteBooksFromDB = responseData.favoriteBooks;
         let favoriteBooks = {};
-        favoriteBooksFromDB.forEach((favoriteBook) => {
-          favoriteBooks[favoriteBook.bookID] = favoriteBook.book;
-        });
+        if (favoriteBooksFromDB) {
+          favoriteBooksFromDB.forEach((favoriteBook) => {
+            favoriteBooks[favoriteBook.bookID] = favoriteBook.book;
+          });
+        }
         dispatch(booksActions.setFavoriteBooks(favoriteBooks));
         let collectionFromDB = responseData.collection;
         let collection = {};
-        collectionFromDB.forEach((item) => {
-          collection[item.bookID] = item.book;
-        });
+        if (collectionFromDB) {
+          collectionFromDB.forEach((item) => {
+            collection[item.bookID] = item.book;
+          });
+        }
         dispatch(booksActions.setCollection(collection));
         let friendsFromDB = responseData.friends;
         let friends = {};
-        friendsFromDB.forEach((item) => {
-          friends[item.uid] = item.friend;
-        });
+        if (friendsFromDB) {
+          friendsFromDB.forEach((item) => {
+            friends[item.uid] = item.friend;
+          });
+        }
         dispatch(socialActions.setFriends(friends));
         props.navigation.navigate("MainNavigator");
       })
@@ -217,148 +230,160 @@ function RevampedLogin(props) {
       </View>
 
       <View style={styles.loginInnerContainer}>
-        <Card
-          containerStyle={{
-            borderTopRightRadius: 50,
-            borderBottomLeftRadius: 50,
-            backgroundColor: "#f8f8ff",
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 0,
-            },
-            shadowOpacity: 0.2,
-            shadowRadius: 6,
-            elevation: 6,
-          }}
-        >
-          <Controller
-            control={control}
-            render={({ onChange, onBlur, value }) => (
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={{
-                    height: 40,
-                    fontSize: 18,
-                    borderBottomColor: "#86939e",
-                    borderBottomWidth: 1,
-                  }}
-                  placeholder="Email"
-                  onChangeText={(email) => {
-                    onChange(email);
-                    setEmail(email);
-                  }}
-                  onBlur={onBlur}
-                  value={value}
-                />
-                {errors.email && errors.email.type === "required" && (
-                  <Text style={styles.errorMessage}>Email is required.</Text>
-                )}
-                {errors.email && errors.email.type === "validate" && (
-                  <Text style={styles.errorMessage}>
-                    Please provide a valid email.
-                  </Text>
-                )}
-              </View>
-            )}
-            name="email"
-            rules={{
-              required: true,
-              validate: (value) => isEmailAddressValid(value),
+        <View style={{ position: "relative" }}>
+          <Card
+            containerStyle={{
+              borderTopRightRadius: 50,
+              borderBottomLeftRadius: 50,
+              backgroundColor: "#f8f8ff",
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 0,
+              },
+              shadowOpacity: 0.2,
+              shadowRadius: 6,
+              elevation: 6,
             }}
-            defaultValue=""
-          />
-          <Controller
-            control={control}
-            render={({ onChange, onBlur, value }) => (
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={{
-                    height: 40,
-                    fontSize: 18,
-                    borderBottomColor: "#86939e",
-                    borderBottomWidth: 1,
-                  }}
-                  placeholder="Password"
-                  onChangeText={(password) => {
-                    onChange(password);
-                    setPassword(password);
-                  }}
-                  onBlur={onBlur}
-                  value={value}
-                  secureTextEntry={!showPassword}
-                />
-                {errors.password && errors.password.type === "required" && (
-                  <Text style={styles.errorMessage}>Password is required.</Text>
-                )}
-                {errors.password && errors.password.type === "minLength" && (
-                  <Text style={styles.errorMessage}>
-                    Password must be at least 6 characters long.
-                  </Text>
-                )}
-                {showPassword ? (
-                  <Icon
-                    name="eye"
-                    type="font-awesome"
-                    containerStyle={{
-                      height: 24,
-                      position: "absolute",
-                      top: 8,
-                      right: 0,
+          >
+            <Controller
+              control={control}
+              render={({ onChange, onBlur, value }) => (
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={{
+                      height: 40,
+                      fontSize: 18,
+                      borderBottomColor: "#86939e",
+                      borderBottomWidth: 1,
                     }}
-                    onPress={() => setShowPassword(false)}
-                  />
-                ) : (
-                  <Icon
-                    name="eye-slash"
-                    type="font-awesome"
-                    containerStyle={{
-                      height: 24,
-                      position: "absolute",
-                      top: 8,
-                      right: 0,
+                    placeholder="Email"
+                    onChangeText={(email) => {
+                      onChange(email);
+                      setEmail(email);
                     }}
-                    onPress={() => setShowPassword(true)}
+                    onBlur={onBlur}
+                    value={value}
                   />
-                )}
-              </View>
-            )}
-            name="password"
-            rules={{
-              required: true,
-              minLength: 6,
-            }}
-            defaultValue=""
-          />
-          <Button
-            title="Login"
-            buttonStyle={{
-              width: Dimensions.get("window").width * 0.75,
-              borderRadius: 25,
+                  {errors.email && errors.email.type === "required" && (
+                    <Text style={styles.errorMessage}>Email is required.</Text>
+                  )}
+                  {errors.email && errors.email.type === "validate" && (
+                    <Text style={styles.errorMessage}>
+                      Please provide a valid email.
+                    </Text>
+                  )}
+                </View>
+              )}
+              name="email"
+              rules={{
+                required: true,
+                validate: (value) => isEmailAddressValid(value),
+              }}
+              defaultValue=""
+            />
+            <Controller
+              control={control}
+              render={({ onChange, onBlur, value }) => (
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={{
+                      height: 40,
+                      fontSize: 18,
+                      borderBottomColor: "#86939e",
+                      borderBottomWidth: 1,
+                    }}
+                    placeholder="Password"
+                    onChangeText={(password) => {
+                      onChange(password);
+                      setPassword(password);
+                    }}
+                    onBlur={onBlur}
+                    value={value}
+                    secureTextEntry={!showPassword}
+                  />
+                  {errors.password && errors.password.type === "required" && (
+                    <Text style={styles.errorMessage}>
+                      Password is required.
+                    </Text>
+                  )}
+                  {errors.password && errors.password.type === "minLength" && (
+                    <Text style={styles.errorMessage}>
+                      Password must be at least 6 characters long.
+                    </Text>
+                  )}
+                  {showPassword ? (
+                    <Icon
+                      name="eye"
+                      type="font-awesome"
+                      containerStyle={{
+                        height: 24,
+                        position: "absolute",
+                        top: 8,
+                        right: 0,
+                      }}
+                      onPress={() => setShowPassword(false)}
+                    />
+                  ) : (
+                    <Icon
+                      name="eye-slash"
+                      type="font-awesome"
+                      containerStyle={{
+                        height: 24,
+                        position: "absolute",
+                        top: 8,
+                        right: 0,
+                      }}
+                      onPress={() => setShowPassword(true)}
+                    />
+                  )}
+                </View>
+              )}
+              name="password"
+              rules={{
+                required: true,
+                minLength: 6,
+              }}
+              defaultValue=""
+            />
+            <Button
+              title="Login"
+              buttonStyle={{
+                width: Dimensions.get("window").width * 0.75,
+                borderRadius: 25,
+                alignSelf: "center",
+                backgroundColor: "#f96d41",
+              }}
+              onPress={handleSubmit(handleLogin)}
+            />
+          </Card>
+          <View
+            style={{
+              position: "absolute",
+              bottom: -100,
               alignSelf: "center",
-              backgroundColor: "#f96d41",
+              // width: 200,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
-            onPress={handleSubmit(handleLogin)}
-          />
-        </Card>
+          >
+            {/* "#a8abaf" */}
+            {/* style={{ color: COLORS.lightGray4 }} */}
+            <Text style={{ color: COLORS.lightGray4 }}>
+              Or via social media
+            </Text>
+            <SocialIcon
+              raised={true}
+              type="google"
+              style={{ backgroundColor: "#f96d41" }}
+              onPress={() => {
+                promptAsync();
+              }}
+            />
+          </View>
+        </View>
       </View>
-      {/* <View
-        style={{
-          position: "absolute",
-          bottom: 25,
-          alignSelf: "center",
-          width: 200,
-        }}
-      >
-        <Button
-          title="Login With Google"
-          buttonStyle={{
-            borderRadius: 25,
-            backgroundColor: "#f96d41",
-          }}
-          onPress={promptAsync}
-        />
-      </View> */}
     </View>
   );
 }
@@ -392,6 +417,7 @@ const styles = StyleSheet.create({
     height: "100%",
     display: "flex",
     justifyContent: "center",
+    position: "relative",
   },
   loginBackground: {
     flex: 1,
