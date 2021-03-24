@@ -191,8 +191,8 @@ function RevampedRegistration({
                 placeholderTextColor="#b2b2b2"
                 style={(styles.inputMargin, styles.textInput)}
                 onChangeText={(email) => {
-                  onChange(email);
-                  setEmail(email);
+                  onChange(email.trim());
+                  setEmail(email.trim());
                 }}
                 onBlur={onBlur}
                 value={value}
@@ -268,8 +268,8 @@ function RevampedRegistration({
                   placeholderTextColor="#b2b2b2"
                   style={(styles.inputMargin, styles.textInput)}
                   onChangeText={(password) => {
-                    onChange(password);
-                    setPassword(password);
+                    onChange(password.trim());
+                    setPassword(password.trim());
                   }}
                   onBlur={onBlur}
                   value={value}

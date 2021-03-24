@@ -259,8 +259,8 @@ function RevampedLogin(props) {
                     }}
                     placeholder="Email"
                     onChangeText={(email) => {
-                      onChange(email);
-                      setEmail(email);
+                      onChange(email.trim());
+                      setEmail(email.trim());
                     }}
                     onBlur={onBlur}
                     value={value}
@@ -295,8 +295,8 @@ function RevampedLogin(props) {
                     }}
                     placeholder="Password"
                     onChangeText={(password) => {
-                      onChange(password);
-                      setPassword(password);
+                      onChange(password.trim());
+                      setPassword(password.trim());
                     }}
                     onBlur={onBlur}
                     value={value}
