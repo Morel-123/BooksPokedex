@@ -22,6 +22,11 @@ import { ProgressBar } from "react-native-paper";
 
 const avatarImages = [
   {
+    id: 9,
+    image: require("../../assets/pokemon-avatars/rattata.png"),
+    bookRequirement: 0,
+  },
+  {
     id: 10,
     image: require("../../assets/pokemon-avatars/charmander.png"),
     bookRequirement: 2,
@@ -60,6 +65,51 @@ const avatarImages = [
     id: 17,
     image: require("../../assets/pokemon-avatars/eevee.png"),
     bookRequirement: 50,
+  },
+  {
+    id: 18,
+    image: require("../../assets/pokemon-avatars/caterpie.png"),
+    pageRequirement: 200,
+  },
+  {
+    id: 19,
+    image: require("../../assets/pokemon-avatars/pidgey.png"),
+    pageRequirement: 500,
+  },
+  {
+    id: 20,
+    image: require("../../assets/pokemon-avatars/weedle.png"),
+    pageRequirement: 1000,
+  },
+  {
+    id: 21,
+    image: require("../../assets/pokemon-avatars/meowth.png"),
+    pageRequirement: 1500,
+  },
+  {
+    id: 22,
+    image: require("../../assets/pokemon-avatars/mankey.png"),
+    pageRequirement: 2000,
+  },
+  {
+    id: 23,
+    image: require("../../assets/pokemon-avatars/venonat.png"),
+    pageRequirement: 3000,
+  },
+  {
+    id: 24,
+    image: require("../../assets/pokemon-avatars/dratini.png"),
+    pageRequirement: 5000,
+  },
+  {
+    id: 25,
+    image: require("../../assets/pokemon-avatars/mew.png"),
+    pageRequirement: 10000,
+  },
+  {
+    id: 26,
+    image: require("../../assets/pokemon-avatars/mystic.png"),
+    pageRequirement: 15000,
   },
 ];
 
@@ -102,6 +152,49 @@ const booksLevels = [
   },
 ];
 
+const pagesLevels = [
+  {
+    level: 1,
+    pageCount: 0,
+  },
+  {
+    level: 2,
+    pageCount: 200,
+  },
+  {
+    level: 3,
+    pageCount: 500,
+  },
+  {
+    level: 4,
+    pageCount: 1000,
+  },
+  {
+    level: 5,
+    pageCount: 1500,
+  },
+  {
+    level: 6,
+    pageCount: 2000,
+  },
+  {
+    level: 7,
+    pageCount: 3000,
+  },
+  {
+    level: 8,
+    pageCount: 5000,
+  },
+  {
+    level: 9,
+    pageCount: 10000,
+  },
+  {
+    level: 10,
+    pageCount: 15000,
+  },
+];
+
 function Profile(props) {
   const dispatch = useDispatch();
   const database = firebase.firestore();
@@ -119,21 +212,48 @@ function Profile(props) {
   );
   const [chosenAvatar, setChosenAvatar] = useState(avatarImages[avatarIndex]);
   const [loadingAvatarChange, setLoadingAvatarChange] = useState(false);
-  const [nextLevel, setNextLevel] = useState(booksLevels[0]);
+  const [nextBooksLevel, setNextBooksLevel] = useState(booksLevels[0]);
+  const [nextPagesLevel, setNextPagesLevel] = useState(pagesLevels[0]);
 
   useEffect(() => {
     if (collection) {
+      // calculate page count and the next level for page levels
       let pages = 0;
       Object.values(collection).forEach((book) => {
         if (Number.isInteger(book.pageCount)) {
           pages = pages + book.pageCount;
         }
       });
+      pages = 16020;
+      for (let i = 0; i < pagesLevels.length; i++) {
+        if (pagesLevels[i].pageCount > pages) {
+          setNextPagesLevel(pagesLevels[i]);
+          break;
+        }
+        // it means we have more pages then every level
+        if (i == pagesLevels.length - 1) {
+          let maxPageLevel = {
+            level: "MAX",
+            pageCount: pages,
+          };
+          setNextPagesLevel(maxPageLevel);
+        }
+      }
+      // calculate book count and the next level for book levels
       let numOfBooks = Object.keys(collection).length;
+      numOfBooks = 52;
       for (let i = 0; i < booksLevels.length; i++) {
         if (booksLevels[i].bookCount > numOfBooks) {
-          setNextLevel(booksLevels[i]);
+          setNextBooksLevel(booksLevels[i]);
           break;
+        }
+        // it means we have more books then every level
+        if (i == booksLevels.length - 1) {
+          let maxBookLevel = {
+            level: "MAX",
+            bookCount: numOfBooks,
+          };
+          setNextBooksLevel(maxBookLevel);
         }
       }
       setNumOfBooks(numOfBooks);
@@ -162,7 +282,7 @@ function Profile(props) {
     var scaled = number / scale;
 
     // format number and add suffix
-    return scaled.toFixed(1) + suffix;
+    return parseFloat(scaled.toFixed(1)) + suffix;
   }
 
   const handleLogout = () => {
@@ -258,7 +378,8 @@ function Profile(props) {
             }}
             onPress={() => onAvatarSelected(item)}
           >
-            {numOfBooks < item.bookRequirement && (
+            {(numOfBooks < item.bookRequirement ||
+              numOfPages < item.pageRequirement) && (
               <View
                 style={{
                   position: "absolute",
@@ -290,7 +411,11 @@ function Profile(props) {
                 height: selectedAvatar.id === item.id ? 60 : 75,
                 borderRadius: 10,
                 alignSelf: "center",
-                opacity: numOfBooks < item.bookRequirement ? 0.5 : 1,
+                opacity:
+                  numOfBooks < item.bookRequirement ||
+                  numOfPages < item.pageRequirement
+                    ? 0.5
+                    : 1,
               }}
             />
           </TouchableOpacity>
@@ -391,7 +516,8 @@ function Profile(props) {
                 // justifyContent: "center",
               }}
             >
-              {numOfBooks >= selectedAvatar.bookRequirement ? (
+              {numOfBooks >= selectedAvatar.bookRequirement ||
+              numOfPages >= selectedAvatar.pageRequirement ? (
                 <MaterialCommunityIcons
                   name="lock-open"
                   color={COLORS.black}
@@ -411,14 +537,25 @@ function Profile(props) {
                   style={{ marginRight: 5, height: 26, alignSelf: "center" }}
                 />
               )}
-              <Text style={{ fontSize: 16 }}>
-                Read {selectedAvatar.bookRequirement} books to unlock
-              </Text>
+              {selectedAvatar.bookRequirement == 0 ? (
+                <Text style={{ fontSize: 16 }}>Thank you gift for joining</Text>
+              ) : (
+                <Text style={{ fontSize: 16 }}>
+                  Read{" "}
+                  {selectedAvatar.bookRequirement
+                    ? `${selectedAvatar.bookRequirement} books`
+                    : `${abbreviateNumber(
+                        selectedAvatar.pageRequirement
+                      )} pages`}{" "}
+                  to unlock
+                </Text>
+              )}
             </View>
             <TouchableOpacity
               style={{
                 backgroundColor:
-                  numOfBooks < selectedAvatar.bookRequirement
+                  numOfBooks < selectedAvatar.bookRequirement ||
+                  numOfPages < selectedAvatar.pageRequirement
                     ? "#dfdfdf"
                     : COLORS.primary,
                 width: "50%",
@@ -432,13 +569,15 @@ function Profile(props) {
               onPress={onChangeAvatar}
               disabled={
                 numOfBooks < selectedAvatar.bookRequirement ||
+                numOfPages < selectedAvatar.pageRequirement ||
                 loadingAvatarChange
               }
             >
               <Text
                 style={{
                   color:
-                    numOfBooks < selectedAvatar.bookRequirement
+                    numOfBooks < selectedAvatar.bookRequirement ||
+                    numOfPages < selectedAvatar.pageRequirement
                       ? "#a1a1a1"
                       : COLORS.white,
                   fontWeight: "bold",
@@ -462,7 +601,7 @@ function Profile(props) {
     );
   }
 
-  function renderMasteryLevelsSection() {
+  function renderBooksMasteryLevelsSection() {
     return (
       <View
         style={{
@@ -478,6 +617,7 @@ function Profile(props) {
             padding: 10,
             borderRadius: 25,
             width: 90,
+            height: 90,
             justifyContent: "center",
             alignItems: "center",
             // backgroundColor: "#1cb0f6",
@@ -490,7 +630,10 @@ function Profile(props) {
             style={{ width: 50, height: 50, borderRadius: 10 }}
           />
           <Text style={{ color: COLORS.white, fontWeight: "bold" }}>
-            LEVEL {nextLevel.level - 1}
+            Lvl.{" "}
+            {nextBooksLevel.level != "MAX"
+              ? nextBooksLevel.level - 1
+              : nextBooksLevel.level}
           </Text>
         </View>
         <View style={{ width: "70%", height: "100%", marginHorizontal: 10 }}>
@@ -500,29 +643,127 @@ function Profile(props) {
             >
               Books Mastery
             </Text>
-            <Text style={{ fontSize: 14, color: COLORS.black }}>
-              Read {nextLevel.bookCount} books to unlock
-            </Text>
+            {nextBooksLevel.level != "MAX" ? (
+              <Text style={{ fontSize: 14, color: COLORS.black }}>
+                Read {nextBooksLevel.bookCount} books to unlock
+              </Text>
+            ) : (
+              <Text style={{ fontSize: 14, color: COLORS.black }}>
+                Max level reached
+              </Text>
+            )}
           </View>
           <View
             style={{
-              flexDirection: "row",
+              flexDirection: "column",
+              // flexDirection: "row",
               // justifyContent: "space-between",
-              alignItems: "center",
+              // alignItems: "center",
               // width: "90%",
               marginTop: 10,
+              width: 175,
             }}
           >
             <ProgressBar
               // progress={0.5}
-              progress={numOfBooks / nextLevel.bookCount}
+              progress={numOfBooks / nextBooksLevel.bookCount}
               color={COLORS.primary}
               style={{ height: 15, width: 175, borderRadius: 15 }}
             />
             <Text
-              style={{ color: COLORS.black, paddingBottom: 2, marginLeft: 10 }}
+              style={{
+                color: COLORS.black,
+                // paddingBottom: 2,
+                // marginLeft: 10
+              }}
             >
-              {numOfBooks} / {nextLevel.bookCount}
+              {numOfBooks} / {nextBooksLevel.bookCount}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  function renderPagesMasteryLevelsSection() {
+    return (
+      <View
+        style={{
+          width: "90%",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          alignSelf: "center",
+        }}
+      >
+        <View
+          style={{
+            padding: 10,
+            borderRadius: 25,
+            width: 90,
+            height: 90,
+            justifyContent: "center",
+            alignItems: "center",
+            // backgroundColor: "#1cb0f6",
+            backgroundColor: "#d86c41",
+          }}
+        >
+          <Image
+            source={require("../../assets/stack8.png")}
+            resizeMode="contain"
+            style={{ width: 50, height: 50, borderRadius: 10 }}
+          />
+          <Text style={{ color: COLORS.white, fontWeight: "bold" }}>
+            Lvl.{" "}
+            {nextPagesLevel.level != "MAX"
+              ? nextPagesLevel.level - 1
+              : nextPagesLevel.level}
+          </Text>
+        </View>
+        <View style={{ width: "70%", height: "100%", marginHorizontal: 10 }}>
+          <View>
+            <Text
+              style={{ fontSize: 20, fontWeight: "bold", color: COLORS.black }}
+            >
+              Pages Mastery
+            </Text>
+            {nextPagesLevel.level != "MAX" ? (
+              <Text style={{ fontSize: 14, color: COLORS.black }}>
+                Read {abbreviateNumber(nextPagesLevel.pageCount)} pages to
+                unlock
+              </Text>
+            ) : (
+              <Text style={{ fontSize: 14, color: COLORS.black }}>
+                Max level reached
+              </Text>
+            )}
+          </View>
+          <View
+            style={{
+              flexDirection: "column",
+              // flexDirection: "row",
+              // justifyContent: "space-between",
+              // alignItems: "center",
+              // width: "90%",
+              marginTop: 10,
+              width: 175,
+            }}
+          >
+            <ProgressBar
+              // progress={0.5}
+              progress={numOfPages / nextPagesLevel.pageCount}
+              color={COLORS.primary}
+              style={{ height: 15, width: 175, borderRadius: 15 }}
+            />
+            <Text
+              style={{
+                color: COLORS.black,
+                // paddingBottom: 2,
+                // marginLeft: 10
+              }}
+            >
+              {abbreviateNumber(numOfPages)} /{" "}
+              {abbreviateNumber(nextPagesLevel.pageCount)}
             </Text>
           </View>
         </View>
@@ -656,9 +897,9 @@ function Profile(props) {
           </View>
 
           <View style={{ marginTop: 20 }}>
-            {renderMasteryLevelsSection()}
+            {renderBooksMasteryLevelsSection()}
             <View style={{ marginTop: 20 }}>
-              {renderMasteryLevelsSection()}
+              {renderPagesMasteryLevelsSection()}
             </View>
           </View>
 
@@ -725,246 +966,6 @@ function Profile(props) {
           {renderAvatarChangeOverlay()}
         </View>
       </ImageBackground>
-    </View>
-  );
-
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: COLORS.black,
-        position: "relative",
-      }}
-    >
-      <View style={{ position: "absolute", top: 50 }}>
-        <TouchableOpacity
-          style={{
-            flex: 1,
-          }}
-          onPress={() => onAvatarPress()}
-        >
-          <Image
-            // source={require("../../assets/pokemon-avatars/011-avatar.png")}
-            source={chosenAvatar.image}
-            resizeMode="contain"
-            style={{ width: 100, height: 100, borderRadius: 10 }}
-          />
-        </TouchableOpacity>
-      </View>
-      {/* box shadow inset 0px -5px #168cc4 */}
-      <View
-        style={{
-          width: "90%",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <View
-          style={{
-            padding: 10,
-            borderRadius: 25,
-            width: 90,
-            justifyContent: "center",
-            alignItems: "center",
-            // backgroundColor: "#1cb0f6",
-            backgroundColor: "#d86c41",
-          }}
-        >
-          <Image
-            source={require("../../assets/read.png")}
-            resizeMode="contain"
-            style={{ width: 50, height: 50, borderRadius: 10 }}
-          />
-          <Text style={{ color: COLORS.white, fontWeight: "bold" }}>
-            LEVEL {nextLevel.level - 1}
-          </Text>
-        </View>
-        <View style={{ width: "70%", height: "100%", marginRight: 10 }}>
-          <View>
-            <Text
-              style={{ fontSize: 20, fontWeight: "bold", color: COLORS.white }}
-            >
-              Books Mastery
-            </Text>
-            <Text style={{ fontSize: 14, color: COLORS.white }}>
-              Read {nextLevel.bookCount} books to unlock
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              // justifyContent: "space-between",
-              alignItems: "center",
-              // width: "90%",
-              marginTop: 6,
-            }}
-          >
-            <ProgressBar
-              // progress={0.5}
-              progress={numOfBooks / nextLevel.bookCount}
-              color={COLORS.primary}
-              style={{ height: 15, width: 175, borderRadius: 15 }}
-            />
-            <Text
-              style={{ color: COLORS.white, paddingBottom: 2, marginLeft: 10 }}
-            >
-              {numOfBooks} / {nextLevel.bookCount}
-            </Text>
-          </View>
-        </View>
-      </View>
-      <Text style={{ color: "white" }}>You read {numOfBooks} books</Text>
-      <Text style={{ color: "white", marginBottom: 5 }}>
-        You read {abbreviateNumber(numOfPages)} pages
-      </Text>
-      <Button title="Log Out" onPress={handleLogout} color="#f96d41" />
-
-      {visible ? (
-        <View
-          style={{
-            position: Platform.OS === "web" ? "absolute" : "absolute",
-            height: "50%",
-          }}
-        >
-          <Overlay
-            overlayStyle={{
-              height: Platform.OS === "web" ? "100%" : "60%",
-              width: Platform.OS === "web" ? "100%" : "75%",
-              paddingHorizontal: 0,
-              backgroundColor: "#f9f4ef",
-            }}
-            isVisible={visible}
-            onBackdropPress={() => {
-              setVisible(false);
-              setSelectedAvatar(chosenAvatar);
-            }}
-          >
-            <View style={{ position: "relative" }}>
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  marginBottom: 5,
-                  paddingLeft: 10,
-                  fontSize: 20,
-                }}
-              >
-                Choose Your Avatar:
-              </Text>
-              <View
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Image
-                  source={selectedAvatar.image}
-                  resizeMode="contain"
-                  style={{ width: 100, height: 100, borderRadius: 10 }}
-                />
-              </View>
-              <ScrollView
-                style={{
-                  marginTop: 10,
-                  height: 200,
-                  marginBottom: 10,
-                  width: "100%",
-                }}
-              >
-                <View
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    // alignItems: "center",
-                    width: "100%",
-                  }}
-                >
-                  {renderAvatarSection()}
-                </View>
-              </ScrollView>
-              <View
-                style={{
-                  width: "100%",
-                  paddingLeft: 10,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  // justifyContent: "center",
-                }}
-              >
-                {numOfBooks >= selectedAvatar.bookRequirement ? (
-                  <MaterialCommunityIcons
-                    name="lock-open"
-                    color={COLORS.black}
-                    size={26}
-                    style={{
-                      marginRight: 5,
-                      height: 26,
-                      alignSelf: "center",
-                      transform: [{ scaleX: -1 }],
-                    }}
-                  />
-                ) : (
-                  <MaterialCommunityIcons
-                    name="lock"
-                    color={COLORS.black}
-                    size={26}
-                    style={{ marginRight: 5, height: 26, alignSelf: "center" }}
-                  />
-                )}
-                <Text style={{ fontSize: 16 }}>
-                  Read {selectedAvatar.bookRequirement} books to unlock
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={{
-                  backgroundColor:
-                    numOfBooks < selectedAvatar.bookRequirement
-                      ? "#dfdfdf"
-                      : COLORS.primary,
-                  width: "50%",
-                  borderRadius: 25,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  alignSelf: "center",
-                  height: 35,
-                  marginTop: 10,
-                }}
-                onPress={onChangeAvatar}
-                disabled={
-                  numOfBooks < selectedAvatar.bookRequirement ||
-                  loadingAvatarChange
-                }
-              >
-                <Text
-                  style={{
-                    color:
-                      numOfBooks < selectedAvatar.bookRequirement
-                        ? "#a1a1a1"
-                        : COLORS.white,
-                    fontWeight: "bold",
-                  }}
-                >
-                  {loadingAvatarChange ? "LOADING..." : "SAVE"}
-                </Text>
-              </TouchableOpacity>
-              {Platform.OS === "web" && (
-                <Button
-                  title="Dismiss"
-                  onPress={() => {
-                    setVisible(false);
-                    setSelectedAvatar(chosenAvatar);
-                  }}
-                />
-              )}
-            </View>
-          </Overlay>
-        </View>
-      ) : (
-        <></>
-      )}
     </View>
   );
 }
