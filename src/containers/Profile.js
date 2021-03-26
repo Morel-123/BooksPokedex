@@ -224,7 +224,6 @@ function Profile(props) {
           pages = pages + book.pageCount;
         }
       });
-      pages = 16020;
       for (let i = 0; i < pagesLevels.length; i++) {
         if (pagesLevels[i].pageCount > pages) {
           setNextPagesLevel(pagesLevels[i]);
@@ -241,7 +240,6 @@ function Profile(props) {
       }
       // calculate book count and the next level for book levels
       let numOfBooks = Object.keys(collection).length;
-      numOfBooks = 52;
       for (let i = 0; i < booksLevels.length; i++) {
         if (booksLevels[i].bookCount > numOfBooks) {
           setNextBooksLevel(booksLevels[i]);

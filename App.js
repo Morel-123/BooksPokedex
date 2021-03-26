@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Platform, Image, Text, View } from "react-native";
+import { StyleSheet, Platform, Image, Text, View, I18nManager } from "react-native";
 import { createSwitchNavigator, createAppContainer } from "react-navigation";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
@@ -18,6 +18,9 @@ import MainNavigator from "./src/containers/MainNavigator";
 import authReducer from "./src/reducers/Auth";
 import booksReducer from "./src/reducers/Books";
 import socialReducer from "./src/reducers/Social";
+
+I18nManager.forceRTL(false);
+I18nManager.allowRTL(false);
 
 const rootReducer = combineReducers({
   auth: authReducer,
