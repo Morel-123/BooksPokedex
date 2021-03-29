@@ -442,16 +442,7 @@ function Book(props) {
               loading={loadingCollectionRequest}
             />
           )}
-          {/* <Button title="Go Back" onPress={handleBack} /> */}
         </ScrollView>
-        {/* <Snackbar
-          visible={visible}
-          onDismiss={onDismissSnackBar}
-          duration={1500}
-          style={{ backgroundColor: "#448aff" }}
-        >
-          {liked ? "Added to Favorites" : "Removed from Favorites"}
-        </Snackbar> */}
       </View>
     </Root>
   );

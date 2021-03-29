@@ -229,7 +229,7 @@ function RevampedNewBookForm(props) {
         <Text style={{ color: COLORS.white, marginBottom: 5 }}>Loading</Text>
         <Spinner
           size={Platform.OS === "android" ? 10 : "large"}
-          color={Platform.OS === "android" ? "#f96d41" : undefined}
+          color={Platform.OS === "android" ? COLORS.primary : undefined}
         />
       </View>
     );
@@ -594,14 +594,14 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     borderRadius: 25,
-    backgroundColor: "#f96d41",
+    backgroundColor: COLORS.primary,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     elevation: 1,
   },
   registerButtonText: {
-    color: "#d4f4f3",
+    color: "white",
     alignSelf: "center",
     fontWeight: "bold",
   },

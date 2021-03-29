@@ -350,7 +350,6 @@ const BookDetail = (props) => {
           <View
             style={{
               flex: 1,
-              // paddingHorizontal: SIZES.radius,
               alignItems: "center",
               justifyContent: "center",
               paddingHorizontal: 5,

@@ -367,11 +367,7 @@ function Profile(props) {
           }}
         >
           <TouchableOpacity
-            // style={{
-            //   flex: 1,
-            // }}
             style={{
-              // backgroundColor: "gray",
               position: "relative",
             }}
             onPress={() => onAvatarSelected(item)}
@@ -498,7 +494,6 @@ function Profile(props) {
                 style={{
                   display: "flex",
                   justifyContent: "center",
-                  // alignItems: "center",
                   width: "100%",
                 }}
               >
@@ -511,7 +506,6 @@ function Profile(props) {
                 paddingLeft: 10,
                 flexDirection: "row",
                 alignItems: "center",
-                // justifyContent: "center",
               }}
             >
               {numOfBooks >= selectedAvatar.bookRequirement ||
@@ -618,7 +612,6 @@ function Profile(props) {
             height: 90,
             justifyContent: "center",
             alignItems: "center",
-            // backgroundColor: "#1cb0f6",
             backgroundColor: "#d86c41",
           }}
         >
@@ -654,16 +647,11 @@ function Profile(props) {
           <View
             style={{
               flexDirection: "column",
-              // flexDirection: "row",
-              // justifyContent: "space-between",
-              // alignItems: "center",
-              // width: "90%",
               marginTop: 10,
               width: 175,
             }}
           >
             <ProgressBar
-              // progress={0.5}
               progress={numOfBooks / nextBooksLevel.bookCount}
               color={COLORS.primary}
               style={{ height: 15, width: 175, borderRadius: 15 }}
@@ -671,8 +659,6 @@ function Profile(props) {
             <Text
               style={{
                 color: COLORS.black,
-                // paddingBottom: 2,
-                // marginLeft: 10
               }}
             >
               {numOfBooks} / {nextBooksLevel.bookCount}
@@ -702,7 +688,6 @@ function Profile(props) {
             height: 90,
             justifyContent: "center",
             alignItems: "center",
-            // backgroundColor: "#1cb0f6",
             backgroundColor: "#d86c41",
           }}
         >
@@ -739,16 +724,11 @@ function Profile(props) {
           <View
             style={{
               flexDirection: "column",
-              // flexDirection: "row",
-              // justifyContent: "space-between",
-              // alignItems: "center",
-              // width: "90%",
               marginTop: 10,
               width: 175,
             }}
           >
             <ProgressBar
-              // progress={0.5}
               progress={numOfPages / nextPagesLevel.pageCount}
               color={COLORS.primary}
               style={{ height: 15, width: 175, borderRadius: 15 }}
@@ -756,8 +736,6 @@ function Profile(props) {
             <Text
               style={{
                 color: COLORS.black,
-                // paddingBottom: 2,
-                // marginLeft: 10
               }}
             >
               {abbreviateNumber(numOfPages)} /{" "}
@@ -775,7 +753,6 @@ function Profile(props) {
         source={require("../../assets/library1.jpg")}
         style={{
           flex: 1,
-          // resizeMode: "contain",
           resizeMode: "stretch",
           justifyContent: "center",
           height: 250,
@@ -807,7 +784,6 @@ function Profile(props) {
               onPress={() => onAvatarPress()}
             >
               <Image
-                // source={require("../../assets/pokemon-avatars/snorlax.png")}
                 source={chosenAvatar.image}
                 resizeMode="contain"
                 style={{ width: 100, height: 100, borderRadius: 10 }}
@@ -937,7 +913,6 @@ function Profile(props) {
                   color: COLORS.primary,
                   fontSize: 22,
                   fontWeight: "600",
-                  // marginBottom: 2,
                 }}
               >
                 Log Out

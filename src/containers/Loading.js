@@ -73,7 +73,7 @@ function Loading(props) {
     >
       <View style={styles.circle}>
         <Pulse
-          color="#f96d41"
+          color={COLORS.primary}
           numPulses={1}
           diameter={220}
           speed={20}
@@ -102,8 +102,6 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     position: "absolute",
-    // left: Dimensions.get("window").width / 2,
-    // top: Dimensions.get("window").height / 2,
     left: "50%",
     top: "50%",
     marginLeft: -150 / 2,

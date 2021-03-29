@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   registerButtonText: {
-    color: "#d4f4f3",
+    color: "white",
     alignSelf: "center",
     fontWeight: "bold",
   },

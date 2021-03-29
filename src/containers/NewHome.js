@@ -226,13 +226,6 @@ const NewHome = (props) => {
         {/* Greetings */}
         <View style={{ flex: 1 }}>
           <View style={{ marginRight: SIZES.padding }}>
-            {/* <Text style={{ ...FONTS.h3, color: COLORS.white }}>Welcome</Text>
-            <Text style={{ ...FONTS.h2, color: COLORS.white }}>
-              {user
-                ? user.firstName.substring(0, 1).toUpperCase() +
-                  user.firstName.substring(1)
-                : ""}
-            </Text> */}
             <Text style={{ ...FONTS.h2, color: COLORS.white }}>
               Welcome,{" "}
               {user
@@ -609,7 +602,7 @@ const NewHome = (props) => {
           <Text style={{ color: COLORS.white, marginBottom: 5 }}>Loading</Text>
           <Spinner
             size={Platform.OS === "android" ? 10 : "large"}
-            color={Platform.OS === "android" ? "#f96d41" : undefined}
+            color={Platform.OS === "android" ? COLORS.primary : undefined}
           />
         </View>
       ) : (

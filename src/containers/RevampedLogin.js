@@ -182,11 +182,6 @@ function RevampedLogin(props) {
 
   return (
     <View style={styles.loginContainer}>
-      {/* <ImageBackground
-        resizeMode={"cover"}
-        style={styles.loginBackground}
-        source={require("../../assets/books.jpg")}
-      ></ImageBackground> */}
       <View
         style={{
           position: "absolute",
@@ -221,7 +216,6 @@ function RevampedLogin(props) {
       </TouchableOpacity>
       <View style={styles.logoContainer}>
         <Image style={styles.logo} source={require("../../assets/logo.png")} />
-        {/* <Text style={styles.logoText}>BookDex</Text> */}
         <Image
           source={require("../../assets/logo-bold2.png")}
           resizeMode="contain"
@@ -352,7 +346,7 @@ function RevampedLogin(props) {
                 width: Dimensions.get("window").width * 0.75,
                 borderRadius: 25,
                 alignSelf: "center",
-                backgroundColor: "#f96d41",
+                backgroundColor: COLORS.primary,
               }}
               onPress={handleSubmit(handleLogin)}
             />
@@ -362,21 +356,18 @@ function RevampedLogin(props) {
               position: "absolute",
               bottom: -100,
               alignSelf: "center",
-              // width: 200,
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
             }}
           >
-            {/* "#a8abaf" */}
-            {/* style={{ color: COLORS.lightGray4 }} */}
             <Text style={{ color: COLORS.lightGray4 }}>
               Or via social media
             </Text>
             <SocialIcon
               raised={true}
               type="google"
-              style={{ backgroundColor: "#f96d41" }}
+              style={{ backgroundColor: COLORS.primary }}
               onPress={() => {
                 promptAsync();
               }}
@@ -428,7 +419,6 @@ const styles = StyleSheet.create({
     left: 0,
   },
   signUpButton: {
-    // borderBottomColor: "#0000007a",
     borderBottomWidth: 1,
     fontSize: 18,
     color: "white",
@@ -447,8 +437,6 @@ const styles = StyleSheet.create({
     height: 100,
   },
   logoText: {
-    // fontSize: 18,
-    // fontWeight: "bold",
     textAlign: "center",
     fontSize: 28,
     fontWeight: "600",
@@ -458,7 +446,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 1,
     left: Dimensions.get("window").width / 2 - 75,
-    // top: 60,
     top: Dimensions.get("window").height * 0.22 - 66,
   },
   errorMessage: {

@@ -51,14 +51,6 @@ function RevampedRegistration({
 
   return (
     <View style={styles.container}>
-      {/* <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => {
-          handleOnBackPress();
-        }}
-      >
-        <FontAwesome name="arrow-left" color="#fff" size={24} />
-      </TouchableOpacity> */}
       <View
         style={{
           height: 40,
@@ -121,7 +113,6 @@ function RevampedRegistration({
             <View
               style={{
                 marginHorizontal: 10,
-                // marginBottom: errors.firstName ? 0 : 10,
               }}
             >
               <TextInput
@@ -152,7 +143,6 @@ function RevampedRegistration({
             <View
               style={{
                 marginHorizontal: 10,
-                // marginBottom: errors.lastName ? 0 : 10,
               }}
             >
               <TextInput
@@ -183,7 +173,6 @@ function RevampedRegistration({
             <View
               style={{
                 marginHorizontal: 10,
-                // marginBottom: errors.email ? 0 : 10,
               }}
             >
               <TextInput
@@ -220,7 +209,6 @@ function RevampedRegistration({
             <View
               style={{
                 marginHorizontal: 10,
-                // marginBottom: errors.phoneNumber ? 0 : 10,
               }}
             >
               <TextInput
@@ -260,7 +248,6 @@ function RevampedRegistration({
               <View
                 style={{
                   marginHorizontal: 10,
-                //   marginBottom: errors.password ? 0 : 10,
                 }}
               >
                 <TextInput
@@ -348,7 +335,6 @@ const styles = StyleSheet.create({
   },
   regform: {
     alignSelf: "stretch",
-    // marginTop: 10,
     marginTop: SIZES.padding2,
     position: "relative",
     flex: 1,
@@ -357,8 +343,6 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 28,
     color: "white",
-    // marginBottom: 10,
-    // marginTop: 25,
     alignSelf: "center",
   },
   opacity: {
@@ -377,8 +361,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    // marginTop: 40,
-    // marginBottom: 10,
   },
   maleIcon: {
     height: 75,
@@ -405,7 +387,6 @@ const styles = StyleSheet.create({
   inputMargin: {
     marginLeft: 10,
     marginRight: 10,
-    // marginBottom: 10,
   },
   backButtonIcon: {
     color: "#fff",
@@ -432,7 +413,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     borderRadius: 25,
-    backgroundColor: "#f96d41",
+    backgroundColor: COLORS.primary,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

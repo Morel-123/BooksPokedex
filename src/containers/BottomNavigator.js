@@ -11,6 +11,7 @@ import NewCollection from "./NewCollection";
 import Social from "./Social";
 import Profile from "./Profile";
 import { BottomNavigation } from "react-native-paper";
+import { COLORS } from "../constants";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -21,8 +22,7 @@ function MyTabs() {
       activeColor="white"
       inactiveColor="#bdbdbd"
       labelStyle={{ fontSize: 12 }}
-      // barStyle={{ backgroundColor: "#448aff" }}
-      barStyle={{ backgroundColor: "#f96d41" }}
+      barStyle={{ backgroundColor: COLORS.primary }}
     >
       <Tab.Screen
         name="Home"

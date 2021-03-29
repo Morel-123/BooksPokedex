@@ -180,7 +180,7 @@ function NewSocial(props) {
                       !showAddFriends &&
                       selectedFriendState &&
                       item.uid == selectedFriendState.uid
-                        ? "#f96d41"
+                        ? COLORS.primary
                         : "#f96d41c4",
                     display: "flex",
                     justifyContent: "center",
@@ -336,7 +336,7 @@ function NewSocial(props) {
             </Text>
             <Spinner
               size={Platform.OS === "android" ? 10 : "large"}
-              color={Platform.OS === "android" ? "#f96d41" : undefined}
+              color={Platform.OS === "android" ? COLORS.primary : undefined}
             />
           </View>
         ) : (
@@ -347,7 +347,7 @@ function NewSocial(props) {
               paddingLeft: SIZES.padding,
             }}
           >
-            <Text style={{ marginLeft: 5, direction: "ltr", color: "white" }}>
+            <Text style={{ direction: "ltr", color: "white" }}>
               {selectedFriendState.firstName.substring(0, 1).toUpperCase() +
                 selectedFriendState.firstName.substring(1)}
             </Text>
@@ -372,7 +372,7 @@ function NewSocial(props) {
             </Text>
             <Spinner
               size={Platform.OS === "android" ? 10 : "large"}
-              color={Platform.OS === "android" ? "#f96d41" : undefined}
+              color={Platform.OS === "android" ? COLORS.primary : undefined}
             />
           </View>
         ) : (
@@ -427,7 +427,7 @@ function NewSocial(props) {
                     }}
                   >
                     <Icon
-                      color="#f96d41"
+                      color={COLORS.primary}
                       type="ionicon"
                       name={
                         Platform.OS === "ios"
@@ -447,7 +447,7 @@ function NewSocial(props) {
                       borderTopRightRadius: 25,
                       borderBottomLeftRadius: 25,
                       borderBottomRightRadius: 25,
-                      backgroundColor: "#f96d41",
+                      backgroundColor: COLORS.primary,
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
@@ -519,7 +519,7 @@ function NewSocial(props) {
             borderTopRightRadius: 50,
             borderBottomLeftRadius: 50,
             borderBottomRightRadius: 50,
-            backgroundColor: showAddFriends ? "#f96d41" : "#f96d41c4",
+            backgroundColor: showAddFriends ? COLORS.primary : "#f96d41c4",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
