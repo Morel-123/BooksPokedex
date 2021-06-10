@@ -229,7 +229,7 @@ function Profile(props) {
           setNextPagesLevel(pagesLevels[i]);
           break;
         }
-        // it means we have more pages then every level
+        // it means we have more pages than every level
         if (i == pagesLevels.length - 1) {
           let maxPageLevel = {
             level: "MAX",
@@ -280,7 +280,7 @@ function Profile(props) {
     var scaled = number / scale;
 
     // format number and add suffix
-    return parseFloat(scaled.toFixed(1)) + suffix;
+    return parseFloat(scaled.toFixed(3)) + suffix;
   }
 
   const handleLogout = () => {

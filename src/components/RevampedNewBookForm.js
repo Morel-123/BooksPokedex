@@ -118,7 +118,7 @@ function RevampedNewBookForm(props) {
             .then((url) => {
               let userBook = {};
               userBook["authors"] = [authorName];
-              userBook["categories"] = [genre];
+              userBook["categories"] = genre.replace(/\s+/g, '') != "" ? [genre] : null;
               userBook["description"] = description;
               userBook["pageCount"] = pageCount;
               userBook["title"] = bookName;
@@ -162,7 +162,7 @@ function RevampedNewBookForm(props) {
           .then((url) => {
             let userBook = {};
             userBook["authors"] = [authorName];
-            userBook["categories"] = [genre];
+            userBook["categories"] = genre.replace(/\s+/g, '') != "" ? [genre] : null;
             userBook["description"] = description;
             userBook["pageCount"] = pageCount;
             userBook["title"] = bookName;
@@ -415,11 +415,18 @@ function RevampedNewBookForm(props) {
                   Number of pages is required.
                 </Text>
               )}
+              {((errors.pageCount && errors.pageCount.type === "maxLength") ||
+                (submitPressed && pageCount == "")) && (
+                <Text style={styles.errorMessage}>
+                  Insert a maximum of 7 digits.
+                </Text>
+              )}
             </View>
           )}
           name="pageCount"
           rules={{
             required: true,
+            maxLength: 7,
             validate: (value) => isPageCountValid(value),
           }}
           defaultValue=""

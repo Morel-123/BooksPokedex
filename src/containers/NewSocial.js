@@ -146,6 +146,24 @@ function NewSocial(props) {
       });
   };
 
+  const removeFriend = (friend) => {
+    database
+      .collection("users")
+      .doc(user.uid)
+      .update({
+        friends: firebase.firestore.FieldValue.arrayRemove({
+          uid: friend.uid,
+          friend: friend,
+        }),
+      })
+      .then(function () {
+        dispatch(socialActions.removeFriend(friend));
+      })
+      .catch(function (error) {
+        console.log(error.message);
+      });
+  };
+
   const containsHebrew = (str) => {
     return /[\u0590-\u05FF]/.test(str);
   };
@@ -414,10 +432,18 @@ function NewSocial(props) {
                   </Text>
                 </View>
                 {friends[item.uid] ? (
-                  <View
+                  <TouchableOpacity
+                    key={item.uid}
                     style={{
                       height: 30,
                       width: 100,
+                      borderTopLeftRadius: 25,
+                      borderTopRightRadius: 25,
+                      borderBottomLeftRadius: 25,
+                      borderBottomRightRadius: 25,
+                      // backgroundColor: COLORS.primary,
+                      borderColor: "#ffffffd1",
+                      borderWidth: 1,
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
@@ -425,19 +451,46 @@ function NewSocial(props) {
                       position: "absolute",
                       right: 0,
                     }}
+                    onPress={() => removeFriend(item)}
                   >
-                    <Icon
-                      color={COLORS.primary}
-                      type="ionicon"
-                      name={
-                        Platform.OS === "ios"
-                          ? "ios-checkmark-circle-outline"
-                          : "md-checkmark-circle-outline"
-                      }
-                      iconStyle={{ width: 26, textAlign: "center" }}
-                    />
-                  </View>
+                    <View>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          lineHeight: 14,
+                          fontSize: 14,
+                          color: "white",
+                          marginTop: Platform.OS === "android" ? 3 : 0,
+                        }}
+                      >
+                        Remove
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
                 ) : (
+                  // <View
+                  //   style={{
+                  //     height: 30,
+                  //     width: 100,
+                  //     display: "flex",
+                  //     justifyContent: "center",
+                  //     alignItems: "center",
+                  //     marginRight: SIZES.padding,
+                  //     position: "absolute",
+                  //     right: 0,
+                  //   }}
+                  // >
+                  //   <Icon
+                  //     color={COLORS.primary}
+                  //     type="ionicon"
+                  //     name={
+                  //       Platform.OS === "ios"
+                  //         ? "ios-checkmark-circle-outline"
+                  //         : "md-checkmark-circle-outline"
+                  //     }
+                  //     iconStyle={{ width: 26, textAlign: "center" }}
+                  //   />
+                  // </View>
                   <TouchableOpacity
                     key={item.uid}
                     style={{

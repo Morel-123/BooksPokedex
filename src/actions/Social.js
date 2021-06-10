@@ -10,7 +10,7 @@ export const addFriend = (friend) => ({
 });
 
 export const removeFriend = (friend) => ({
-  type: LOGIN,
+  type: REMOVE_FRIEND,
   friend: friend,
 });
 
