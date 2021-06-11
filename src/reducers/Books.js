@@ -10,6 +10,9 @@ import {
   ADD_TO_COLLECTION,
   REMOVE_FROM_COLLECTION,
   SET_COLLECTION,
+  ADD_TO_READING_LIST,
+  REMOVE_FROM_READING_LIST,
+  SET_READING_LIST
 } from "../actions/Books";
 
 const initialState = {
@@ -20,6 +23,7 @@ const initialState = {
   fantasyBooks: null,
   favoriteBooks: {},
   collection: {},
+  readingList: {},
 };
 
 export default (state = initialState, action) => {
@@ -86,6 +90,25 @@ export default (state = initialState, action) => {
       return {
         ...state,
         collection: action.collection,
+      };
+    case ADD_TO_READING_LIST:
+      let newReadingList = { ...state.readingList };
+      newReadingList[action.readingListBook.id] = action.readingListBook;
+      return {
+        ...state,
+        readingList: newReadingList,
+      };
+    case REMOVE_FROM_READING_LIST:
+      let updatedReadingList = { ...state.readingList };
+      delete updatedReadingList[action.readingListBook.id];
+      return {
+        ...state,
+        readingList: updatedReadingList,
+      };
+    case SET_READING_LIST:
+      return {
+        ...state,
+        readingList: action.readingList,
       };
     default:
       return state;

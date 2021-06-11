@@ -34,6 +34,7 @@ function Signup(props) {
             gender: user.gender,
             favoriteBooks: [],
             collection: [],
+            readingList: [],
             friends: [],
             expoPushToken: null,
           })

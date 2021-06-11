@@ -12,6 +12,7 @@ import {
   SafeAreaView,
   FlatList,
   Platform,
+  ImageBackground,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -21,9 +22,11 @@ import * as booksActions from "../actions/Books";
 import { COLORS, FONTS, SIZES, icons } from "../constants";
 
 function NewCollection(props) {
+  const [isCollectionSelected, setIsCollectionSelected] = useState(true);
   const dispatch = useDispatch();
   let favoriteBooks = useSelector((state) => state.books.favoriteBooks);
   let collection = useSelector((state) => state.books.collection);
+  let readingList = useSelector((state) => state.books.readingList);
 
   const onBookPress = (book) => {
     dispatch(booksActions.setCurrentBook(book));
@@ -192,6 +195,78 @@ function NewCollection(props) {
         </View>
       );
     };
+
+    if (!isCollectionSelected) {
+      // reading list is selected
+      return (
+        <View style={{ flex: 1, marginTop: SIZES.radius }}>
+          {/* Header */}
+          <View
+            style={{
+              paddingHorizontal: SIZES.padding,
+              flexDirection: "row",
+            }}
+          >
+            <ImageBackground
+              style={{
+                width: 26,
+                height: 26,
+                marginRight: 5,
+                alignSelf: "center",
+                marginTop: 2,
+              }}
+              resizeMode={"cover"}
+              source={require("../../assets/book.png")}
+            ></ImageBackground>
+            <Text style={{ ...FONTS.h2, color: COLORS.white, marginRight: 15 }}>
+              Reading List {Object.keys(readingList).length}
+            </Text>
+            <TouchableOpacity
+              onPress={() => setIsCollectionSelected(true)}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <MaterialCommunityIcons
+                name="book"
+                color={COLORS.white}
+                size={26}
+                style={{
+                  marginRight: 5,
+                  height: 26,
+                  alignSelf: "center",
+                  opacity: 0.4,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Reading List */}
+          {Object.keys(readingList).length > 0 ? (
+            <FlatList
+              data={Object.values(readingList)}
+              renderItem={renderBookItem}
+              keyExtractor={(item) => `${item.id}`}
+              showsVerticalScrollIndicator={false}
+              style={{ paddingLeft: SIZES.padding, marginTop: SIZES.radius }}
+            />
+          ) : (
+            <Text
+              style={{
+                color: COLORS.white,
+                paddingHorizontal: SIZES.padding,
+                marginTop: SIZES.radius,
+              }}
+            >
+              Start Adding To Your Reading List To See Books Here
+            </Text>
+          )}
+        </View>
+      );
+    }
+
     return (
       <View style={{ flex: 1, marginTop: SIZES.radius }}>
         {/* Header */}
@@ -207,9 +282,30 @@ function NewCollection(props) {
             size={26}
             style={{ marginRight: 5, height: 26, alignSelf: "center" }}
           />
-          <Text style={{ ...FONTS.h2, color: COLORS.white }}>
+          <Text style={{ ...FONTS.h2, color: COLORS.white, marginRight: 15 }}>
             Collection {Object.keys(collection).length}
           </Text>
+          <TouchableOpacity
+            onPress={() => setIsCollectionSelected(false)}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ImageBackground
+              style={{
+                width: 26,
+                height: 26,
+                marginRight: 5,
+                alignSelf: "center",
+                opacity: 0.4,
+                marginTop: 2,
+              }}
+              resizeMode={"cover"}
+              source={require("../../assets/book.png")}
+            ></ImageBackground>
+          </TouchableOpacity>
         </View>
 
         {/* Collection */}
@@ -223,7 +319,11 @@ function NewCollection(props) {
           />
         ) : (
           <Text
-            style={{ color: COLORS.white, paddingHorizontal: SIZES.padding }}
+            style={{
+              color: COLORS.white,
+              paddingHorizontal: SIZES.padding,
+              marginTop: SIZES.radius,
+            }}
           >
             Start Adding To Your Collection To See Books Here
           </Text>

@@ -81,6 +81,7 @@ function RevampedLogin(props) {
                 gender: "male",
                 favoriteBooks: [],
                 collection: [],
+                readingList: [],
                 friends: [],
                 expoPushToken: null,
               })
@@ -95,6 +96,7 @@ function RevampedLogin(props) {
                 );
                 userObj.favoriteBooks = [];
                 userObj.collection = [];
+                userObj.readingList = [];
                 userObj.friends = [];
                 userObj.expoPushToken = null;
                 dispatch({
@@ -156,6 +158,14 @@ function RevampedLogin(props) {
           });
         }
         dispatch(booksActions.setCollection(collection));
+        let readingListFromDB = responseData.readingList;
+        let readingList = {};
+        if (readingListFromDB) {
+          readingListFromDB.forEach((readingListBook) => {
+            readingList[readingListBook.bookID] = readingListBook.book;
+          });
+        }
+        dispatch(booksActions.setReadingList(readingList));
         let friendsFromDB = responseData.friends;
         let friends = {};
         if (friendsFromDB) {

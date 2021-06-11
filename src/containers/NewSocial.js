@@ -12,7 +12,9 @@ import {
   SafeAreaView,
   FlatList,
   Platform,
+  ImageBackground,
 } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
 import * as booksActions from "../actions/Books";
@@ -30,14 +32,20 @@ function NewSocial(props) {
   let friendsCollections = useSelector(
     (state) => state.social.friendsCollections
   );
-  let selectedFriend = useSelector((state) => state.social.selectedFriend);
-  const [selectedFriendState, setSelectedFriendState] = useState(
-    selectedFriend
+  let friendsReadingLists = useSelector(
+    (state) => state.social.friendsReadingLists
   );
+  let selectedFriend = useSelector((state) => state.social.selectedFriend);
+  const [selectedFriendState, setSelectedFriendState] =
+    useState(selectedFriend);
 
   const [collection, setCollection] = useState(
     selectedFriend ? selectedFriend.collection : null
   );
+  const [readingList, setReadingList] = useState(
+    selectedFriend ? selectedFriend.readingList : null
+  );
+  const [isCollectionSelected, setIsCollectionSelected] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const database = firebase.firestore();
@@ -54,24 +62,45 @@ function NewSocial(props) {
     setSelectedFriendState(selectedFriend);
     if (selectedFriend) {
       setShowAddFriends(false);
-      if (friendsCollections[selectedFriend.uid]) {
+      const existingFriendCollection = friendsCollections[selectedFriend.uid];
+      const existingFriendReadingList = friendsReadingLists[selectedFriend.uid];
+      if (existingFriendCollection && existingFriendReadingList) {
         setCollection(friendsCollections[selectedFriend.uid]);
+        setReadingList(friendsReadingLists[selectedFriend.uid]);
       } else {
-        setCollection(null);
+        if (!existingFriendCollection) {
+          setCollection(null);
+        }
+        if (!existingFriendReadingList) {
+          setReadingList(null);
+        }
         setIsLoading(true);
         database
           .collection("users")
           .doc(selectedFriend.uid)
           .get()
           .then((response) => {
-            let friendCollection = response.data().collection;
-            dispatch(
-              socialActions.addFriendCollection(
-                selectedFriend.uid,
-                friendCollection
-              )
-            );
-            setCollection(friendCollection);
+            const responseData = response.data();
+            if (!existingFriendCollection) {
+              let friendCollection = responseData.collection;
+              dispatch(
+                socialActions.addFriendCollection(
+                  selectedFriend.uid,
+                  friendCollection
+                )
+              );
+              setCollection(friendCollection);
+            }
+            if (!existingFriendReadingList) {
+              let friendReadingList = responseData.readingList;
+              dispatch(
+                socialActions.addFriendReadingList(
+                  selectedFriend.uid,
+                  friendReadingList
+                )
+              );
+              setReadingList(friendReadingList);
+            }
             setIsLoading(false);
           })
           .catch((error) => {
@@ -334,6 +363,54 @@ function NewSocial(props) {
         </View>
       );
     };
+
+    if (!isCollectionSelected) {
+      return (
+        <View style={{ flex: 1, direction: "ltr" }}>
+          {readingList && Object.keys(readingList).length > 0 ? (
+            <FlatList
+              data={Object.values(readingList)}
+              renderItem={({ item }) => renderBookItem({ item: item.book })}
+              keyExtractor={(item) => `${item.bookID}`}
+              showsVerticalScrollIndicator={false}
+              style={{ paddingLeft: SIZES.padding }}
+            />
+          ) : isLoading ? (
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: COLORS.white, marginBottom: 5 }}>
+                Loading
+              </Text>
+              <Spinner
+                size={Platform.OS === "android" ? 10 : "large"}
+                color={Platform.OS === "android" ? COLORS.primary : undefined}
+              />
+            </View>
+          ) : (
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                paddingLeft: SIZES.padding,
+              }}
+            >
+              <Text style={{ direction: "ltr", color: "white" }}>
+                {selectedFriendState.firstName.substring(0, 1).toUpperCase() +
+                  selectedFriendState.firstName.substring(1)}
+              </Text>
+              <Text style={{ marginLeft: 5, direction: "ltr", color: "white" }}>
+                has no books in their reading list.
+              </Text>
+            </View>
+          )}
+        </View>
+      );
+    }
 
     return (
       <View style={{ flex: 1, direction: "ltr" }}>
@@ -627,17 +704,79 @@ function NewSocial(props) {
             >
               {selectedFriendState ? "'s" : ""}
             </Text>
-            <Text
-              style={{
-                color: COLORS.white,
-                marginLeft: 5,
-                fontSize: 20,
-                fontWeight: "bold",
-                direction: "ltr",
-              }}
-            >
-              Collection {collection ? Object.keys(collection).length : 0}
-            </Text>
+            {isCollectionSelected ? (
+              <>
+                <Text
+                  style={{
+                    color: COLORS.white,
+                    marginLeft: 5,
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    direction: "ltr",
+                    marginRight: 15,
+                  }}
+                >
+                  Collection {collection ? Object.keys(collection).length : 0}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setIsCollectionSelected(false)}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <ImageBackground
+                    style={{
+                      width: 26,
+                      height: 26,
+                      marginRight: 5,
+                      alignSelf: "center",
+                      opacity: 0.4,
+                      marginTop: 2,
+                    }}
+                    resizeMode={"cover"}
+                    source={require("../../assets/book.png")}
+                  ></ImageBackground>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                <Text
+                  style={{
+                    color: COLORS.white,
+                    marginLeft: 5,
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    direction: "ltr",
+                    marginRight: 15,
+                  }}
+                >
+                  Reading List{" "}
+                  {readingList ? Object.keys(readingList).length : 0}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setIsCollectionSelected(true)}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="book"
+                    color={COLORS.white}
+                    size={26}
+                    style={{
+                      marginRight: 5,
+                      height: 26,
+                      alignSelf: "center",
+                      opacity: 0.4,
+                    }}
+                  />
+                </TouchableOpacity>
+              </>
+            )}
           </View>
           <ScrollView contentContainerStyle={{ flex: 1 }}>
             <View style={{ flex: 1 }}>{renderFriendsCollectionSection()}</View>

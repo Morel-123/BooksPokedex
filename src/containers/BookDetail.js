@@ -48,15 +48,21 @@ const BookDetail = (props) => {
     book ? (favoriteBooks[book.id] ? true : false) : false
   );
 
+  let readingList = useSelector((state) => state.books.readingList);
+  const [inReadingList, setInReadingList] = useState(
+    book ? (readingList[book.id] ? true : false) : false
+  );
+
   let collection = useSelector((state) => state.books.collection);
   const user = useSelector((state) => state.auth.user);
   const [visible, setVisible] = useState(false);
+  const [readingListSnackBarVisible, setReadingListSnackBarVisible] =
+    useState(false);
   const [isInCollection, setIsInCollection] = useState(
     book ? (collection[book.id] ? true : false) : false
   );
-  const [loadingCollectionRequest, setLoadingCollectionRequest] = useState(
-    false
-  );
+  const [loadingCollectionRequest, setLoadingCollectionRequest] =
+    useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
   const indicator = new Animated.Value(0);
@@ -72,7 +78,12 @@ const BookDetail = (props) => {
     } else {
       setLiked(false);
     }
-  }, [book, collection, favoriteBooks]);
+    if (book && readingList[book.id]) {
+      setInReadingList(true);
+    } else {
+      setInReadingList(false);
+    }
+  }, [book, collection, favoriteBooks, readingList]);
 
   const onAddOrRemoveBookToCollection = () => {
     setLoadingCollectionRequest(true);
@@ -172,9 +183,44 @@ const BookDetail = (props) => {
       });
   };
 
+  const onBookReadingListPress = () => {
+    setInReadingList((val) => !val);
+    database
+      .collection("users")
+      .doc(user.uid)
+      .update({
+        readingList: inReadingList
+          ? firebase.firestore.FieldValue.arrayRemove({
+              bookID: book.id,
+              book: book,
+            })
+          : firebase.firestore.FieldValue.arrayUnion({
+              bookID: book.id,
+              book: book,
+            }),
+      })
+      .then(function () {
+        if (inReadingList) {
+          dispatch(booksActions.removeFromReadingList(book));
+        } else {
+          dispatch(booksActions.addToReadingList(book));
+        }
+        onToggleReadingListSnackBar();
+      })
+      .catch(function (error) {
+        console.log(error.message);
+      });
+  };
+
   const onToggleSnackBar = () => setVisible(!visible);
 
   const onDismissSnackBar = () => setVisible(false);
+
+  const onToggleReadingListSnackBar = () =>
+    setReadingListSnackBarVisible(!visible);
+
+  const onDismissReadingListSnackBar = () =>
+    setReadingListSnackBarVisible(false);
 
   const displySuccessPopup = (message, userCallback) => {
     setShowPopup(true);
@@ -506,6 +552,34 @@ const BookDetail = (props) => {
           )}
         </TouchableOpacity>
 
+        {/* Reading List */}
+        <TouchableOpacity
+          style={{
+            width: 60,
+            backgroundColor: COLORS.secondary,
+            marginLeft: SIZES.base,
+            marginVertical: SIZES.base,
+            borderRadius: SIZES.radius,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onPress={onBookReadingListPress}
+        >
+          {inReadingList ? (
+            <ImageBackground
+              style={{ width: 26, height: 26 }}
+              resizeMode={"cover"}
+              source={require("../../assets/book.png")}
+            ></ImageBackground>
+          ) : (
+            <ImageBackground
+              style={{ width: 26, height: 26 }}
+              resizeMode={"cover"}
+              source={require("../../assets/book-outline.png")}
+            ></ImageBackground>
+          )}
+        </TouchableOpacity>
+
         {/* Add to collection */}
 
         {isInCollection ? (
@@ -597,6 +671,16 @@ const BookDetail = (props) => {
             style={{ backgroundColor: "#448aff" }}
           >
             {liked ? "Added to Favorites" : "Removed from Favorites"}
+          </Snackbar>
+          <Snackbar
+            visible={readingListSnackBarVisible}
+            onDismiss={onDismissReadingListSnackBar}
+            duration={1500}
+            style={{ backgroundColor: "#448aff" }}
+          >
+            {inReadingList
+              ? "Added to Reading List"
+              : "Removed from Reading List"}
           </Snackbar>
         </Root>
       </View>

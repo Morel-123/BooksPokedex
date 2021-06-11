@@ -44,6 +44,12 @@ function Loading(props) {
               collection[item.bookID] = item.book;
             });
             dispatch(booksActions.setCollection(collection));
+            let readingListFromDB = responseData.readingList;
+            let readingList = {};
+            readingListFromDB.forEach((readingListBook) => {
+              readingList[readingListBook.bookID] = readingListBook.book;
+            });
+            dispatch(booksActions.setReadingList(readingList));
             let friendsFromDB = responseData.friends;
             let friends = {};
             friendsFromDB.forEach((item) => {

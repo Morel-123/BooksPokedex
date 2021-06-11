@@ -9,6 +9,9 @@ export const SET_FAVORITE_BOOKS = "SET_FAVORITE_BOOKS";
 export const ADD_TO_COLLECTION = "ADD_TO_COLLECTION";
 export const REMOVE_FROM_COLLECTION = "REMOVE_FROM_COLLECTION";
 export const SET_COLLECTION = "SET_COLLECTION";
+export const ADD_TO_READING_LIST = "ADD_TO_READING_LIST";
+export const REMOVE_FROM_READING_LIST = "REMOVE_FROM_READING_LIST";
+export const SET_READING_LIST = "SET_READING_LIST";
 
 export const setCurrentBook = (book) => ({
   type: SET_CURRENT_BOOK,
@@ -63,4 +66,19 @@ export const removeFromCollection = (book) => ({
 export const setCollection = (books) => ({
   type: SET_COLLECTION,
   collection: books,
+});
+
+export const addToReadingList = (book) => ({
+  type: ADD_TO_READING_LIST,
+  readingListBook: book,
+});
+
+export const removeFromReadingList = (book) => ({
+  type: REMOVE_FROM_READING_LIST,
+  readingListBook: book,
+});
+
+export const setReadingList = (books) => ({
+  type: SET_READING_LIST,
+  readingList: books,
 });

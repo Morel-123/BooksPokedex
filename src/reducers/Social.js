@@ -4,11 +4,13 @@ import {
   SET_CURRENT_FRIEND,
   SET_FRIENDS,
   ADD_FRIEND_COLLECTION,
+  ADD_FRIEND_READING_LIST,
 } from "../actions/Social";
 
 const initialState = {
   friends: {},
   friendsCollections: {},
+  friendsReadingLists: {},
   selectedFriend: null,
 };
 
@@ -44,6 +46,13 @@ export default (state = initialState, action) => {
       return {
         ...state,
         friendsCollections: newFriendsCollections,
+      };
+    case ADD_FRIEND_READING_LIST:
+      let newFriendsReadingLists = { ...state.friendsReadingLists };
+      newFriendsReadingLists[action.friendID] = action.friendReadingList;
+      return {
+        ...state,
+        friendsReadingLists: newFriendsReadingLists,
       };
     default:
       return state;
