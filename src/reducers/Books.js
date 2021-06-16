@@ -12,7 +12,8 @@ import {
   SET_COLLECTION,
   ADD_TO_READING_LIST,
   REMOVE_FROM_READING_LIST,
-  SET_READING_LIST
+  SET_READING_LIST,
+  ADD_FROM_READING_LIST_TO_COLLECTION,
 } from "../actions/Books";
 
 const initialState = {
@@ -109,6 +110,20 @@ export default (state = initialState, action) => {
       return {
         ...state,
         readingList: action.readingList,
+      };
+    case ADD_FROM_READING_LIST_TO_COLLECTION:
+      let updatedNewCollection = { ...state.collection };
+      let updatedNewReadingList = { ...state.readingList };
+      for (const book of action.books) {
+        delete updatedNewReadingList[book.id];
+        if(!updatedNewCollection[book.id]) {
+          updatedNewCollection[book.id] = book;
+        }
+      }
+      return {
+        ...state,
+        collection: updatedNewCollection,
+        readingList: updatedNewReadingList,
       };
     default:
       return state;

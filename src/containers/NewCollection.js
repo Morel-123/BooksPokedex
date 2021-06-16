@@ -14,6 +14,8 @@ import {
   Platform,
   ImageBackground,
 } from "react-native";
+import { Snackbar } from "react-native-paper";
+import Spinner from "../components/Spinner";
 import { Icon } from "react-native-elements";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { firebase } from "../firebase/Config";
@@ -23,15 +25,162 @@ import { COLORS, FONTS, SIZES, icons } from "../constants";
 
 function NewCollection(props) {
   const [isCollectionSelected, setIsCollectionSelected] = useState(true);
+  const [selectedIndexes, setSelectedIndexes] = useState([]);
+  const [selectedBooks, setSelectedBooks] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+  const database = firebase.firestore();
   const dispatch = useDispatch();
   let favoriteBooks = useSelector((state) => state.books.favoriteBooks);
   let collection = useSelector((state) => state.books.collection);
   let readingList = useSelector((state) => state.books.readingList);
 
+  const onReadingListBookPress = (book, index) => {
+    const indexIndexInArray = selectedIndexes.indexOf(index);
+    const bookIndexInArray = selectedBooks.findIndex((b) => b.id == book.id);
+    let copyOfSelectedIndexes = [...selectedIndexes];
+    let copyOfSelectedBooks = [...selectedBooks];
+    if (indexIndexInArray !== -1) {
+      copyOfSelectedIndexes.splice(indexIndexInArray, 1);
+      copyOfSelectedBooks.splice(bookIndexInArray, 1);
+      setSelectedIndexes(copyOfSelectedIndexes);
+      setSelectedBooks(copyOfSelectedBooks);
+      return;
+    } else {
+      if (selectedIndexes.length > 0) {
+        copyOfSelectedIndexes.push(index);
+        copyOfSelectedBooks.push(book);
+        setSelectedIndexes(copyOfSelectedIndexes);
+        setSelectedBooks(copyOfSelectedBooks);
+        return;
+      }
+    }
+    dispatch(booksActions.setCurrentBook(book));
+    props.navigation.navigate("Book Info");
+  };
+
   const onBookPress = (book) => {
     dispatch(booksActions.setCurrentBook(book));
     props.navigation.navigate("Book Info");
   };
+
+  const onBookLongPress = (book, index) => {
+    if (isCollectionSelected) {
+      return;
+    } else {
+      const indexIndexInArray = selectedIndexes.indexOf(index);
+      const bookIndexInArray = selectedBooks.findIndex((b) => b.id == book.id);
+      let copyOfSelectedIndexes = [...selectedIndexes];
+      let copyOfSelectedBooks = [...selectedBooks];
+      if (indexIndexInArray !== -1) {
+        copyOfSelectedIndexes.splice(indexIndexInArray, 1);
+        copyOfSelectedBooks.splice(bookIndexInArray, 1);
+      } else {
+        copyOfSelectedIndexes.push(index);
+        copyOfSelectedBooks.push(book);
+      }
+      setSelectedIndexes(copyOfSelectedIndexes);
+      setSelectedBooks(copyOfSelectedBooks);
+    }
+  };
+
+  async function notifyFriendOnAddToCollection(books) {
+    let recipients = [];
+    for (let i = 0; i < user.friends.length; i++) {
+      if (user.friends[i].friend.expoPushToken) {
+        recipients.push(user.friends[i].friend.expoPushToken);
+      }
+    }
+    let bookTitles = "";
+    for (const bookObj of books) {
+      if (bookTitles != "") {
+        bookTitles = bookTitles + ", ";
+      }
+      bookTitles = bookTitles + bookObj.book.title;
+    }
+    const message = {
+      to: recipients,
+      sound: "default",
+      title:
+        books.length == 1
+          ? `${
+              user.firstName.substring(0, 1).toUpperCase() +
+              user.firstName.substring(1)
+            } just finished a book`
+          : `${
+              user.firstName.substring(0, 1).toUpperCase() +
+              user.firstName.substring(1)
+            } just finished some books`,
+      body:
+        books.length == 1
+          ? `${bookTitles} was added to their collection!`
+          : `${bookTitles} were added to their collection!`,
+      data: { data: "goes here" },
+    };
+
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }
+
+  const onAddBooksToCollection = () => {
+    setLoading(true);
+    let removeBooksFromReadingList = [];
+    let newBooksToCollection = [];
+    for (const book of selectedBooks) {
+      removeBooksFromReadingList.push({
+        bookID: book.id,
+        book: book,
+      });
+      if (!collection[book.id]) {
+        newBooksToCollection.push({
+          bookID: book.id,
+          book: book,
+        });
+      }
+    }
+    let updateFields = {
+      readingList: firebase.firestore.FieldValue.arrayRemove(
+        ...removeBooksFromReadingList
+      ),
+    };
+    if (newBooksToCollection.length > 0) {
+      updateFields = {
+        readingList: firebase.firestore.FieldValue.arrayRemove(
+          ...removeBooksFromReadingList
+        ),
+        collection: firebase.firestore.FieldValue.arrayUnion(
+          ...newBooksToCollection
+        ),
+      };
+    }
+    database
+      .collection("users")
+      .doc(user.uid)
+      .update(updateFields)
+      .then(async function () {
+        if (newBooksToCollection.length > 0 && Platform.OS !== "web") {
+          await notifyFriendOnAddToCollection(newBooksToCollection);
+        }
+        dispatch(booksActions.addFromReadingListToCollection(selectedBooks));
+        setVisible(true);
+        setSelectedIndexes([]);
+        setSelectedBooks([]);
+        setLoading(false);
+      })
+      .catch(function (error) {
+        console.log(error.message);
+      });
+  };
+
+  const onDismissSnackBar = () => setVisible(false);
 
   const containsHebrew = (str) => {
     return /[\u0590-\u05FF]/.test(str);
@@ -113,12 +262,31 @@ function NewCollection(props) {
   }
 
   function renderCollectionSection() {
-    const renderBookItem = ({ item }) => {
+    const renderBookItem = ({ item, index }) => {
       return (
         <View style={{ marginVertical: SIZES.base }}>
           <TouchableOpacity
-            style={{ height: 166, flexDirection: "row" }}
-            onPress={() => onBookPress(item)}
+            style={{
+              height: 166,
+              flexDirection: "row",
+              alignItems: "center",
+              paddingLeft: isCollectionSelected ? 0 : SIZES.padding,
+              backgroundColor:
+                !isCollectionSelected && selectedIndexes.indexOf(index) !== -1
+                  ? "#41414191"
+                  : "transparent",
+            }}
+            onPress={() =>
+              isCollectionSelected
+                ? onBookPress(item)
+                : onReadingListBookPress(item, index)
+            }
+            onLongPress={() => {
+              if (isCollectionSelected) {
+                return;
+              }
+              onBookLongPress(item, index);
+            }}
           >
             {/* Book Cover */}
             <Image
@@ -133,7 +301,14 @@ function NewCollection(props) {
               style={{ width: 100, height: 150, borderRadius: 10 }}
             />
 
-            <View style={{ flex: 1, marginLeft: SIZES.radius }}>
+            <View
+              style={{
+                flex: 1,
+                marginLeft: SIZES.radius,
+                alignSelf: "flex-start",
+                marginTop: 1,
+              }}
+            >
               {/* Book name and author */}
               <View>
                 <Text
@@ -250,7 +425,9 @@ function NewCollection(props) {
               renderItem={renderBookItem}
               keyExtractor={(item) => `${item.id}`}
               showsVerticalScrollIndicator={false}
-              style={{ paddingLeft: SIZES.padding, marginTop: SIZES.radius }}
+              // paddingLeft: SIZES.padding,
+              style={{ marginTop: SIZES.radius }}
+              extraData={selectedIndexes}
             />
           ) : (
             <Text
@@ -333,7 +510,9 @@ function NewCollection(props) {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.black }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: COLORS.black, position: "relative" }}
+    >
       {/* Body Section */}
       <ScrollView style={{ marginTop: SIZES.padding2 }}>
         {/* Favorites Section */}
@@ -341,6 +520,112 @@ function NewCollection(props) {
         {/* Collection Section */}
         <View>{renderCollectionSection()}</View>
       </ScrollView>
+      {!isCollectionSelected &&
+      selectedIndexes &&
+      selectedIndexes.length > 0 ? (
+        <>
+          {loading ? (
+            <View
+              style={{
+                position: "absolute",
+                backgroundColor: "#343f54a1",
+                height: "100%",
+                width: "100%",
+                zIndex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: COLORS.white, marginBottom: 5 }}>
+                Loading
+              </Text>
+              <Spinner
+                size={Platform.OS === "android" ? 10 : "large"}
+                color={COLORS.primary}
+              />
+            </View>
+          ) : null}
+          <View
+            style={{
+              position: "absolute",
+              top: 35,
+              left: 0,
+              width: "100%",
+              backgroundColor: COLORS.black,
+              height: 50,
+              paddingHorizontal: SIZES.padding,
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                height: 30,
+                width: 30,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                setSelectedIndexes([]);
+                setSelectedBooks([]);
+              }}
+            >
+              <Image
+                source={icons.back_arrow_icon}
+                resizeMode="contain"
+                style={{
+                  width: 25,
+                  height: 25,
+                  tintColor: COLORS.white,
+                }}
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                marginLeft: 10,
+                marginBottom: 1,
+                fontSize: 26,
+                color: COLORS.white,
+              }}
+            >
+              {selectedIndexes.length}
+            </Text>
+          </View>
+          <View style={{ position: "absolute", bottom: 30, right: 30 }}>
+            <TouchableOpacity
+              style={{
+                width: 60,
+                height: 60,
+                backgroundColor: COLORS.primary,
+                borderTopLeftRadius: 50,
+                borderTopRightRadius: 50,
+                borderBottomLeftRadius: 50,
+                borderBottomRightRadius: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onPress={onAddBooksToCollection}
+            >
+              <MaterialCommunityIcons
+                name="book-plus"
+                color="white"
+                size={30}
+              />
+            </TouchableOpacity>
+          </View>
+        </>
+      ) : null}
+      <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        duration={1500}
+        style={{ backgroundColor: "#448aff" }}
+      >
+        Added to collection successfully
+      </Snackbar>
     </SafeAreaView>
   );
 }
