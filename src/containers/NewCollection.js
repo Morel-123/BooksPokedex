@@ -180,6 +180,35 @@ function NewCollection(props) {
       });
   };
 
+  const onRemoveBooksFromReadingList = () => {
+    setLoading(true);
+    let removeBooksFromReadingList = [];
+    for (const book of selectedBooks) {
+      removeBooksFromReadingList.push({
+        bookID: book.id,
+        book: book,
+      });
+    }
+    let updateFields = {
+      readingList: firebase.firestore.FieldValue.arrayRemove(
+        ...removeBooksFromReadingList
+      ),
+    };
+    database
+      .collection("users")
+      .doc(user.uid)
+      .update(updateFields)
+      .then(async function () {
+        dispatch(booksActions.removeBooksFromReadingList(selectedBooks));
+        setSelectedIndexes([]);
+        setSelectedBooks([]);
+        setLoading(false);
+      })
+      .catch(function (error) {
+        console.log(error.message);
+      });
+  };
+
   const onDismissSnackBar = () => setVisible(false);
 
   const containsHebrew = (str) => {
@@ -593,6 +622,20 @@ function NewCollection(props) {
             >
               {selectedIndexes.length}
             </Text>
+            <TouchableOpacity
+              style={{
+                height: 30,
+                width: 30,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                position: "absolute",
+                right: 24,
+              }}
+              onPress={onRemoveBooksFromReadingList}
+            >
+              <MaterialCommunityIcons name="delete" color="white" size={26} />
+            </TouchableOpacity>
           </View>
           <View style={{ position: "absolute", bottom: 30, right: 30 }}>
             <TouchableOpacity

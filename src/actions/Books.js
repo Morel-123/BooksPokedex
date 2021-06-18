@@ -14,6 +14,7 @@ export const REMOVE_FROM_READING_LIST = "REMOVE_FROM_READING_LIST";
 export const SET_READING_LIST = "SET_READING_LIST";
 export const ADD_FROM_READING_LIST_TO_COLLECTION =
   "ADD_FROM_READING_LIST_TO_COLLECTION";
+export const REMOVE_BOOKS_FROM_READING_LIST = "REMOVE_BOOKS_FROM_READING_LIST";
 
 export const setCurrentBook = (book) => ({
   type: SET_CURRENT_BOOK,
@@ -87,5 +88,10 @@ export const setReadingList = (books) => ({
 
 export const addFromReadingListToCollection = (books) => ({
   type: ADD_FROM_READING_LIST_TO_COLLECTION,
+  books: books,
+});
+
+export const removeBooksFromReadingList = (books) => ({
+  type: REMOVE_BOOKS_FROM_READING_LIST,
   books: books,
 });
