@@ -111,6 +111,46 @@ const avatarImages = [
     image: require("../../assets/pokemon-avatars/mystic.png"),
     pageRequirement: 15000,
   },
+  {
+    id: 27,
+    image: require("../../assets/pokemon-avatars/pokeball.png"),
+    bookRequirement: 75,
+  },
+  {
+    id: 28,
+    image: require("../../assets/pokemon-avatars/abra.png"),
+    bookRequirement: 100,
+  },
+  {
+    id: 29,
+    image: require("../../assets/pokemon-avatars/ultra-ball.png"),
+    bookRequirement: 150,
+  },
+  {
+    id: 30,
+    image: require("../../assets/pokemon-avatars/pokecoin.png"),
+    bookRequirement: 200,
+  },
+  {
+    id: 31,
+    image: require("../../assets/pokemon-avatars/zubat.png"),
+    pageRequirement: 20000,
+  },
+  {
+    id: 32,
+    image: require("../../assets/pokemon-avatars/superball.png"),
+    pageRequirement: 30000,
+  },
+  {
+    id: 33,
+    image: require("../../assets/pokemon-avatars/bellsprout.png"),
+    pageRequirement: 40000,
+  },
+  {
+    id: 34,
+    image: require("../../assets/pokemon-avatars/mega-ball.png"),
+    pageRequirement: 50000,
+  },
 ];
 
 const booksLevels = [
@@ -149,6 +189,22 @@ const booksLevels = [
   {
     level: 9,
     bookCount: 50,
+  },
+  {
+    level: 10,
+    bookCount: 75,
+  },
+  {
+    level: 11,
+    bookCount: 100,
+  },
+  {
+    level: 12,
+    bookCount: 150,
+  },
+  {
+    level: 13,
+    bookCount: 200,
   },
 ];
 
@@ -192,6 +248,22 @@ const pagesLevels = [
   {
     level: 10,
     pageCount: 15000,
+  },
+  {
+    level: 11,
+    pageCount: 20000,
+  },
+  {
+    level: 12,
+    pageCount: 30000,
+  },
+  {
+    level: 13,
+    pageCount: 40000,
+  },
+  {
+    level: 14,
+    pageCount: 50000,
   },
 ];
 
@@ -627,7 +699,7 @@ function Profile(props) {
               : nextBooksLevel.level}
           </Text>
         </View>
-        <View style={{ width: "70%", height: "100%", marginHorizontal: 10 }}>
+        <View style={{ width: "70%", height: "100%", marginRight: 10, marginLeft: 20, }}>
           <View>
             <Text
               style={{ fontSize: 20, fontWeight: "bold", color: COLORS.black }}
@@ -703,7 +775,7 @@ function Profile(props) {
               : nextPagesLevel.level}
           </Text>
         </View>
-        <View style={{ width: "70%", height: "100%", marginHorizontal: 10 }}>
+        <View style={{ width: "70%", height: "100%", marginRight: 10, marginLeft: 20, }}>
           <View>
             <Text
               style={{ fontSize: 20, fontWeight: "bold", color: COLORS.black }}
