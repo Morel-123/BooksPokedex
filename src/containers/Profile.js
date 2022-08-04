@@ -651,11 +651,24 @@ function Profile(props) {
               </Text>
             </TouchableOpacity>
             {Platform.OS === "web" && (
-              <Button
+              <ElementsButton
                 title="Dismiss"
                 onPress={() => {
                   setVisible(false);
                   setSelectedAvatar(chosenAvatar);
+                }}
+                buttonStyle={{
+                  marginTop: 10,
+                  width: '50%',
+                  alignSelf: 'center',
+                  borderRadius: '25px',
+                  backgroundColor: COLORS.white,
+                  borderWidth: 1,
+                  borderColor: COLORS.primary,
+                  height: '35px',
+                }}
+                titleStyle={{
+                  color: COLORS.primary,
                 }}
               />
             )}
@@ -671,7 +684,7 @@ function Profile(props) {
         style={{
           width: "90%",
           flexDirection: "row",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "center",
           alignSelf: "center",
         }}
@@ -699,7 +712,7 @@ function Profile(props) {
               : nextBooksLevel.level}
           </Text>
         </View>
-        <View style={{ width: "70%", height: "100%", marginRight: 10, marginLeft: 20, }}>
+        <View style={{ height: "100%", marginRight: 10, marginLeft: 20, }}>
           <View>
             <Text
               style={{ fontSize: 20, fontWeight: "bold", color: COLORS.black }}
@@ -747,7 +760,7 @@ function Profile(props) {
         style={{
           width: "90%",
           flexDirection: "row",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "center",
           alignSelf: "center",
         }}
@@ -775,7 +788,7 @@ function Profile(props) {
               : nextPagesLevel.level}
           </Text>
         </View>
-        <View style={{ width: "70%", height: "100%", marginRight: 10, marginLeft: 20, }}>
+        <View style={{ height: "100%", marginRight: 10, marginLeft: 20, }}>
           <View>
             <Text
               style={{ fontSize: 20, fontWeight: "bold", color: COLORS.black }}

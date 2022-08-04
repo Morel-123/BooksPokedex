@@ -1,27 +1,23 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-  Button,
-  Image,
-  ScrollView,
-  Dimensions,
-  TouchableOpacity,
-  SafeAreaView,
-  FlatList,
-  Platform,
-  ImageBackground,
-} from "react-native";
-import { Snackbar } from "react-native-paper";
-import Spinner from "../components/Spinner";
-import { Icon } from "react-native-elements";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { firebase } from "../firebase/Config";
+import React, { useState } from "react";
+import {
+  FlatList,
+  Image,
+  ImageBackground,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Icon } from "react-native-elements";
+import { Snackbar } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import * as booksActions from "../actions/Books";
-import { COLORS, FONTS, SIZES, icons } from "../constants";
+import Spinner from "../components/Spinner";
+import { COLORS, FONTS, icons, SIZES } from "../constants";
+import { firebase } from "../firebase/Config";
 
 function NewCollection(props) {
   const [isCollectionSelected, setIsCollectionSelected] = useState(true);
@@ -29,6 +25,7 @@ function NewCollection(props) {
   const [selectedBooks, setSelectedBooks] = useState([]);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [reverseOrder, setReverseOrder] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const database = firebase.firestore();
   const dispatch = useDispatch();
@@ -512,12 +509,36 @@ function NewCollection(props) {
               source={require("../../assets/book.png")}
             ></ImageBackground>
           </TouchableOpacity>
+          <TouchableOpacity
+              onPress={() => setReverseOrder((prevValue) => !prevValue)}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginLeft: "auto",
+              }}
+            >
+              <MaterialCommunityIcons
+                name={reverseOrder ? "sort-ascending" : "sort-descending"}
+                color={COLORS.white}
+                size={26}
+                style={{
+                  height: 26,
+                  alignSelf: "center",
+                  opacity: 0.4,
+                }}
+              />
+            </TouchableOpacity>
         </View>
 
         {/* Collection */}
         {Object.keys(collection).length > 0 ? (
           <FlatList
-            data={Object.values(collection)}
+            data={
+              reverseOrder
+                ? Object.values(collection).reverse()
+                : Object.values(collection)
+            }
             renderItem={renderBookItem}
             keyExtractor={(item) => `${item.id}`}
             showsVerticalScrollIndicator={false}

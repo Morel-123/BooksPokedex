@@ -49,6 +49,7 @@ function NewSocial(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const database = firebase.firestore();
+  const [reverseOrder, setReverseOrder] = useState(false);
 
   useEffect(() => {
     if (
@@ -416,7 +417,11 @@ function NewSocial(props) {
       <View style={{ flex: 1, direction: "ltr" }}>
         {collection && Object.keys(collection).length > 0 ? (
           <FlatList
-            data={Object.values(collection)}
+            data={
+              reverseOrder
+                ? Object.values(collection).reverse()
+                : Object.values(collection)
+            }
             renderItem={({ item }) => renderBookItem({ item: item.book })}
             keyExtractor={(item) => `${item.bookID}`}
             showsVerticalScrollIndicator={false}
@@ -738,6 +743,27 @@ function NewSocial(props) {
                     resizeMode={"cover"}
                     source={require("../../assets/book.png")}
                   ></ImageBackground>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setReverseOrder((prevValue) => !prevValue)}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginLeft: "auto",
+                    marginRight: 5,
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name={reverseOrder ? "sort-ascending" : "sort-descending"}
+                    color={COLORS.white}
+                    size={26}
+                    style={{
+                      height: 26,
+                      alignSelf: "center",
+                      opacity: 0.4,
+                    }}
+                  />
                 </TouchableOpacity>
               </>
             ) : (
