@@ -2,9 +2,6 @@
 
 BooksPokedex is a dynamic literary platform crafted to cater to book enthusiasts around the globe. It seamlessly blends robust search functionality, a personalized book management system, an engaging social feature, and a whimsical profile screen to provide an immersive and interactive reading experience.
 
-<img src="https://read-mes.s3.amazonaws.com/BooksPokedex/login.jpg" alt="BooksPokedex Login" width="300" height="500">
-*The login screen of BooksPokedex. Create an account or log in to start your literary journey.*
-
 <img src="https://read-mes.s3.amazonaws.com/BooksPokedex/main.jpg" alt="BooksPokedex Main" width="300" height="500">
 *The main screen of BooksPokedex. Dive into a universe of books and enjoy the multifaceted features.*
 
