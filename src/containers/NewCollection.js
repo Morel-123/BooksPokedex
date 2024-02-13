@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Image,
@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Icon } from "react-native-elements";
+import { Icon, SearchBar } from "react-native-elements";
 import { Snackbar } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import * as booksActions from "../actions/Books";
@@ -26,12 +26,31 @@ function NewCollection(props) {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [reverseOrder, setReverseOrder] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const database = firebase.firestore();
   const dispatch = useDispatch();
   let favoriteBooks = useSelector((state) => state.books.favoriteBooks);
   let collection = useSelector((state) => state.books.collection);
   let readingList = useSelector((state) => state.books.readingList);
+
+  const filteredCollection = useMemo(
+    () => filterBooks(collection),
+    [searchText, collection]
+  );
+
+  useEffect(() => {
+    if (!showSearch) {
+      setSearchText("");
+    }
+  }, [showSearch]);
+
+  useEffect(() => {
+    if (Object.keys(collection).length === 0) {
+      setShowSearch(false);
+    }
+  }, [collection]);
 
   const onReadingListBookPress = (book, index) => {
     const indexIndexInArray = selectedIndexes.indexOf(index);
@@ -211,6 +230,23 @@ function NewCollection(props) {
   const containsHebrew = (str) => {
     return /[\u0590-\u05FF]/.test(str);
   };
+
+  function filterBooks(books) {
+    const searchTerm = searchText.trim().toLowerCase();
+    return Object.values(books).filter((book) => {
+      const { title, authors } = book;
+      if (title && title.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      if (
+        authors &&
+        authors.some((author) => author.toLowerCase().includes(searchTerm))
+      ) {
+        return true;
+      }
+      return false;
+    });
+  }
 
   function renderFavoritesSection(myBooks) {
     const renderItem = ({ item, index }) => {
@@ -500,7 +536,6 @@ function NewCollection(props) {
               style={{
                 width: 26,
                 height: 26,
-                marginRight: 5,
                 alignSelf: "center",
                 opacity: 0.4,
                 marginTop: 2,
@@ -509,40 +544,100 @@ function NewCollection(props) {
               source={require("../../assets/book.png")}
             ></ImageBackground>
           </TouchableOpacity>
-          <TouchableOpacity
-              onPress={() => setReverseOrder((prevValue) => !prevValue)}
+          {Object.keys(collection).length > 0 && (
+            <TouchableOpacity
+              onPress={() => setShowSearch((prevValue) => !prevValue)}
               style={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                marginLeft: "auto",
               }}
             >
               <MaterialCommunityIcons
-                name={reverseOrder ? "sort-ascending" : "sort-descending"}
+                name="magnify"
                 color={COLORS.white}
                 size={26}
                 style={{
+                  marginLeft: 10,
                   height: 26,
                   alignSelf: "center",
-                  opacity: 0.4,
+                  opacity: showSearch ? 1 : 0.4,
                 }}
               />
             </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            onPress={() => setReverseOrder((prevValue) => !prevValue)}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginLeft: "auto",
+            }}
+          >
+            <MaterialCommunityIcons
+              name={reverseOrder ? "sort-ascending" : "sort-descending"}
+              color={COLORS.white}
+              size={26}
+              style={{
+                height: 26,
+                alignSelf: "center",
+                opacity: 0.4,
+              }}
+            />
+          </TouchableOpacity>
         </View>
 
+        {showSearch && (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              paddingHorizontal: SIZES.padding,
+              paddingTop: SIZES.radius,
+              alignItems: "center",
+            }}
+          >
+            <SearchBar
+              platform="android"
+              containerStyle={{
+                height: 60,
+                width: "100%",
+                backgroundColor: "#cbcbcb",
+                top: 0,
+                zIndex: 100,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderTopLeftRadius: 25,
+                borderTopRightRadius: 25,
+                borderBottomLeftRadius: 25,
+                borderBottomRightRadius: 25,
+              }}
+              placeholder="Type Here..."
+              onChangeText={(search) => {
+                setSearchText(search);
+              }}
+              onClear={() => setSearchText("")}
+              value={searchText}
+            />
+          </View>
+        )}
+
         {/* Collection */}
-        {Object.keys(collection).length > 0 ? (
+        {Object.keys(filteredCollection).length > 0 ? (
           <FlatList
             data={
-              reverseOrder
-                ? Object.values(collection).reverse()
-                : Object.values(collection)
+              reverseOrder ? filteredCollection.reverse() : filteredCollection
             }
             renderItem={renderBookItem}
             keyExtractor={(item) => `${item.id}`}
             showsVerticalScrollIndicator={false}
-            style={{ paddingLeft: SIZES.padding, marginTop: SIZES.radius }}
+            style={{
+              paddingLeft: SIZES.padding,
+              marginTop: SIZES.radius,
+              flexGrow: 0,
+            }}
           />
         ) : (
           <Text
@@ -552,7 +647,9 @@ function NewCollection(props) {
               marginTop: SIZES.radius,
             }}
           >
-            Start Adding To Your Collection To See Books Here
+            {showSearch && filteredCollection.length === 0
+              ? "No matching results"
+              : "Start Adding To Your Collection To See Books Here"}
           </Text>
         )}
       </View>
