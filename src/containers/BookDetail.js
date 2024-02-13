@@ -651,6 +651,8 @@ const BookDetail = (props) => {
           flex: 1,
           backgroundColor: COLORS.black,
           height: Dimensions.get("window").height,
+          maxHeight: Dimensions.get("window").height,
+          overflow: 'hidden',
         }}
       >
         <Root>
