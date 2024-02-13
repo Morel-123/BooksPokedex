@@ -683,7 +683,7 @@ function NewSocial(props) {
           style={{ flex: 1, marginTop: 5, marginBottom: 5, direction: "ltr" }}
         >
           <View
-            style={{ display: "flex", flexDirection: "row", marginBottom: 5 }}
+            style={{ display: "flex", flexDirection: "row", marginBottom: 5, height: 28 }}
           >
             <Text
               style={{
