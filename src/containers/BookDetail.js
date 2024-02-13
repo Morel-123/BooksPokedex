@@ -15,7 +15,6 @@ import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
 import { Icon, Button } from "react-native-elements";
 import { Snackbar } from "react-native-paper";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as booksActions from "../actions/Books";
 import Root from "../components/Root";
 import Popup from "../components/Popup";
@@ -445,75 +444,85 @@ const BookDetail = (props) => {
         : 1;
 
     return (
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          padding: SIZES.padding,
-          paddingVertical: 20,
-        }}
-      >
-        {/* Custom Scrollbar */}
-        <View
-          style={{ width: 4, height: "100%", backgroundColor: COLORS.gray1 }}
+      <>
+        <Text
+          style={{
+            ...FONTS.h2,
+            color: COLORS.white,
+            marginBottom: 6,
+            paddingTop: 20,
+            paddingLeft: 48, //24(container padding left) + 20(description padding left) + 4(scrollbar width)
+          }}
         >
-          <Animated.View
+          Description
+        </Text>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            padding: SIZES.padding,
+            paddingBottom: 20,
+            paddingTop: 0,
+          }}
+        >
+          {/* Custom Scrollbar */}
+          <View
             style={{
               width: 4,
-              height: indicatorSize,
-              backgroundColor: COLORS.lightGray4,
-              transform: [
-                {
-                  translateY: Animated.multiply(
-                    indicator,
-                    scrollViewVisibleHeight / scrollViewWholeHeight
-                  ).interpolate({
-                    inputRange: [0, difference],
-                    outputRange: [0, difference],
-                    extrapolate: "clamp",
-                  }),
-                },
-              ],
-            }}
-          />
-        </View>
-
-        {/* Description */}
-        <ScrollView
-          contentContainerStyle={{ paddingLeft: SIZES.padding2 }}
-          showsVerticalScrollIndicator={false}
-          scrollEventThrottle={16}
-          onContentSizeChange={(width, height) => {
-            setScrollViewWholeHeight(height);
-          }}
-          onLayout={({
-            nativeEvent: {
-              layout: { x, y, width, height },
-            },
-          }) => {
-            setScrollViewVisibleHeight(height);
-          }}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: indicator } } }],
-            { useNativeDriver: false }
-          )}
-        >
-          <Text
-            style={{
-              ...FONTS.h2,
-              color: COLORS.white,
-              marginBottom: 6,
+              height: "100%",
+              backgroundColor: COLORS.gray1,
+              opacity: book.description && book.description.length > 0 ? 1 : 0,
             }}
           >
-            Description
-          </Text>
-          <Text style={{ ...FONTS.body2, color: COLORS.lightGray }}>
-            {book.description && book.description.length > 0
-              ? book.description
-              : "No description at the moment."}
-          </Text>
-        </ScrollView>
-      </View>
+            <Animated.View
+              style={{
+                width: 4,
+                height: indicatorSize,
+                backgroundColor: COLORS.lightGray4,
+                transform: [
+                  {
+                    translateY: Animated.multiply(
+                      indicator,
+                      scrollViewVisibleHeight / scrollViewWholeHeight
+                    ).interpolate({
+                      inputRange: [0, difference],
+                      outputRange: [0, difference],
+                      extrapolate: "clamp",
+                    }),
+                  },
+                ],
+              }}
+            />
+          </View>
+
+          {/* Description */}
+          <ScrollView
+            contentContainerStyle={{ paddingLeft: 20 }}
+            showsVerticalScrollIndicator={false}
+            scrollEventThrottle={16}
+            onContentSizeChange={(width, height) => {
+              setScrollViewWholeHeight(height);
+            }}
+            onLayout={({
+              nativeEvent: {
+                layout: { x, y, width, height },
+              },
+            }) => {
+              setScrollViewVisibleHeight(height);
+            }}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: indicator } } }],
+              { useNativeDriver: false }
+            )}
+          >
+            <Text style={{ ...FONTS.body2, color: COLORS.lightGray }}>
+              {book.description && book.description.length > 0
+                ? book.description
+                : "No description at the moment."}
+            </Text>
+          </ScrollView>
+        </View>
+      </>
     );
   }
 
@@ -652,7 +661,7 @@ const BookDetail = (props) => {
           backgroundColor: COLORS.black,
           height: Dimensions.get("window").height,
           maxHeight: Dimensions.get("window").height,
-          overflow: 'hidden',
+          overflow: "hidden",
         }}
       >
         <Root>
