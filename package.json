@@ -6,7 +6,7 @@
     "web": "expo start --web",
     "start": "react-native start",
     "test": "jest",
-    "eas-build-pre-install": "npm i -g npm@8.19.4"
+    "eas-build-pre-install": "npm i -g npm@8.19.4 && npm config set legacy-peer-deps=true"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.1.0",
