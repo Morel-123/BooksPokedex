@@ -4,7 +4,10 @@
   },
   "build": {
     "base": {
-      "node": "14.21.3"
+      "node": "14.21.3",
+      "android": {
+        "image": "ubuntu-20.04-jdk-8-ndk-r19c"
+      }
     },
     "development": {
       "extends": "base",
