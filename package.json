@@ -1,4 +1,6 @@
 {
+  "name": "bookspokedex",
+  "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "android": "react-native run-android",
