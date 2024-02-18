@@ -1,8 +1,8 @@
 import React from "react";
-import { Bubbles } from "react-native-loader";
+import LoaderKit from "react-native-loader-kit";
 
 function Spinner(props) {
-  return <Bubbles {...props} />;
+  return <LoaderKit {...props} />;
 }
 
 export default Spinner;

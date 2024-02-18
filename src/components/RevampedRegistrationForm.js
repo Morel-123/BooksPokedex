@@ -11,7 +11,7 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import User from "../entities/User";
 import { useForm, Controller } from "react-hook-form";
-import { Icon } from "react-native-elements";
+import { Icon } from "@rneui/themed";
 import { COLORS, FONTS, SIZES, icons } from "../constants";
 
 function RevampedRegistration({

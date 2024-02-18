@@ -15,14 +15,7 @@ import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
 import * as booksActions from "../actions/Books";
 import * as socialActions from "../actions/Social";
-import {
-  Card,
-  ListItem,
-  Button,
-  Input,
-  Icon,
-  SocialIcon,
-} from "react-native-elements";
+import { Button, Card, Icon, SocialIcon } from "@rneui/themed";
 import { useForm, Controller } from "react-hook-form";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
@@ -351,15 +344,16 @@ function RevampedLogin(props) {
               defaultValue=""
             />
             <Button
-              title="Login"
+              radius={25}
               buttonStyle={{
                 width: Dimensions.get("window").width * 0.75,
-                borderRadius: 25,
                 alignSelf: "center",
                 backgroundColor: COLORS.primary,
               }}
               onPress={handleSubmit(handleLogin)}
-            />
+            >
+              Login
+            </Button>
           </Card>
           <View
             style={{
