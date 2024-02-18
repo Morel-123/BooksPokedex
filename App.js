@@ -1,9 +1,8 @@
 import React from "react";
 import { StyleSheet, Platform, Image, Text, View, I18nManager } from "react-native";
-import { createSwitchNavigator, createAppContainer } from "react-navigation";
+// import { createSwitchNavigator, createAppContainer } from "react-navigation";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
-import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { COLORS, FONTS, SIZES, icons } from "./src/constants";
 import { StatusBar } from "react-native";
@@ -29,6 +28,7 @@ const rootReducer = combineReducers({
 });
 export const store = createStore(rootReducer);
 
+/*
 const AppContainer = createAppContainer(
   createSwitchNavigator(
     {
@@ -42,6 +42,7 @@ const AppContainer = createAppContainer(
     }
   )
 );
+*/
 
 export default class App extends React.Component {
   async componentDidMount() {
@@ -49,11 +50,6 @@ export default class App extends React.Component {
   }
 
   loadAssetsAsync = async () => {
-    await Font.loadAsync({
-      "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
-      "Roboto-Black": require("./assets/fonts/Roboto-Black.ttf"),
-      "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
-    });
     await Asset.fromModule(require("./assets/logo.png")).downloadAsync();
   };
 
@@ -66,7 +62,7 @@ export default class App extends React.Component {
           backgroundColor={COLORS.black}
           translucent={true}
         />
-        <AppContainer />
+        {/*<AppContainer />*/}
       </Provider>
     );
   }

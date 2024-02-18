@@ -13,7 +13,7 @@ import {
 import { FONTS, COLORS, SIZES, icons } from "../constants";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
-import { Icon, Button } from "react-native-elements";
+import { Icon, Button } from "@rneui/themed";
 import { Snackbar } from "react-native-paper";
 import * as booksActions from "../actions/Books";
 import Root from "../components/Root";
@@ -593,7 +593,6 @@ const BookDetail = (props) => {
 
         {isInCollection ? (
           <Button
-            title="Remove From Collection"
             titleStyle={{
               paddingBottom: 0,
               paddingTop: 0,
@@ -601,12 +600,12 @@ const BookDetail = (props) => {
               color: COLORS.white,
             }}
             onPress={onAddOrRemoveBookToCollection}
+            radius={SIZES.radius}
             buttonStyle={{
               flex: 1,
               backgroundColor: COLORS.primary,
               marginHorizontal: SIZES.base,
               marginVertical: SIZES.base,
-              borderRadius: SIZES.radius,
               alignItems: "center",
               justifyContent: "center",
               height: "auto",
@@ -618,11 +617,12 @@ const BookDetail = (props) => {
               justifyContent: "center",
             }}
             loading={loadingCollectionRequest}
-          />
+          >
+            Remove From Collection
+          </Button>
         ) : (
           <Button
             component={TouchableOpacity}
-            title="Add To Collection"
             titleStyle={{
               paddingBottom: 0,
               paddingTop: 0,
@@ -630,12 +630,12 @@ const BookDetail = (props) => {
               color: COLORS.white,
             }}
             onPress={onAddOrRemoveBookToCollection}
+            radius={SIZES.radius}
             buttonStyle={{
               flex: 1,
               backgroundColor: COLORS.primary,
               marginHorizontal: SIZES.base,
               marginVertical: SIZES.base,
-              borderRadius: SIZES.radius,
               alignItems: "center",
               justifyContent: "center",
               height: "auto",
@@ -647,7 +647,9 @@ const BookDetail = (props) => {
               justifyContent: "center",
             }}
             loading={loadingCollectionRequest}
-          />
+          >
+            Add To Collection
+          </Button>
         )}
       </View>
     );

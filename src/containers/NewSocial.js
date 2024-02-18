@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as booksActions from "../actions/Books";
 import * as socialActions from "../actions/Social";
 import { TouchableRipple } from "react-native-paper";
-import { Icon } from "react-native-elements";
+import { Icon } from "@rneui/themed";
 import Spinner from "../components/Spinner";
 import { COLORS, FONTS, SIZES, icons } from "../constants";
 

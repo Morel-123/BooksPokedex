@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../actions/Auth";
 import * as booksActions from "../actions/Books";
 import Spinner from "../components/Spinner";
-import { SearchBar } from "react-native-elements";
+import { SearchBar } from "@rneui/themed";
 
 import { COLORS, FONTS, SIZES, icons } from "../constants";
 

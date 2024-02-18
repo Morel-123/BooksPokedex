@@ -15,7 +15,7 @@ import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
 import * as booksActions from "../actions/Books";
 import * as socialActions from "../actions/Social";
-import { Card, ListItem, Button, Input, Icon } from "react-native-elements";
+import { Button, Card, Icon } from "@rneui/themed";
 import { useForm, Controller } from "react-hook-form";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
@@ -287,24 +287,24 @@ function Login(props) {
             defaultValue=""
           />
           <Button
-            title="Login"
+            radius={25}
             buttonStyle={{
               width: Dimensions.get("window").width * 0.75,
-              borderRadius: 25,
               alignSelf: "center",
             }}
             onPress={handleSubmit(handleLogin)}
-          />
+          >
+            Login
+          </Button>
         </Card>
       </View>
       <View style={{ position: "absolute", bottom: 25, alignSelf: "center", width: 200}}>
         <Button
-          title="Login With Google"
-          buttonStyle={{
-            borderRadius: 25,
-          }}
+          radius={25}
           onPress={promptAsync}
-        />
+        >
+          Login With Google
+        </Button>
       </View>
     </View>
   );

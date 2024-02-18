@@ -1,0 +1,18 @@
+diff --git a/node_modules/react-native-loader-kit/android/build.gradle b/node_modules/react-native-loader-kit/android/build.gradle
+index 14954fa..f87236d 100644
+--- a/node_modules/react-native-loader-kit/android/build.gradle
++++ b/node_modules/react-native-loader-kit/android/build.gradle
+@@ -19,10 +19,10 @@ def safeExtGet(prop, fallback) {
+ }
+ 
+ android {
+-    compileSdkVersion safeExtGet('LoaderKit_compileSdkVersion', 29)
++    compileSdkVersion safeExtGet('LoaderKit_compileSdkVersion', 34)
+     defaultConfig {
+-        minSdkVersion safeExtGet('LoaderKit_minSdkVersion', 16)
+-        targetSdkVersion safeExtGet('LoaderKit_targetSdkVersion', 29)
++        minSdkVersion safeExtGet('LoaderKit_minSdkVersion', 23)
++        targetSdkVersion safeExtGet('LoaderKit_targetSdkVersion', 34)
+         versionCode 1
+         versionName "1.0"
+ 

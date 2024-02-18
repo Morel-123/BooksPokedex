@@ -1,18 +1,30 @@
 {
-  "name": "bookspokedex",
-  "displayName": "bookspokedex",
   "expo": {
     "name": "bookspokedex",
     "slug": "bookspokedex",
     "scheme": "com.bookspokedex",
     "version": "1.0.0",
+    "orientation": "portrait",
     "icon": "./assets/pokedex.png",
-    "assetBundlePatterns": ["**/*"],
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1e1b26"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
+      "supportsTablet": false,
       "bundleIdentifier": "com.bookspokedex",
       "buildNumber": "1.0.0"
     },
     "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/pokedex.png",
+        "backgroundColor": "#ffffff"
+      },
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.bookspokedex",
       "googleServicesFile": "./app/google-services.json",
@@ -22,14 +34,28 @@
       "barStyle": "light-content",
       "backgroundColor": "#f96d41"
     },
-    "splash": {
-      "image": "./assets/logo.png",
-      "backgroundColor": "#1e1b26"
-    },
     "extra": {
       "eas": {
         "projectId": "ac76a628-f48f-494c-8e9c-23a507fa29dc"
       }
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "assets/fonts/Roboto Regular.ttf",
+            "assets/fonts/Roboto Black.ttf",
+            "assets/fonts/Roboto Bold.ttf"
+          ]
+        }
+      ]
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ac76a628-f48f-494c-8e9c-23a507fa29dc"
     }
   }
 }

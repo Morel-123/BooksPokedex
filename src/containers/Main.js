@@ -14,7 +14,7 @@ import {
   FlatList,
   Keyboard,
 } from "react-native";
-import { Icon } from "react-native-elements";
+import { Icon, SearchBar } from "@rneui/themed";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../actions/Auth";
@@ -23,7 +23,6 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { createStackNavigator } from "@react-navigation/stack";
 import Book from "./Book";
 import { TouchableRipple } from "react-native-paper";
-import { SearchBar } from "react-native-elements";
 import { useDebounce } from "use-debounce";
 import Category from "../components/Category";
 import Spinner from "../components/Spinner";

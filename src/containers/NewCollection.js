@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Icon, SearchBar } from "react-native-elements";
+import { Icon, SearchBar } from "@rneui/themed";
 import { Snackbar } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import * as booksActions from "../actions/Books";

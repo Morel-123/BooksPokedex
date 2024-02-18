@@ -17,7 +17,7 @@ import { TouchableRipple, Snackbar } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as booksActions from "../actions/Books";
 import { useHeaderHeight } from "@react-navigation/stack";
-import { Icon, Button } from "react-native-elements";
+import { Icon, Button } from "@rneui/themed";
 import Root from "../components/Root";
 import Popup from "../components/Popup";
 
@@ -397,14 +397,10 @@ function Book(props) {
           </View>
           {isInCollection ? (
             <Button
-              title="Remove From Collection"
               titleStyle={{ paddingBottom: 0, paddingTop: 0 }}
               onPress={onAddOrRemoveBookToCollection}
+              radius={25}
               buttonStyle={{
-                borderTopLeftRadius: 25,
-                borderTopRightRadius: 25,
-                borderBottomLeftRadius: 25,
-                borderBottomRightRadius: 25,
                 width: Dimensions.get("window").width * 0.6,
                 marginTop: 15,
                 display: "flex",
@@ -417,17 +413,15 @@ function Book(props) {
                 alignItems: "center",
               }}
               loading={loadingCollectionRequest}
-            />
+            >
+              Remove From Collection
+            </Button>
           ) : (
             <Button
-              title="Add To Collection"
               titleStyle={{ paddingBottom: 0, paddingTop: 0 }}
               onPress={onAddOrRemoveBookToCollection}
+              radius={25}
               buttonStyle={{
-                borderTopLeftRadius: 25,
-                borderTopRightRadius: 25,
-                borderBottomLeftRadius: 25,
-                borderBottomRightRadius: 25,
                 width: Dimensions.get("window").width * 0.6,
                 marginTop: 15,
                 display: "flex",
@@ -440,7 +434,9 @@ function Book(props) {
                 alignItems: "center",
               }}
               loading={loadingCollectionRequest}
-            />
+            >
+              Add To Collection
+            </Button>
           )}
         </ScrollView>
       </View>

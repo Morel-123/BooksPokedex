@@ -3,23 +3,21 @@
     "version": ">= 7.2.0"
   },
   "build": {
-    "base": {
-      "node": "14.21.3",
-      "android": {
-        "image": "ubuntu-20.04-jdk-8-ndk-r19c"
-      }
-    },
+    "base": {},
     "development": {
       "extends": "base",
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development"
     },
     "preview": {
       "extends": "base",
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "preview"
     },
     "production": {
-      "extends": "base"
+      "extends": "base",
+      "channel": "production"
     }
   },
   "submit": {

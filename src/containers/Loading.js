@@ -15,7 +15,7 @@ import * as socialActions from "../actions/Social";
 import Spinner from "../components/Spinner";
 import { COLORS } from "../constants";
 
-const Pulse = require("react-native-pulse").default;
+import Pulse from "react-native-pulse";
 
 function Loading(props) {
   const dispatch = useDispatch();

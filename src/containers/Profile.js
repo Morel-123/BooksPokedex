@@ -12,7 +12,7 @@ import {
   Dimensions,
 } from "react-native";
 import { TouchableOpacity as GestureTouchableOpactiy } from "react-native-gesture-handler";
-import { Overlay, Button as ElementsButton } from "react-native-elements";
+import { Overlay, Button as ElementsButton } from "@rneui/themed";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { firebase } from "../firebase/Config";
 import { useDispatch, useSelector } from "react-redux";
@@ -652,25 +652,26 @@ function Profile(props) {
             </TouchableOpacity>
             {Platform.OS === "web" && (
               <ElementsButton
-                title="Dismiss"
                 onPress={() => {
                   setVisible(false);
                   setSelectedAvatar(chosenAvatar);
                 }}
+                radius={25}
                 buttonStyle={{
                   marginTop: 10,
                   width: '50%',
                   alignSelf: 'center',
-                  borderRadius: '25px',
                   backgroundColor: COLORS.white,
                   borderWidth: 1,
                   borderColor: COLORS.primary,
-                  height: '35px',
+                  height: 35,
                 }}
                 titleStyle={{
                   color: COLORS.primary,
                 }}
-              />
+              >
+                Dismiss
+              </ElementsButton>
             )}
           </View>
         </Overlay>
