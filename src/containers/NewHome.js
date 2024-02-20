@@ -101,6 +101,10 @@ const NewHome = (props) => {
               let googleBooks = [];
               if (responseJson && responseJson.items) {
                 responseJson.items.forEach((book) => {
+                  const formattedBook = { ...book.volumeInfo, id: book.id };
+                  if (formattedBook.imageLinks) {
+                    formattedBook.imageLinks.thumbnail = formattedBook.imageLinks.thumbnail.replace('http://', 'https://');
+                  }
                   googleBooks.push({ ...book.volumeInfo, id: book.id });
                 });
                 setAllCategoriesBooks((books) => {

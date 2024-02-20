@@ -554,7 +554,7 @@ const BookDetail = (props) => {
               color={COLORS.lightGray2}
               type="ionicon"
               name={
-                Platform.OS === "ios" ? "ios-heart-empty" : "md-heart-empty"
+                Platform.OS === "ios" ? "ios-heart-empty" : "md-heart-outline"
               }
               iconStyle={{ width: 26, textAlign: "center" }}
             />
@@ -660,7 +660,7 @@ const BookDetail = (props) => {
           flex: 1,
           backgroundColor: COLORS.black,
           height: Dimensions.get("window").height,
-          maxHeight: Dimensions.get("window").height,
+          maxHeight: Platform.OS === 'web' ? '100vh' : '100%',
           overflow: "hidden",
         }}
       >

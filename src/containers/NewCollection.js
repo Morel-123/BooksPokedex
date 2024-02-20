@@ -36,8 +36,8 @@ function NewCollection(props) {
   let readingList = useSelector((state) => state.books.readingList);
 
   const filteredCollection = useMemo(
-    () => filterBooks(collection),
-    [searchText, collection]
+    () => reverseOrder ? filterBooks(collection).reverse() : filterBooks(collection),
+    [searchText, collection, reverseOrder]
   );
 
   useEffect(() => {
@@ -627,9 +627,10 @@ function NewCollection(props) {
         {/* Collection */}
         {Object.keys(filteredCollection).length > 0 ? (
           <FlatList
-            data={
-              reverseOrder ? filteredCollection.reverse() : filteredCollection
-            }
+            // data={
+            //   reverseOrder ? filteredCollection.reverse() : filteredCollection
+            // }
+            data={filteredCollection}
             renderItem={renderBookItem}
             keyExtractor={(item) => `${item.id}`}
             showsVerticalScrollIndicator={false}

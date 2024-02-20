@@ -146,6 +146,13 @@ function RevampedLogin(props) {
         let favoriteBooks = {};
         if (favoriteBooksFromDB) {
           favoriteBooksFromDB.forEach((favoriteBook) => {
+            if (favoriteBook.book.imageLinks) {
+              favoriteBook.book.imageLinks.thumbnail =
+                favoriteBook.book.imageLinks.thumbnail.replace(
+                  "http://",
+                  "https://"
+                );
+            }
             favoriteBooks[favoriteBook.bookID] = favoriteBook.book;
           });
         }
@@ -154,6 +161,10 @@ function RevampedLogin(props) {
         let collection = {};
         if (collectionFromDB) {
           collectionFromDB.forEach((item) => {
+            if (item.book.imageLinks) {
+              item.book.imageLinks.thumbnail =
+                item.book.imageLinks.thumbnail.replace("http://", "https://");
+            }
             collection[item.bookID] = item.book;
           });
         }
@@ -162,6 +173,13 @@ function RevampedLogin(props) {
         let readingList = {};
         if (readingListFromDB) {
           readingListFromDB.forEach((readingListBook) => {
+            if (readingListBook.book.imageLinks) {
+              readingListBook.book.imageLinks.thumbnail =
+                readingListBook.book.imageLinks.thumbnail.replace(
+                  "http://",
+                  "https://"
+                );
+            }
             readingList[readingListBook.bookID] = readingListBook.book;
           });
         }

@@ -11,6 +11,16 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": ["**/*"],
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.bookspokedex",
@@ -37,7 +47,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "ac76a628-f48f-494c-8e9c-23a507fa29dc"
+        "projectId": "3b271485-ee3c-432a-ab0f-037e6e4308f6"
       }
     }
   }

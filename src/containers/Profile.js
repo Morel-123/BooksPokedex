@@ -659,13 +659,13 @@ function Profile(props) {
                 }}
                 buttonStyle={{
                   marginTop: 10,
-                  width: '50%',
-                  alignSelf: 'center',
-                  borderRadius: '25px',
+                  width: "50%",
+                  alignSelf: "center",
+                  borderRadius: "25px",
                   backgroundColor: COLORS.white,
                   borderWidth: 1,
                   borderColor: COLORS.primary,
-                  height: '35px',
+                  height: "35px",
                 }}
                 titleStyle={{
                   color: COLORS.primary,
@@ -712,7 +712,7 @@ function Profile(props) {
               : nextBooksLevel.level}
           </Text>
         </View>
-        <View style={{ height: "100%", marginRight: 10, marginLeft: 20, }}>
+        <View style={{ height: "100%", marginRight: 10, marginLeft: 20 }}>
           <View>
             <Text
               style={{ fontSize: 20, fontWeight: "bold", color: COLORS.black }}
@@ -737,7 +737,9 @@ function Profile(props) {
             }}
           >
             <ProgressBar
-              progress={numOfBooks / nextBooksLevel.bookCount}
+              progress={
+                numOfBooks !== null ? numOfBooks / nextBooksLevel.bookCount : 0
+              }
               color={COLORS.primary}
               style={{ height: 15, width: 175, borderRadius: 15 }}
             />
@@ -788,7 +790,7 @@ function Profile(props) {
               : nextPagesLevel.level}
           </Text>
         </View>
-        <View style={{ height: "100%", marginRight: 10, marginLeft: 20, }}>
+        <View style={{ height: "100%", marginRight: 10, marginLeft: 20 }}>
           <View>
             <Text
               style={{ fontSize: 20, fontWeight: "bold", color: COLORS.black }}
@@ -814,7 +816,9 @@ function Profile(props) {
             }}
           >
             <ProgressBar
-              progress={numOfPages / nextPagesLevel.pageCount}
+              progress={
+                numOfPages !== null ? numOfPages / nextPagesLevel.pageCount : 0
+              }
               color={COLORS.primary}
               style={{ height: 15, width: 175, borderRadius: 15 }}
             />

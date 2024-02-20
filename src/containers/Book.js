@@ -250,7 +250,7 @@ function Book(props) {
                       name={
                         Platform.OS === "ios"
                           ? "ios-heart-empty"
-                          : "md-heart-empty"
+                          : "md-heart-outline"
                       }
                       iconStyle={{ width: 26, textAlign: "center" }}
                     />

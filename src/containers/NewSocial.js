@@ -84,6 +84,16 @@ function NewSocial(props) {
             const responseData = response.data();
             if (!existingFriendCollection) {
               let friendCollection = responseData.collection;
+              friendCollection = friendCollection.map((bookObject) => {
+                if (bookObject.book.imageLinks) {
+                  bookObject.book.imageLinks.thumbnail =
+                    bookObject.book.imageLinks.thumbnail.replace(
+                      "http://",
+                      "https://"
+                    );
+                }
+                return bookObject;
+              });
               dispatch(
                 socialActions.addFriendCollection(
                   selectedFriend.uid,
@@ -94,6 +104,16 @@ function NewSocial(props) {
             }
             if (!existingFriendReadingList) {
               let friendReadingList = responseData.readingList;
+              friendReadingList = friendReadingList.map((bookObject) => {
+                if (bookObject.book.imageLinks) {
+                  bookObject.book.imageLinks.thumbnail =
+                    bookObject.book.imageLinks.thumbnail.replace(
+                      "http://",
+                      "https://"
+                    );
+                }
+                return bookObject;
+              });
               dispatch(
                 socialActions.addFriendReadingList(
                   selectedFriend.uid,
@@ -683,7 +703,12 @@ function NewSocial(props) {
           style={{ flex: 1, marginTop: 5, marginBottom: 5, direction: "ltr" }}
         >
           <View
-            style={{ display: "flex", flexDirection: "row", marginBottom: 5, height: 28 }}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              marginBottom: 5,
+              height: 28,
+            }}
           >
             <Text
               style={{

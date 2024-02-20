@@ -35,18 +35,36 @@ function Loading(props) {
             let favoriteBooksFromDB = responseData.favoriteBooks;
             let favoriteBooks = {};
             favoriteBooksFromDB.forEach((favoriteBook) => {
+              if (favoriteBook.book.imageLinks) {
+                favoriteBook.book.imageLinks.thumbnail =
+                  favoriteBook.book.imageLinks.thumbnail.replace(
+                    "http://",
+                    "https://"
+                  );
+              }
               favoriteBooks[favoriteBook.bookID] = favoriteBook.book;
             });
             dispatch(booksActions.setFavoriteBooks(favoriteBooks));
             let collectionFromDB = responseData.collection;
             let collection = {};
             collectionFromDB.forEach((item) => {
+              if (item.book.imageLinks) {
+                item.book.imageLinks.thumbnail =
+                  item.book.imageLinks.thumbnail.replace("http://", "https://");
+              }
               collection[item.bookID] = item.book;
             });
             dispatch(booksActions.setCollection(collection));
             let readingListFromDB = responseData.readingList;
             let readingList = {};
             readingListFromDB.forEach((readingListBook) => {
+              if (readingListBook.book.imageLinks) {
+                readingListBook.book.imageLinks.thumbnail =
+                  readingListBook.book.imageLinks.thumbnail.replace(
+                    "http://",
+                    "https://"
+                  );
+              }
               readingList[readingListBook.bookID] = readingListBook.book;
             });
             dispatch(booksActions.setReadingList(readingList));

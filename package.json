@@ -22,6 +22,7 @@
     "expo": "^41.0.0",
     "expo-application": "~3.1.2",
     "expo-auth-session": "~3.2.3",
+    "expo-build-properties": "^0.3.0",
     "expo-camera": "~11.0.2",
     "expo-font": "~9.1.0",
     "expo-google-sign-in": "~9.1.0",
@@ -58,6 +59,7 @@
     "react-navigation": "^4.4.4",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5",
+    "url": "^0.11.3",
     "use-debounce": "^5.0.4"
   },
   "devDependencies": {
