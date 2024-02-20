@@ -19,7 +19,8 @@
             "usesCleartextTraffic": true
           }
         }
-      ]
+      ],
+      "./config_plugins/withAnimatedWebp"
     ],
     "ios": {
       "supportsTablet": false,

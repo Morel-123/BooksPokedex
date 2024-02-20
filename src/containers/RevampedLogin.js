@@ -1,32 +1,22 @@
-import React, { useState, useEffect } from "react";
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from "expo-web-browser";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
-  StyleSheet,
+  Dimensions, Image, StyleSheet,
   Text,
-  TextInput,
-  View,
-  ImageBackground,
-  TouchableOpacity,
-  Image,
-  Dimensions,
-  KeyboardAvoidingView,
+  TextInput, TouchableOpacity, View
 } from "react-native";
-import { firebase } from "../firebase/Config";
+import {
+  Button, Card, Icon,
+  SocialIcon
+} from "react-native-elements";
 import { useDispatch } from "react-redux";
 import * as authActions from "../actions/Auth";
 import * as booksActions from "../actions/Books";
 import * as socialActions from "../actions/Social";
-import {
-  Card,
-  ListItem,
-  Button,
-  Input,
-  Icon,
-  SocialIcon,
-} from "react-native-elements";
-import { useForm, Controller } from "react-hook-form";
-import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
-import { COLORS, FONTS, SIZES, icons } from "../constants";
+import { COLORS } from "../constants";
+import { firebase } from "../firebase/Config";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -37,7 +27,6 @@ function RevampedLogin(props) {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const database = firebase.firestore();
-  var provider = new firebase.auth.GoogleAuthProvider();
   const [user, setUser] = useState(null);
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId:
@@ -218,7 +207,7 @@ function RevampedLogin(props) {
         }}
       >
         <Image
-          source={require("../../assets/reader3.gif")}
+          source={require("../../assets/reader4.webp")}
           resizeMode="cover"
           style={{ width: "100%", height: 150, borderRadius: 10 }}
         />
